@@ -1,0 +1,32 @@
+version: 2
+
+multi-ecosystem-groups:
+  dependencies:
+    schedule:
+      interval: weekly
+    commit-message:
+      prefix: chore
+      include: scope
+
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    multi-ecosystem-group: dependencies
+    patterns: ["*"]
+  - package-ecosystem: npm
+    directory: /
+    multi-ecosystem-group: dependencies
+    patterns: ["*"]
+  - package-ecosystem: uv
+    directory: /
+    multi-ecosystem-group: dependencies
+    patterns: ["*"]
+    # The minimum supported Home Assistant's test environment moves only
+    # with hacs.json, by hand: its pytest-homeassistant-custom-component
+    # pin is the floor, and its pycares<5 is what that release needs.
+    exclude-paths:
+      - tests/min-ha-pins.txt
+  - package-ecosystem: docker
+    directory: /qa/mock-aivi
+    multi-ecosystem-group: dependencies
+    patterns: ["*"]

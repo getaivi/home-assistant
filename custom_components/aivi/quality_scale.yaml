@@ -1,0 +1,226 @@
+# Integration Quality Scale self-declaration.
+#
+# Custom integrations are not formally graded by Home Assistant; this file
+# records rule-by-rule compliance so the state is auditable.
+rules:
+  # Bronze
+  action-setup:
+    status: exempt
+    comment: The integration registers no service actions.
+  appropriate-polling:
+    status: done
+    comment: >-
+      Entities are push-based and never polled. The one recurring call
+      is the subscription check: every 12 hours while the subscription is
+      active (so its end date stays current), every hour while it is not
+      (to resume once it is renewed), never both.
+  brands:
+    status: done
+    comment: >-
+      Brand icons ship inside the component (brand/icon.png,
+      brand/icon@2x.png), the mechanism for custom integrations since
+      HA 2026.3 (home-assistant/brands does not accept custom-integration
+      submissions). On HA older than 2026.3 the frontend shows the generic
+      placeholder.
+  common-modules: done
+  config-flow:
+    status: done
+    comment: >-
+      The flow connects the account (token, optional base URL).
+      Widget and Live Activity bindings have no subentry flows; the Aivi
+      panel manages them as config subentries over the integration's
+      WebSocket API.
+  config-flow-test-coverage: done
+  dependency-transparency:
+    status: done
+    comment: No external requirements at all.
+  docs-actions:
+    status: exempt
+    comment: No service actions.
+  docs-triggers:
+    status: exempt
+    comment: No triggers.
+  docs-conditions:
+    status: exempt
+    comment: No conditions.
+  # The docs rules are met by the guide the manifest links to
+  # (docs.getaivi.app/home-assistant/integration/) together with the
+  # README: install, removal, parameters, how data updates, examples,
+  # use cases, troubleshooting and limitations each have a section there.
+  docs-high-level-description: done
+  docs-installation-instructions: done
+  docs-removal-instructions: done
+  entity-event-setup: done
+  entity-unique-id: done
+  has-entity-name: done
+  runtime-data: done
+  test-before-configure: done
+  test-before-setup:
+    status: done
+    comment: >-
+      Setup asks for the account's subscription (GET /account) and
+      lists its widgets first; a rejected token raises
+      ConfigEntryAuthFailed and an unreachable API ConfigEntryNotReady. An
+      account without an active subscription sets up paused (nothing is
+      pushed), so its repair issue and recovery work.
+  unique-config-entry:
+    status: done
+    comment: >-
+      The API exposes no stable account identifier, so duplicates are
+      detected by matching the configured credentials
+      (_async_abort_entries_match), the documented fallback. The base URL
+      is stored without trailing slashes, so one API typed two ways is one
+      account.
+
+  # Silver
+  action-exceptions:
+    status: exempt
+    comment: No service actions.
+  config-entry-unloading:
+    status: done
+    comment: >-
+      Unloading stops every push manager and the command stream; a
+      setup that fails midway stops whatever it already started. The
+      sidebar panel is removed when the last account unloads.
+  docs-configuration-parameters: done
+  docs-installation-parameters: done
+  entity-unavailable:
+    status: done
+    comment: >-
+      The diagnostic sensors stay available while pushes fail (the
+      push status sensor says why, with the message as an attribute) and
+      while the content waits for a value (the push status sensor reads
+      "waiting", with the fields it waits for as an attribute).
+      The account's Event stream sensor is off, not unavailable, while the
+      stream is down or paused (with the reason as an attribute), and
+      unavailable only while the account binds nothing that accepts input.
+      The account's Subscription and Health sensors are always available:
+      they keep the last answer Aivi gave.
+      Unavailable required sources skip the push; optional fields
+      drop out of the payload. Sourced segment weights (dynamic segments)
+      degrade to their stored fallback weight instead of dropping, so an
+      unavailable sensor never reshuffles a segmented bar. Colors are
+      clamped to what the wire takes before they are sent (the palette;
+      hex too on switchboard tiles), so an unresolvable or out-of-range
+      color degrades to the stored literal instead of being rejected.
+  integration-owner: done
+  log-when-unavailable:
+    status: done
+    comment: >-
+      One warning when pushes start failing and one line on
+      recovery, per binding; the switchboard command stream logs the same way
+      (one warning when it drops, one line when it reconnects). An inactive
+      subscription is the account's state: one warning when the account
+      pauses and one line when it resumes, never one per binding. Content
+      that does not resolve because a required field reads unknown or
+      unavailable is not a failure: a debug line once per reading and once
+      when it resolves again, a waiting row in the push log, and the push
+      status sensor's "waiting" state; it withdraws no repair issue.
+  parallel-updates: done
+  reauthentication-flow: done
+  test-coverage:
+    status: done
+    comment: pytest enforces a 95% coverage gate (--cov-fail-under=95).
+
+  # Gold
+  devices:
+    status: done
+    comment: >-
+      One service device per binding (its sensors and Presses event
+      entity) and one per account (its Subscription, Health and Event
+      stream sensors), so several accounts on one install stay apart.
+  diagnostics:
+    status: done
+    comment: >-
+      The entry (token redacted), each binding's push health (with
+      the field its content waits for, and when a change the throttle
+      holds goes out), the
+      subscription status (state, end date, renewal), the event stream and
+      the activity log (recent inputs and recent pushes with what each
+      sent), and whether the log is kept on disk.
+  discovery:
+    status: exempt
+    comment: A cloud service; there is nothing on the network to discover.
+  discovery-update-info:
+    status: exempt
+    comment: No discovery.
+  docs-data-update: done
+  docs-examples: done
+  docs-known-limitations:
+    status: done
+    comment: >-
+      The guide's "Good to know" says what a user runs into (how
+      quickly things update, which templates work, the stand-in preview
+      icons) and the one hard limit, colors. They are a closed 18-name
+      wire enum, so a template returning a hex value or a light's
+      rgb_color falls back to the stored swatch; switchboard tile colors
+      and gradients are the exception and take hex.
+  docs-supported-devices:
+    status: exempt
+    comment: A service integration; no physical devices to list.
+  docs-supported-functions: done
+  docs-troubleshooting: done
+  docs-use-cases: done
+  dynamic-devices:
+    status: done
+    comment: >-
+      Bindings are config subentries (created from the Aivi panel).
+      Adding, editing or removing one starts, replaces or stops only that
+      binding's push manager, device and entities (the account's Event
+      stream sensor appears with its first binding that accepts input,
+      and a binding edited to accept input gets its Presses entity,
+      without a reload); the other bindings and the command stream keep
+      running, and an edit that leaves the content unchanged sends nothing
+      to the devices.
+  entity-category: done
+  entity-device-class: done
+  entity-disabled-by-default:
+    status: exempt
+    comment: >-
+      No entity ships disabled: each is part of how the integration is
+      monitored or automated on, and there are few. Per binding, "Last
+      sent" and "Update status" show whether it is kept up to date; per
+      account, Subscription, Health and Event stream show its health, and
+      the Presses event entity is what presses are automated on.
+  entity-translations: done
+  exception-translations: done
+  icon-translations: done
+  reconfiguration-flow:
+    status: done
+    comment: >-
+      Entry-level reconfigure updates the token and base URL in
+      place. Bindings (subentries) are edited in the Aivi panel, which has
+      no flow but covers the same reconfigure need.
+  repair-issues:
+    status: done
+    comment: >-
+      Raised for widgets and activities deleted upstream, rejected
+      content, a template that differs from the one Aivi has for the slug,
+      an exhausted Live Activity quota, switchboard content over the 4 KiB
+      limit (caught before sending), and unsupported templates; withdrawn
+      automatically on recovery. A binding that an enabled automation
+      also feeds (one of Aivi's blueprints, or any automation calling the
+      Aivi rest_command with its slug) gets an issue whose repair flow
+      turns that automation off; it is withdrawn when either side goes.
+      An account without an active subscription gets one fixable issue
+      (not one per binding) whose repair flow checks again; it is
+      withdrawn when the account is found renewed, by that check, the
+      hourly one, or any call Aivi answers. Values are coerced before they
+      reach the wire, so a bad color degrades to its fallback instead of
+      producing a content_rejected issue; content_rejected is raised only
+      when the Aivi API rejects the content.
+  stale-devices:
+    status: done
+    comment: >-
+      Devices are scoped to their binding subentry and removed with
+      it; upstream deletion raises a repair issue guiding removal, and
+      async_remove_config_entry_device permits manual cleanup.
+
+  # Platinum
+  async-dependency: done
+  inject-websession: done
+  strict-typing:
+    status: done
+    comment: >-
+      Enforced with ty in strict mode (all rules at error severity)
+      via pyproject [tool.ty.rules].

@@ -1,0 +1,1214 @@
+{
+ "about": "Scenarios for scripts/suggest_eval.py, against the qa stack's home. Each is one Suggest request and the checks its answer must pass on every run. Drawn from real failures: add one when Suggest gets something wrong.",
+ "cases": [
+  {
+   "id": "fill-remaining",
+   "group": "fill",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Fill the remaining slots",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 8,
+     "keeps": true
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "fill-populate-all",
+   "group": "fill",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Try to populate all slots",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain",
+     "switch.decorative_lights"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "history": [
+    {
+     "ask": "Do we have some more stuff to add here?",
+     "reply": "I've added the Decorative Lights to your Porch widget."
+    }
+   ],
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 8,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "fill-two-more",
+   "group": "fill",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add two more tiles",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 5,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "fill-all-lights-overflow",
+   "group": "fill",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add all the lights",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 8,
+     "keeps": true,
+     "added_domains": [
+      "light",
+      "switch",
+      "input_boolean"
+     ]
+    },
+    {
+     "reply": [
+      "one",
+      "fit",
+      "room",
+      "8",
+      "eight",
+      "left out",
+      "not all"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "count-free",
+   "group": "count",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "How many tiles can I still add?",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "answer_only": true,
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "reply": [
+      "5",
+      "five"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "count-used",
+   "group": "count",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "How many tiles does it have now?",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "answer_only": true,
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "reply": [
+      "3",
+      "three"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "add-keeps-existing",
+   "group": "add-not-replace",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Also add the things that run once when pressed",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "keeps": true,
+     "min": 4,
+     "added_domains": [
+      "scene",
+      "button",
+      "script"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "add-one-named",
+   "group": "add-not-replace",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add the garage door",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 4,
+     "keeps": true,
+     "includes": [
+      "cover.garage_door"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "add-vague-more",
+   "group": "add-not-replace",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "more",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain",
+     "switch.decorative_lights"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "history": [
+    {
+     "ask": "Do we have some more stuff to add here?",
+     "reply": "I've added the Decorative Lights to your Porch widget."
+    }
+   ],
+   "expect": [
+    {
+     "rows": "actions",
+     "min": 4,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "edit-remove-and-reorder",
+   "group": "edit",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Remove the fountain and put the kitchen lights first",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "excludes": [
+      "input_boolean.fountain"
+     ],
+     "first": "light.kitchen_lights",
+     "includes": [
+      "input_boolean.front_door",
+      "input_boolean.porch_light"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "edit-remove-one",
+   "group": "edit",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Remove the front door",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 2,
+     "excludes": [
+      "input_boolean.front_door"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "edit-gauge-swap",
+   "group": "edit",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Show the humidity instead",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "field": "value",
+     "is": "sensor.outside_humidity"
+    },
+    {
+     "field": "max_value",
+     "is": 100
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "edit-gauge-range",
+   "group": "edit",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Make the range 0 to 30",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "field": "min_value",
+     "is": 0
+    },
+    {
+     "field": "max_value",
+     "is": 30
+    },
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    }
+   ]
+  },
+  {
+   "id": "edit-accent-only",
+   "group": "edit",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Make the accent purple",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "field": "accent",
+     "is": "purple"
+    },
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    },
+    {
+     "field": "min_value",
+     "is": -20
+    }
+   ]
+  },
+  {
+   "id": "edit-the-other-one",
+   "group": "edit",
+   "template": "gauge",
+   "name": "Temperature",
+   "ask": "use the other one",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "icon": "thermometer.medium"
+   },
+   "history": [
+    {
+     "ask": "temperature",
+     "reply": "I set the gauge to the outside temperature."
+    }
+   ],
+   "expect": [
+    {
+     "field": "value",
+     "in": [
+      "number.temperature_setting",
+      "climate.heatpump",
+      "climate.hvac",
+      "climate.ecobee"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "restyle-better-icons",
+   "group": "restyle",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Use better icons",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rows": "actions",
+     "count": 3,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "restyle-siren-icon",
+   "group": "restyle",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add the siren with a fitting icon",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "keeps": true,
+     "includes": [
+      "siren.siren"
+     ]
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "restyle-make-better",
+   "group": "restyle",
+   "template": "progress",
+   "name": "Laundry",
+   "ask": "make it better",
+   "bindings": {
+    "progress": "input_number.washer_progress"
+   },
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "field": "progress",
+     "is": "input_number.washer_progress"
+    },
+    {
+     "field": "icon",
+     "set": true
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "restyle-colorful",
+   "group": "restyle",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Make it colorful",
+   "bindings": {
+    "value": "sensor.outside_temperature"
+   },
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "cannot-non-tile-domains",
+   "group": "cannot",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add the robot vacuum and the living room TV",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "rows": "actions",
+     "count": 3,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "cannot-porch-related",
+   "group": "cannot",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "Add everything related to the porch",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "answer_only": true,
+   "expect": [
+    {
+     "rows": "actions",
+     "keeps": true,
+     "max": 5
+    }
+   ]
+  },
+  {
+   "id": "cannot-wrong-template",
+   "group": "cannot",
+   "template": "progress",
+   "name": "Weather",
+   "ask": "show the weather forecast",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "cannot-pool",
+   "group": "cannot",
+   "template": "gauge",
+   "name": "Pool",
+   "ask": "pool temperature",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "cannot-garbage",
+   "group": "cannot",
+   "template": "countdown",
+   "name": "Garbage day",
+   "ask": "Set it up for me",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "cannot-ev",
+   "group": "cannot",
+   "template": "monitor",
+   "name": "EV",
+   "ask": "Set it up for me",
+   "kind": "activity",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "ask-nameless",
+   "group": "ask",
+   "template": "status",
+   "name": "Widget 1",
+   "ask": "Set it up for me",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    },
+    {
+     "options": 1
+    }
+   ]
+  },
+  {
+   "id": "ask-room-gauge",
+   "group": "ask",
+   "template": "gauge",
+   "name": "Living room",
+   "ask": "Set it up for me",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "ask-the-door",
+   "group": "ask",
+   "template": "status",
+   "name": "Door",
+   "ask": "the door",
+   "expect": [
+    {
+     "field": "state",
+     "in": [
+      "lock.front_door",
+      "input_boolean.front_door"
+     ]
+    },
+    {
+     "options": 1
+    }
+   ]
+  },
+  {
+   "id": "ask-temperature",
+   "group": "ask",
+   "template": "gauge",
+   "name": "Temperature",
+   "ask": "temperature",
+   "expect": [
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    },
+    {
+     "options": 1
+    }
+   ]
+  },
+  {
+   "id": "first-outside-temp",
+   "group": "first-setup",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "outside temperature",
+   "expect": [
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    },
+    {
+     "field": "icon",
+     "set": true
+    },
+    {
+     "field": "ring",
+     "set": true
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "first-washer",
+   "group": "first-setup",
+   "template": "progress",
+   "name": "Laundry",
+   "ask": "the washer",
+   "expect": [
+    {
+     "field": "progress",
+     "is": "input_number.washer_progress"
+    },
+    {
+     "field": "state",
+     "is": "input_text.washer_state"
+    },
+    {
+     "field": "icon",
+     "set": true
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "first-lights",
+   "group": "first-setup",
+   "template": "switchboard",
+   "name": "Lights",
+   "ask": "my lights",
+   "expect": [
+    {
+     "rows": "actions",
+     "min": 5,
+     "max": 8,
+     "includes": [
+      "light.kitchen_lights"
+     ],
+     "added_domains": [
+      "light",
+      "switch",
+      "input_boolean"
+     ]
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "first-energy",
+   "group": "first-setup",
+   "template": "energy",
+   "name": "Energy",
+   "ask": "Set it up for me",
+   "expect": [
+    {
+     "field": "grid_power",
+     "in": [
+      "sensor.grid_power_now",
+      "input_number.grid_power"
+     ]
+    },
+    {
+     "rows": "sources",
+     "min": 1
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "first-batteries",
+   "group": "first-setup",
+   "template": "battery",
+   "name": "Batteries",
+   "ask": "Set it up for me",
+   "expect": [
+    {
+     "rows": "devices",
+     "min": 3,
+     "includes": [
+      "sensor.robot_vacuum_battery_level",
+      "sensor.door_lock_battery_level"
+     ]
+    },
+    {
+     "icons": "real"
+    },
+    {
+     "rejected": 0
+    }
+   ]
+  },
+  {
+   "id": "first-washer-activity",
+   "group": "first-setup",
+   "template": "progress",
+   "name": "Washer",
+   "ask": "Set it up for me",
+   "kind": "activity",
+   "expect": [
+    {
+     "field": "progress",
+     "is": "input_number.washer_progress"
+    },
+    {
+     "field": "icon",
+     "set": true
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "first-power-trend",
+   "group": "first-setup",
+   "template": "trend",
+   "name": "Power",
+   "ask": "power usage",
+   "expect": [
+    {
+     "field": "value",
+     "is": "sensor.power_consumption"
+    },
+    {
+     "field": "icon",
+     "set": true
+    },
+    {
+     "icons": "real"
+    }
+   ]
+  },
+  {
+   "id": "unclear-mash",
+   "group": "unclear",
+   "template": "status",
+   "name": "Front door",
+   "ask": "asdasd",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    },
+    {
+     "options": 1
+    }
+   ]
+  },
+  {
+   "id": "unclear-word",
+   "group": "unclear",
+   "template": "status",
+   "name": "Front door",
+   "ask": "giraffe",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-emoji",
+   "group": "unclear",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "🦄🦄",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-punctuation",
+   "group": "unclear",
+   "template": "status",
+   "name": "Front door",
+   "ask": "?",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-weather-paris",
+   "group": "unclear",
+   "template": "status",
+   "name": "Front door",
+   "ask": "What's the weather in Paris?",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-joke",
+   "group": "unclear",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Tell me a joke",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-edit-mash",
+   "group": "unclear",
+   "template": "status",
+   "name": "Front door",
+   "ask": "asdasd",
+   "bindings": {
+    "state": "lock.front_door",
+    "icon": "lock.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    },
+    {
+     "options": 1
+    }
+   ]
+  },
+  {
+   "id": "unclear-edit-emoji",
+   "group": "unclear",
+   "template": "switchboard",
+   "name": "Porch",
+   "ask": "🦄",
+   "bindings": {
+    "actions": [
+     "input_boolean.front_door",
+     "input_boolean.porch_light",
+     "input_boolean.fountain"
+    ],
+    "icon": "house.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    },
+    {
+     "rows": "actions",
+     "count": 3,
+     "keeps": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-edit-joke",
+   "group": "unclear",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "Tell me a joke",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "unclear-edit-punctuation",
+   "group": "unclear",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": ".",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "lacks-sauna",
+   "group": "cannot",
+   "template": "status",
+   "name": "Front door",
+   "ask": "Show the sauna temperature",
+   "expect": [
+    {
+     "unchanged": true
+    },
+    {
+     "asks": true
+    }
+   ]
+  },
+  {
+   "id": "short-red",
+   "group": "short",
+   "template": "status",
+   "name": "Front door",
+   "ask": "red",
+   "bindings": {
+    "state": "lock.front_door",
+    "icon": "lock.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "field": "state",
+     "is": "lock.front_door"
+    }
+   ]
+  },
+  {
+   "id": "short-use-washer",
+   "group": "short",
+   "template": "status",
+   "name": "Front door",
+   "ask": "use the washer",
+   "bindings": {
+    "state": "lock.front_door",
+    "icon": "lock.fill",
+    "accent": "green"
+   },
+   "expect": [
+    {
+     "field": "state",
+     "in": [
+      "input_text.washer_state",
+      "input_number.washer_progress"
+     ]
+    }
+   ]
+  },
+  {
+   "id": "short-bigger-range",
+   "group": "short",
+   "template": "gauge",
+   "name": "Outside",
+   "ask": "bigger range",
+   "bindings": {
+    "value": "sensor.outside_temperature",
+    "min_value": -20,
+    "max_value": 40,
+    "ring": [
+     "blue",
+     "green",
+     "orange",
+     "red"
+    ],
+    "icon": "thermometer.medium",
+    "accent": "orange"
+   },
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "field": "value",
+     "is": "sensor.outside_temperature"
+    }
+   ]
+  },
+  {
+   "id": "short-german",
+   "group": "short",
+   "template": "status",
+   "name": "Haustür",
+   "ask": "Zeig, ob die Haustür abgeschlossen ist",
+   "expect": [
+    {
+     "field": "state",
+     "is": "lock.front_door"
+    }
+   ]
+  },
+  {
+   "id": "ambiguous-temperature",
+   "group": "ambiguous",
+   "template": "status",
+   "name": "Front door",
+   "ask": "show a temperature",
+   "expect": [
+    {
+     "changed": true
+    },
+    {
+     "options": 1
+    }
+   ]
+  }
+ ]
+}

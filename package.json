@@ -1,0 +1,37 @@
+{
+  "name": "aivi-home-assistant",
+  "private": true,
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "The aivi panel frontend (Lit + TypeScript in frontend/src, built by Vite to the gitignored bundle custom_components/aivi/frontend/aivi-panel.js and its lazily loaded, content-hashed template editor aivi-code-editor-<hash>.js) plus the snapshot harness.",
+  "scripts": {
+    "build": "vite build --config frontend/vite.editor.config.ts && vite build --config frontend/vite.config.ts",
+    "typecheck": "tsc -p frontend/tsconfig.json && tsc -p frontend/tsconfig.test.json && tsc -p tests/e2e/tsconfig.json",
+    "test": "vitest run --config frontend/vitest.config.ts --coverage",
+    "test:watch": "vitest --config frontend/vitest.config.ts",
+    "test:harness": "playwright test -c tests/e2e/harness",
+    "test:qa": "playwright test -c tests/e2e/qa"
+  },
+  "dependencies": {
+    "lit": "^3.3.3"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "^4.14.0",
+    "@biomejs/biome": "2.6.2",
+    "@codemirror/autocomplete": "^6.20.4",
+    "@codemirror/commands": "^6.11.1",
+    "@codemirror/language": "^6.13.1",
+    "@codemirror/state": "^6.7.6",
+    "@codemirror/view": "^6.43.15",
+    "@lezer/highlight": "^1.2.5",
+    "@mdi/svg": "^7.4.47",
+    "@playwright/test": "^1.64.1",
+    "@types/node": "^26.6.5",
+    "@vitest/coverage-v8": "^5.0.5",
+    "happy-dom": "^21.0.4",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.5",
+    "vitest": "^5.0.3"
+  }
+}

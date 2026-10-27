@@ -1,0 +1,1563 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "连接您的 Aivi 账户",
+        "description": "粘贴 Aivi App 中 Settings 标签页里的 API 令牌。如果要连接多个账户，请为此账户命名。",
+        "data": {
+          "token": "API 令牌",
+          "name": "账户名称"
+        },
+        "sections": {
+          "advanced": {
+            "name": "高级选项",
+            "description": "可选。仅当要连接默认以外的 Aivi API 时才更改基础 URL。",
+            "data": {
+              "base_url": "API 基础 URL"
+            }
+          }
+        }
+      },
+      "reauth_confirm": {
+        "title": "重新连接 Aivi",
+        "description": "Aivi 拒绝了您的 API 令牌。请从 Aivi App 的 Settings 标签页粘贴新的令牌。",
+        "data": {
+          "token": "API 令牌"
+        }
+      },
+      "reconfigure": {
+        "title": "重新配置 Aivi",
+        "description": "更新 API 令牌。打开“高级选项”可更改基础 URL。",
+        "data": {
+          "token": "API 令牌"
+        },
+        "sections": {
+          "advanced": {
+            "name": "高级选项",
+            "description": "可选。仅当要连接默认以外的 Aivi API 时才更改基础 URL。",
+            "data": {
+              "base_url": "API 基础 URL"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aivi 拒绝了该 API 令牌。请检查后重试。",
+      "cannot_connect": "无法连接 Aivi。请检查网络连接后重试。",
+      "no_subscription": "此 Aivi 账户没有有效订阅。请在 Aivi App 中订阅，然后重试。"
+    },
+    "abort": {
+      "reauth_successful": "Aivi 已重新连接。",
+      "reconfigure_successful": "Aivi 连接已更新。",
+      "already_configured": "此 Aivi 账户已连接。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Aivi 选项",
+        "data": {
+          "keep_log": "重启后保留日志"
+        },
+        "data_description": {
+          "keep_log": "发往 Aivi 的推送和来自您设备的点按的日志保存在内存中，Home Assistant 重启后会重新开始。开启后，它还会不时写入磁盘，因此能在重启后保留。若想减少 SD 卡的损耗，请保持关闭。"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_rejected": {
+      "message": "Aivi 拒绝了 API 令牌。请重新连接账户，以便小组件和实时活动继续更新。"
+    },
+    "cannot_connect": {
+      "message": "无法连接 Aivi：{error}"
+    }
+  },
+  "issues": {
+    "widget_missing": {
+      "title": "小组件“{name}”不在 Aivi App 中",
+      "description": "Aivi App 中没有 slug 为“{slug}”的小组件，因此 Home Assistant 无法为“{name}”提供数据。请在 Aivi App 的 **Widgets** 标签页中用完全相同的 slug 重新创建它，或在 Aivi 面板中停止为“{name}”提供数据。"
+    },
+    "content_rejected": {
+      "title": "Aivi 拒绝了“{name}”的内容",
+      "description": "Aivi 认为 Home Assistant 为“{name}”（{slug}）发送的内容无效并拒绝了它。请在 Aivi 面板中检查为它提供数据的设置。Aivi 接受内容后，更新会恢复。"
+    },
+    "content_too_large": {
+      "title": "“{name}”的内容超出 Aivi 的大小限制",
+      "description": "Home Assistant 要为“{name}”（{slug}）发送的内容超过了 Aivi 接受的 4 KiB，因此不会发送，您的设备将继续显示上次的更新。请在 Aivi 面板中缩短图片 URL 或第二行，或移除磁贴。内容符合限制后，更新会恢复。"
+    },
+    "unsupported_template": {
+      "title": "此版本无法为“{name}”所用的模板提供数据",
+      "description": "“{name}”使用“{template}”模板，此版本的 Aivi 集成不支持该模板。请更新集成以便为它提供数据，或在 Aivi 面板中停止为“{name}”提供数据。"
+    },
+    "activity_missing": {
+      "title": "实时活动“{name}”不在 Aivi App 中",
+      "description": "Aivi App 中没有 slug 为“{slug}”的实时活动，因此 Home Assistant 无法为“{name}”提供数据。请在 Aivi App 的 **Activities** 标签页中用完全相同的 slug 重新创建它，或在 Aivi 面板中停止为“{name}”提供数据。"
+    },
+    "template_mismatch": {
+      "title": "“{name}”在 Aivi App 中的模板不同",
+      "description": "Aivi 拒绝了“{name}”（{slug}）的内容，因为在 Aivi App 中使用该 slug 的小组件或实时活动的模板不是“{template}”。请停止为它提供数据，然后在 Aivi 面板中重新设置。模板一致后，更新会恢复。"
+    },
+    "activity_quota": {
+      "title": "“{name}”进行中的实时活动过多",
+      "description": "Aivi 未启动实时活动“{name}”（{slug}），因为该账户进行中的实时活动已达上限。请结束其他实时活动；下次更新时会再次尝试。"
+    },
+    "subscription_inactive": {
+      "title": "Aivi 订阅未生效",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "检查 Aivi 订阅",
+            "description": "Aivi 账户“{account}”没有有效订阅，因此小组件和实时活动已暂停。\n\n您在 Aivi 面板中设置的内容都会保留。在 Aivi App 中续订后，更新会在一小时内恢复。已经续订？选择 **立即检查**。",
+            "submit": "立即检查"
+          },
+          "still_inactive": {
+            "title": "尚未续订",
+            "description": "Aivi 仍未检测到“{account}”的有效订阅。请在 Aivi App 中续订，然后选择 **重新检查**。系统也会每小时检查一次。",
+            "submit": "重新检查"
+          },
+          "cannot_connect": {
+            "title": "无法连接 Aivi",
+            "description": "请检查网络连接，然后选择 **重试**。",
+            "submit": "重试"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi 拒绝了 API 令牌。请先重新连接账户。",
+          "not_loaded": "该 Aivi 账户未在运行。请在 **设置 → 设备与服务** 中重新加载，然后重试。"
+        }
+      }
+    },
+    "subscription_expired": {
+      "title": "Aivi 订阅未生效",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "检查 Aivi 订阅",
+            "description": "“{account}”的 Aivi 订阅已于 {expired} 到期，因此小组件和实时活动已暂停。\n\n您在 Aivi 面板中设置的内容都会保留。在 Aivi App 中续订后，更新会在一小时内恢复。已经续订？选择 **立即检查**。",
+            "submit": "立即检查"
+          },
+          "still_inactive": {
+            "title": "尚未续订",
+            "description": "Aivi 仍未检测到“{account}”的有效订阅。请在 Aivi App 中续订，然后选择 **重新检查**。系统也会每小时检查一次。",
+            "submit": "重新检查"
+          },
+          "cannot_connect": {
+            "title": "无法连接 Aivi",
+            "description": "请检查网络连接，然后选择 **重试**。",
+            "submit": "重试"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi 拒绝了 API 令牌。请先重新连接账户。",
+          "not_loaded": "该 Aivi 账户未在运行。请在 **设置 → 设备与服务** 中重新加载，然后重试。"
+        }
+      }
+    },
+    "automation_conflict": {
+      "title": "还有自动化在为“{name}”提供数据",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "关闭为“{name}”提供数据的自动化",
+            "description": "“{name}”（{slug}）由 Aivi 面板提供数据，同时也由以下自动化提供数据：{automations}。两者会相互覆盖，导致您的设备在两者之间来回切换。\n\n关闭自动化不会将其删除。您可以在 **设置 → 自动化与场景** 中重新开启。",
+            "submit": "关闭"
+          }
+        }
+      }
+    },
+    "automation_conflict_manual": {
+      "title": "还有自动化在为“{name}”提供数据",
+      "description": "“{name}”（{slug}）由 Aivi 面板提供数据，同时也由以下自动化提供数据：{automations}。两者会相互覆盖，导致您的设备在两者之间来回切换。该自动化还在为其他小组件提供数据，或会在 Home Assistant 启动时自动重新开启，因此 Aivi 集成不会替您关闭它。请在 **设置 → 自动化与场景** 中修改它，或在 Aivi 面板中停止为“{name}”提供数据。"
+    }
+  },
+  "config_panel": {
+    "common": {
+      "retry": "重试",
+      "edit": "编辑",
+      "back": "返回",
+      "save": "保存",
+      "saving": "正在保存…",
+      "required": "必填",
+      "none": "无",
+      "default": "默认",
+      "clear": "清除",
+      "remove": "移除",
+      "move-up": "上移",
+      "move-down": "下移",
+      "done": "完成",
+      "close": "关闭",
+      "color": "颜色",
+      "live-activity": "实时活动",
+      "menu": "打开侧边栏"
+    },
+    "error": {
+      "boot-title": "无法加载 Aivi"
+    },
+    "route": {
+      "widget-missing": "未找到该小组件，已改为显示您的小组件。",
+      "activity-missing": "未找到该实时活动，已改为显示您的小组件。"
+    },
+    "onboarding": {
+      "title": "连接您的 Aivi 账户",
+      "body": "小组件在 Aivi App 中制作，由 Home Assistant 为其提供实时数据。连接账户后，账户中的每个小组件都会显示在这里，随时可以设置。",
+      "connect": "连接账户",
+      "token-help": "在哪里找到令牌？",
+      "first-bind-title": "您的第一个小组件已上线。",
+      "first-bind-body": "只要为 {name} 提供数据的实体发生变化，它就会随之更新，无需手动刷新。",
+      "first-bind-dismiss": "知道了"
+    },
+    "hub": {
+      "widgets": "小组件",
+      "live-activities": "实时活动",
+      "accounts": "账户",
+      "account-connected": "已连接",
+      "account-paused": "订阅已暂停",
+      "account-unreachable": "无法连接",
+      "add-account": "添加账户",
+      "manage-accounts": "在设置中管理",
+      "docs": "文档",
+      "support": "支持",
+      "version": "版本 {version}",
+      "fed-dot": "由 Home Assistant 提供数据",
+      "running-dot": "运行中",
+      "idle-dot": "未运行",
+      "waiting-dot": "正在等待值",
+      "empty-title": "还没有小组件或实时活动",
+      "empty-body": "它们在 Aivi App 中创建，你在这里选择让它们保持更新的数据。",
+      "empty-step-create": "在 iPhone 或 iPad 上的 Aivi App 中创建一个小组件或实时活动。",
+      "empty-step-refresh": "在这里点按“刷新”。新建的内容不会自动出现。",
+      "empty-step-feed": "点按“设置”，选择为它提供数据的实体。",
+      "empty-cta": "打开 Aivi App",
+      "empty-widgets-note": "还没有小组件。请先在 Aivi App 中创建，然后刷新。",
+      "empty-activities-note": "还没有实时活动。请先在 Aivi App 中创建，然后刷新。",
+      "offline": "无法连接 Aivi，仅显示您已设置的小组件。",
+      "subscription-inactive": "您的 Aivi 订阅未生效。已设置的内容都会保留，续订后即可恢复。",
+      "check-again": "重新检查",
+      "bind": "设置",
+      "unbind": "停止提供数据",
+      "unbind-confirm": "停止提供数据？",
+      "unbound-toast": "已停止为 {name} 提供数据",
+      "unbind-failed": "无法停止为 {name} 提供数据：{error}",
+      "fed-by": "由 {sources} 提供数据",
+      "nothing-yet": "暂无",
+      "template-count-other": "{count} 个使用模板的字段",
+      "unsupported": "需要更新版本的 Aivi 集成",
+      "widget-gone": "Aivi App 中没有它，因此不会显示任何内容。请停止为它提供数据，或在 App 中使用相同的 slug 重新创建。",
+      "runs-on": "由 {entity} 控制运行",
+      "activity-gone": "Aivi App 中没有它，因此不会显示任何内容。请停止为它提供数据，或在 App 中使用相同的 slug 重新创建。",
+      "search-placeholder": "搜索小组件和实时活动…",
+      "search-label": "按名称或模板搜索小组件和实时活动",
+      "refresh": "刷新",
+      "refresh-same": "已是最新：Aivi App 中没有任何变化。",
+      "refresh-changed": "已从 Aivi App 更新。",
+      "refresh-failed": "无法连接 Aivi。",
+      "filter-label": "按状态筛选",
+      "filter-all": "全部",
+      "filter-bound": "已提供数据",
+      "filter-unbound": "未提供数据",
+      "filter-unsupported": "不支持",
+      "no-matches": "没有与“{query}”匹配的结果",
+      "no-matches-filter": "没有符合此筛选条件的项目",
+      "clear-search": "清除筛选",
+      "results-other": "显示 {count} 个匹配项",
+      "subscription-inactive-some-other": "{names} 的 Aivi 订阅未生效。续订前，其小组件和实时活动将暂停。您设置的内容都会保留。",
+      "paused-mark": "已暂停",
+      "account-ended": "订阅已于 {date} 结束"
+    },
+    "editor": {
+      "activity-chip": "实时活动",
+      "widget-chip": "小组件",
+      "slug-hint": "它的 slug：Aivi App、修复和自动化用来识别它的 ID",
+      "unknown-template": "未知模板“{template}”",
+      "save-failed": "无法保存：{error}",
+      "saved-toast": "现在由 Home Assistant 为 {name} 提供数据",
+      "active-label": "启停实体",
+      "active-hint": "该实体开启时启动实时活动，关闭时结束实时活动",
+      "template-error-blocks": "请修复 {fields} 中的模板错误后再保存。",
+      "fix-fields": "请修复标红的字段后再保存。",
+      "one-of": "{fields} 中的一项",
+      "leave-title": "放弃更改？",
+      "leave-body": "您对 {name} 所做的更改将不会保存。",
+      "leave-keep": "继续编辑",
+      "leave-discard": "放弃"
+    },
+    "presses": {
+      "count": "×{count}",
+      "type-toggle_on": "开",
+      "type-toggle_off": "关",
+      "type-pressed": "点按",
+      "outcome-played": "已处理",
+      "outcome-expired": "已过期",
+      "outcome-not_bound": "未处理",
+      "outcome-ignored": "已忽略",
+      "outcome-failed": "失败"
+    },
+    "recent": {
+      "title": "日志",
+      "hint": "Home Assistant 最近为此发往 Aivi 的内容、您的设备发回的点按，以及各自的结果。",
+      "empty": "还没有记录。第一次发往 Aivi 的推送会显示在这里，您设备上的点按也会。"
+    },
+    "pushes": {
+      "to-aivi": "发往 Aivi",
+      "from-devices": "来自您的设备",
+      "outcome-delivered": "已送达",
+      "outcome-unchanged": "无变化",
+      "outcome-retrying": "重试中",
+      "outcome-failed": "失败",
+      "unchanged-why": "内容与上次推送相同，因此没有发送。",
+      "took": "{ms} 毫秒",
+      "content": "发送的内容",
+      "content-cut": "在此截断：内容超出了日志保留的长度。",
+      "content-none": "没有解析出任何内容，因此无可发送。",
+      "outcome-waiting": "等待中",
+      "outcome-held": "已暂缓",
+      "waiting": "未发送：{field}读到的是“{reading}”。",
+      "waiting-none": "未发送：{field}没有值。",
+      "waiting-any": "未发送：{fields}都没有值。",
+      "held": "暂缓至 {time}：此实时活动最多{every}更新一次。可在{section}的“{setting}”中更改。"
+    },
+    "source": {
+      "entity": "实体",
+      "attribute": "属性",
+      "template": "模板",
+      "bands": "按数值",
+      "literal": "固定值",
+      "fixed": "固定值"
+    },
+    "bands": {
+      "follows": "跟随",
+      "follows-aria": "{field}跟随的读数",
+      "follows-placeholder": "选择传感器",
+      "list": "按数值的{field}",
+      "below": "低于 {limit}",
+      "between": "{from} 至 {limit}",
+      "above": "{from} 及以上",
+      "limit-aria": "“{range}”的上限",
+      "color-aria": "“{range}”的颜色",
+      "remove": "移除区间“{range}”",
+      "add": "添加区间",
+      "full": "最多 {max} 个区间",
+      "as-template": "写成模板",
+      "now": "当前 {reading}，所以是{color}",
+      "now-none": "{name} 当前没有读数，因此显示固定颜色",
+      "order": "请输入大于前一个上限、小于后一个上限的数字。",
+      "lock-hint": "锁定屏幕、着色主屏幕和屏幕变暗时不显示颜色。也请在小组件上显示读数，或让图标随之变化。"
+    },
+    "field": {
+      "also-on": "也显示在{surface}",
+      "source-label": "{field}的来源",
+      "template-aria": "{field}的模板",
+      "pick-entity-first": "请先选择实体，再选择其属性",
+      "entity-missing": "此实体目前在 Home Assistant 中不可用。",
+      "choose-attribute": "选择属性…",
+      "no-attributes": "此实体没有可选的属性。",
+      "style-title": "文字颜色和格式",
+      "format": "格式",
+      "format-as-is": "保持原样",
+      "source-unusable": "读到的是“{value}”，无法在此使用，将使用下方的备用值。",
+      "source-unavailable": "目前没有可读取的内容，将使用下方的备用值。",
+      "fallback": "备用值",
+      "fallback-hint": "上方的来源无法读取时使用",
+      "source-of": "{field}的来源",
+      "template-error": "模板错误：",
+      "error-details": "详情",
+      "template-empty": "此模板目前渲染为空；该字段视为未设置。",
+      "result": "结果",
+      "kind-text": "文本",
+      "kind-number": "数字",
+      "kind-bool": "真或假",
+      "kind-nothing": "空",
+      "kind-list-other": "包含 {count} 项的列表",
+      "kind-numbers-other": "包含 {count} 个数字的列表",
+      "kind-range": "{min} 到 {max}",
+      "updates-on": "更新时机",
+      "updates-domain": "任意 {domain} 实体",
+      "updates-all": "任意状态变化",
+      "updates-time": "每分钟开始时",
+      "updates-more-other": "另外 {count} 项",
+      "updates-limit-other": "最多每 {count} 秒一次",
+      "updates-never": "它读取的内容都不会变化，因此永远不会自行更新。",
+      "unknown-entity": "Home Assistant 中没有 {id}。",
+      "did-you-mean": "是否指的是：",
+      "use-entity": "使用 {id}",
+      "badge-error": "模板有错误",
+      "error-at-line": "第 {line} 行：",
+      "error-at": "第 {line} 行，第 {column} 列：",
+      "error-unclosed": "有内容未闭合。请检查每个 {output} 和 {statement} 是否完整。",
+      "error-unclosed_block": "{tag} 块从未闭合。请在它结束的位置添加 {end}。",
+      "error-unexpected_end": "模板在其打开的所有内容闭合之前就结束了。",
+      "error-stray_end": "{tag} 关闭了一个从未打开的块。",
+      "error-unknown_tag": "“{tag}”不是模板认识的语句。请检查拼写。",
+      "error-unknown_filter": "没有名为“{name}”的过滤器。",
+      "error-unknown_test": "没有名为“{name}”的测试。",
+      "error-bad_char": "此处不能使用字符“{char}”。",
+      "error-missing": "此处缺少“{token}”。",
+      "error-incomplete": "表达式结束得太早：末尾缺少内容。",
+      "error-extra": "“{token}”不应出现在这里。它前面是否缺少运算符或 |？",
+      "error-unexpected": "此处不应出现“{token}”。",
+      "error-undefined": "此处不存在名为“{name}”的内容。请检查拼写。",
+      "error-no_attribute": "“{value}”没有属性“{name}”。",
+      "error-none_attribute": "这里从一个不存在的对象读取“{name}”，通常是实体 ID 有拼写错误。",
+      "error-no_default": "{function} 收到了“{value}”，它不是数字，且没有默认值。请为它提供一个默认值，例如 {example}。",
+      "error-type": "这里混用了文本和数字。请先把文本转换为数字，例如 {example}。",
+      "error-division_by_zero": "这里除以了零。",
+      "number-placeholder": "例如 100",
+      "icon-placeholder": "例如 washer.fill",
+      "symbol-styling": "符号样式",
+      "rendering": "符号风格",
+      "secondary": "第二颜色",
+      "tertiary": "第三颜色",
+      "color-style": "颜色风格",
+      "suggestions": "建议",
+      "device-chip": "设备：{name}",
+      "history-chip": "历史：{name}",
+      "dashboard-chip": "仪表盘",
+      "url-invalid": "请使用带协议的完整 URL，例如网页用 https://，Home Assistant 视图用 homeassistant://。",
+      "url-long": "URL 超过 256 个字符。",
+      "invert": "反转正负号",
+      "icon-color": "图标颜色",
+      "points-source": "历史来源",
+      "points-history": "历史",
+      "points-list": "列表",
+      "points-template": "模板",
+      "points-window": "时间跨度",
+      "points-entity": "历史来源实体",
+      "points-same": "与{field}相同",
+      "points-list-hint": "一个保存数字列表的属性，从最早到最新",
+      "points-template-hint": "一个渲染为数字列表的 Home Assistant 模板，从最早到最新，例如将天气预报映射为其温度",
+      "points-no-history": "为{field}指定一个实体，或在这里选择一个实体，以绘制其历史图表。",
+      "source-waiting": "目前读到的是“{value}”，因此在有值之前不会发送任何内容。",
+      "source-waiting-none": "目前没有可读取的内容，因此在有内容之前不会发送任何内容。",
+      "source-left-out": "目前没有可读取的内容，因此此项会被省略。",
+      "source-unusable-left-out": "读到的是“{value}”，无法在此使用，因此此项会被省略。",
+      "badge-waiting": "目前没有可读取的内容",
+      "name": "“{field}”",
+      "name-grouped": "“{group}：{field}”",
+      "name-case": "as-is"
+    },
+    "code": {
+      "completions": "建议",
+      "fn-states": "实体的状态（文本）",
+      "fn-state_attr": "实体的一个属性",
+      "fn-is_state": "实体是否处于指定状态",
+      "fn-is_state_attr": "实体的某个属性是否为指定值",
+      "fn-has_value": "实体是否有状态（不是未知或不可用）",
+      "fn-expand": "群组和列表中的成员实体",
+      "fn-area_name": "实体所在区域的名称",
+      "fn-area_entities": "区域中的所有实体",
+      "fn-device_attr": "实体所属设备的一项信息，例如型号",
+      "fn-now": "当前日期和时间",
+      "fn-today_at": "今天的某个时间，例如 today_at('18:30')",
+      "fn-as_timestamp": "日期或时间转为自 1970 年起的秒数",
+      "fn-relative_time": "某个时间距今多久，例如 5 分钟",
+      "fn-timedelta": "一段时长，可与时间相加或相减",
+      "fn-timestamp_custom": "格式化时间戳，例如 timestamp_custom('%H:%M')",
+      "fn-iif": "条件成立时取一个值，否则取另一个值",
+      "fn-float": "带小数的数字，文本时使用备用值",
+      "fn-int": "整数，文本时使用备用值",
+      "fn-is_number": "值是否为数字",
+      "fn-round": "将数字四舍五入到指定小数位",
+      "fn-default": "没有值时使用的值",
+      "fn-min": "多个值中最小的一个",
+      "fn-max": "多个值中最大的一个",
+      "fn-selectattr": "保留属性通过测试的项目",
+      "fn-map": "取出每个项目的某个属性，或对每个项目应用过滤器",
+      "fn-list": "将结果转为列表",
+      "fn-count": "项目的数量",
+      "fn-sum": "将所有数字相加",
+      "fn-join": "用分隔符把项目连接成文本",
+      "fn-replace": "把文本替换为其他文本",
+      "fn-state_translated": "实体的状态，使用您的语言",
+      "fn-device_id": "实体所属设备的 ID",
+      "fn-device_entities": "设备的所有实体",
+      "fn-area_id": "区域的 ID，按名称或其中的实体查找",
+      "fn-area_devices": "区域中的所有设备",
+      "fn-areas": "所有区域",
+      "fn-floor_name": "楼层的名称",
+      "fn-label_entities": "带有某个标签的所有实体",
+      "fn-integration_entities": "某个集成的所有实体，例如 'hue'",
+      "fn-utcnow": "当前日期和时间（UTC）",
+      "fn-as_datetime": "将文本或时间戳转为日期和时间",
+      "fn-as_local": "转为您所在时区的日期和时间",
+      "fn-strptime": "按指定格式从文本中读取日期和时间",
+      "fn-time_since": "某个时间距今多久，用文字表示",
+      "fn-time_until": "距某个时间还有多久，用文字表示",
+      "fn-as_timedelta": "将 '00:10:00' 这样的文本转为时长",
+      "fn-timestamp_local": "将时间戳转为本地日期和时间",
+      "fn-timestamp_utc": "将时间戳转为 UTC 日期和时间",
+      "fn-bool": "从 on、yes 或 1 等文本得到 true 或 false",
+      "fn-abs": "去掉符号的数字",
+      "fn-average": "多个数字的平均值",
+      "fn-median": "多个数字的中位数",
+      "fn-string": "将值转为文本",
+      "fn-format": "填充文本格式，例如 '%.1f' | format(x)",
+      "fn-lower": "将文本转为小写",
+      "fn-upper": "将文本转为大写",
+      "fn-title": "每个单词首字母大写",
+      "fn-capitalize": "首字母大写",
+      "fn-trim": "去掉文本两端的空格",
+      "fn-truncate": "将文本截短到指定长度",
+      "fn-slugify": "将文本转为带下划线的小写 ID",
+      "fn-regex_replace": "替换正则表达式匹配的内容",
+      "fn-regex_match": "文本是否以正则表达式的匹配开头",
+      "fn-regex_search": "文本中是否包含正则表达式的匹配",
+      "fn-from_json": "将 JSON 文本读取为值",
+      "fn-rejectattr": "去掉属性通过测试的项目",
+      "fn-select": "保留通过测试的项目",
+      "fn-reject": "去掉通过测试的项目",
+      "fn-length": "项目或字符的数量",
+      "fn-first": "第一个项目",
+      "fn-last": "最后一个项目",
+      "fn-sort": "对项目排序",
+      "fn-unique": "去掉重复的项目",
+      "fn-reverse": "反转顺序",
+      "fn-contains": "列表或文本是否包含某个值",
+      "fn-range": "从 0 到指定数量的数字",
+      "fn-namespace": "保存循环中可以修改的值",
+      "test-defined": "值是否存在",
+      "test-none": "值是否为 None",
+      "test-number": "值是否为数字",
+      "test-string": "值是否为文本",
+      "test-in": "值是否在列表或文本中",
+      "test-match": "文本是否以正则表达式的匹配开头",
+      "test-search": "文本中是否包含正则表达式的匹配",
+      "test-contains": "列表或文本是否包含某个值"
+    },
+    "sheet": {
+      "expand": "展开",
+      "expand-label": "展开{field}的模板",
+      "insert": "插入",
+      "in-template": "此模板中",
+      "all-entities": "所有实体",
+      "matches": "匹配的实体",
+      "keys": "模板按键",
+      "key-output": "表达式",
+      "key-statement": "语句",
+      "key-pipe": "过滤器",
+      "key-quote": "引号",
+      "recipes": "配方",
+      "more": "配方和属性",
+      "recipe-pick": "选择它对应的实体",
+      "recipe-without": "不选实体，稍后填写",
+      "fits": "适用的实体",
+      "or": "或",
+      "recipe-words": "开和关的文字，例如打开和关闭",
+      "recipe-rounded-unit": "取整后的状态及其单位",
+      "recipe-translated": "Home Assistant 中显示的状态",
+      "recipe-fallback": "不可用时的文字",
+      "recipe-time-since": "距上次变化的时间",
+      "recipe-time-of-day": "它的时刻",
+      "recipe-rounded": "状态转为数字并取整",
+      "recipe-number": "状态转为数字",
+      "recipe-share": "百分比转为 0 到 1 的比例",
+      "recipe-entity-time": "它保存的时间点",
+      "recipe-last-changed": "上次变化的时间",
+      "recipe-in-minutes": "5 分钟后",
+      "recipe-attribute-list": "列表属性中的数字",
+      "recipe-color-by-state": "开和关的颜色",
+      "recipe-color-by-number": "超过阈值时的颜色",
+      "recipe-icon-on-off": "开和关各用一个图标",
+      "recipe-icon-by-level": "随电量或百分比变化的图标",
+      "recipe-is-on": "是否已开启",
+      "recipe-above": "是否超过阈值",
+      "word-on": "开",
+      "word-off": "关",
+      "word-open": "打开",
+      "word-closed": "关闭",
+      "word-detected": "已检测到",
+      "word-clear": "未检测到",
+      "word-home": "在家",
+      "word-away": "离家",
+      "word-wet": "潮湿",
+      "word-dry": "干燥",
+      "word-problem": "有问题",
+      "word-ok": "正常",
+      "word-unsafe": "不安全",
+      "word-safe": "安全",
+      "word-connected": "已连接",
+      "word-disconnected": "已断开",
+      "word-unlocked": "已解锁",
+      "word-locked": "已锁定",
+      "word-low": "低",
+      "word-normal": "正常",
+      "word-charging": "充电中",
+      "word-not-charging": "未充电",
+      "word-no-data": "无数据",
+      "writes": "将插入"
+    },
+    "workspace": {
+      "search": "搜索实体和配方",
+      "no-matches": "没有匹配项",
+      "list-keys": "↑ ↓ 移动，Enter 插入，→ 查看更多",
+      "inserted": "已插入 {name}",
+      "find": "查找",
+      "find-count": "第 {current} 个，共 {total} 个",
+      "find-none": "无匹配",
+      "find-previous": "上一个",
+      "find-next": "下一个",
+      "output": "输出",
+      "docs": "文档",
+      "tab-hint": "Tab 缩进，{keys} 让 Tab 移动焦点",
+      "position": "第 {line} 行，第 {column} 列",
+      "wrap": "换行",
+      "key-left": "左移",
+      "key-right": "右移",
+      "key-undo": "撤销",
+      "strip-open": "预览和结果",
+      "search-entity": "搜索实体",
+      "step-keys": "↑ ↓ 移动，Enter 插入，← 返回",
+      "step-back": "返回全部",
+      "hints": "提示",
+      "hint-limit": "Aivi 在这里最多接收 {limit} 个字符，其余部分会被截掉。",
+      "hint-clipped": "{size}小组件会在这个长度处截断。",
+      "hint-kind-number": "此字段需要数字，而“{value}”不是数字，因此显示备用值。",
+      "hint-kind-bool": "此字段需要 true 或 false，而“{value}”都不是，因此显示备用值。",
+      "hint-kind-color": "“{value}”不是此字段可用的颜色，因此显示备用值。",
+      "hint-kind-time": "此字段需要日期和时间，而“{value}”不是，因此显示备用值。",
+      "hint-kind-other": "此字段无法使用“{value}”，因此显示备用值。",
+      "hint-unavailable": "{name} 当前为 {state}，因此小组件显示“{state}”。",
+      "hint-none": "它显示“None”：所读取的内容当前没有值，通常是实体没有的属性。",
+      "hint-decimals-other": "它显示 {count} 位小数。",
+      "hint-symbol": "“{value}”不在 Apple 的符号列表中，设备可能不显示图标。",
+      "fix-round": "取整",
+      "fix-unit": "去掉单位",
+      "fix-is-state": "与“{state}”比较",
+      "fix-unavailable": "改为显示“{words}”",
+      "fix-symbol": "改用“{name}”",
+      "card-changed": "{when}变化",
+      "card-more-other": "另外 {count} 个属性"
+    },
+    "formatter": {
+      "time-since": "已过时间（实时计时，正计时）",
+      "time-until": "剩余时间（实时计时，倒计时）"
+    },
+    "combobox": {
+      "placeholder": "搜索实体…",
+      "no-matches": "没有匹配的实体",
+      "more": "显示 {total} 个中的 {shown} 个。输入以缩小范围。"
+    },
+    "checklist": {
+      "full": "已达上限 {max} 个。请移除一个再添加。",
+      "over": "只会发送前 {max} 个。请移除其余的。",
+      "none-left": "没有可添加的了：所有适用的实体都已使用。",
+      "add": "添加实体…",
+      "add-more": "再添加一个…",
+      "add-label": "添加实体",
+      "count": "{count}/{max}",
+      "order-label": "已选的行，按小组件中的顺序",
+      "reorder": "调整 {name} 的顺序",
+      "reorder-hint": "拖动以调整顺序；Alt+方向键移动当前聚焦的行",
+      "moved": "{name} 已移至第 {position} 位，共 {count} 位",
+      "move-up": "上移 {name}",
+      "move-down": "下移 {name}",
+      "remove": "移除 {name}",
+      "fix": "需要修复",
+      "label-aria": "{name} 的标签",
+      "icon-aria": "{name} 的图标",
+      "color-aria": "{name} 的颜色",
+      "budget": "预算",
+      "budget-aria": "{name} 的预算",
+      "budget-placeholder": "无预算",
+      "budget-invalid": "请输入大于 0 的金额，例如 250 或 99.50。",
+      "charging": "充电",
+      "charging-aria": "{name} 的充电传感器",
+      "charging-auto": "自动",
+      "charging-off": "不显示充电闪电",
+      "charging-off-aria": "{name} 不显示充电闪电",
+      "charging-hint": "二元传感器，或读数为“charging”的传感器。留空时，保存时会自动填入该设备自己的充电传感器。",
+      "charging-unavailable": "目前无法读取此传感器，因此不显示充电闪电。",
+      "today": "今日",
+      "today-aria": "{name} 的今日能耗",
+      "today-hint": "能耗计量表：今日数值从午夜开始计算。",
+      "unit-aria": "{name} 的单位",
+      "unit-placeholder": "无单位",
+      "max": "仪表上限",
+      "max-aria": "{name} 的仪表上限",
+      "max-placeholder": "无仪表",
+      "max-invalid": "请输入大于 0 的数字，例如 100。",
+      "max-hint": "在读数单独显示的地方（锁定屏幕）将仪表填充到这个值。",
+      "max-words": "当前读数为 {value}，不是数字，因此以文本显示，没有仪表。"
+    },
+    "bar": {
+      "mode-label": "进度条样式",
+      "mode-solid": "纯色",
+      "mode-segmented": "分段",
+      "mode-layered": "叠层",
+      "mode-caption-solid": "整条进度条使用同一种填充色",
+      "mode-caption-segmented": "每个阶段是独立的胶囊，随数值上升依次填充",
+      "mode-caption-layered": "一条连续的进度条，实时活动的样式",
+      "mode-announced": "进度条样式：{mode}"
+    },
+    "segments": {
+      "bar-label": "阶段",
+      "phase": "阶段 {index}",
+      "segment-aria": "{name}：占进度条的 {pct}%",
+      "boundary-aria": "{left} 与 {right} 之间的分界",
+      "boundary-at": "{left} {leftPct}%，{right} {rightPct}%",
+      "add": "添加阶段",
+      "added": "已添加 {name}，共 {count}/{max} 个阶段",
+      "removed": "已移除 {name}；其空间并入 {neighbor}",
+      "removed-last": "已移除 {name}",
+      "split": "拆分",
+      "split-aria": "拆分 {name}",
+      "split-too-thin": "{name} 太小，无法拆分",
+      "remove-aria": "移除 {name}",
+      "size": "大小",
+      "size-label": "大小百分比",
+      "size-applied": "{name} 已设为 {pct}%",
+      "label-placeholder": "标签",
+      "label-aria": "{name} 的标签",
+      "fill-label": "填充颜色",
+      "track": "未达到部分",
+      "track-label": "未达到部分的颜色",
+      "track-style-label": "未达到部分的图案",
+      "gray-default": "灰色（默认）",
+      "source": "大小来源",
+      "source-label": "{name} 的大小来源",
+      "fallback": "备用值",
+      "fallback-label": "{name} 的备用大小百分比",
+      "sourced-hint": "实时来自 {source}；无法解析时使用备用值",
+      "fallback-in-use": "正在使用备用大小（{pct}%）。",
+      "result-share": "占进度条的 {pct}%",
+      "template-empty": "此模板目前渲染为空；正在使用备用大小（{pct}%）。",
+      "source-fallback": "此来源目前无法解析为可用的大小；正在使用备用大小（{pct}%）。",
+      "segment-live-aria": "{name}：占进度条的 {pct}%，实时来自 {source}",
+      "boundary-locked": "此分界跟随实时来源；请改为编辑该阶段的来源或备用值。"
+    },
+    "suggest": {
+      "open": "建议",
+      "title": "建议设置",
+      "title-off": "AI 建议",
+      "intro": "用您自己的话说出它应显示什么，表单就会自动填写。或者从这里开始：",
+      "input-label": "描述",
+      "send": "发送",
+      "stop": "停止",
+      "stopped": "已停止：回答已丢弃。",
+      "retry": "重试",
+      "problem-failed": "未成功：{error}",
+      "footer": "在您按下“保存”之前不会保存任何内容。",
+      "options-label": "建议的回复",
+      "model-label": "模型",
+      "model-hint": "每个模型的设置（例如推理强度）都保存在 Home Assistant 中该模型那里。",
+      "enter-hint": "按 Enter 发送，Shift+Enter 换行",
+      "thinking": "正在思考…",
+      "still-working": "仍在处理…",
+      "placeholder-initial": "它应该显示什么？",
+      "placeholder-refine": "要改些什么？",
+      "no-mapping": "模型返回的内容在这里都用不上。请试着说出实体名称，或描述得更具体些。",
+      "round-none": "没有任何更改。",
+      "done-quiet": "完成。",
+      "change-set": "设置了{field}",
+      "change-changed": "更改了{field}",
+      "change-unsourced": "{field}不再跟随实时状态",
+      "change-cleared": "清除了{field}",
+      "not-applied": "未应用：{list}",
+      "undo": "撤消",
+      "undone": "已撤消：表单已恢复原样。",
+      "undone-kept": "已撤消。保留了您此后手动做的更改。",
+      "undone-count": "已撤消 {count} 项。",
+      "redo": "重做",
+      "failed": "建议失败：{error}",
+      "stale": "回答返回途中表单已有改动，因此未应用。",
+      "off-not-loaded": "需要 Home Assistant 中有 AI 提供方。目前还没有提供方支持 AI Task。",
+      "off-cta-not-loaded": "在集成中添加",
+      "off-no-entity": "AI Task 已设置，但还没有模型支持数据生成。",
+      "off-cta-no-entity": "在“AI 建议”中添加",
+      "off-what": "用您自己的话描述小组件，表单就会自动填写。",
+      "undo-label": "撤消“{ask}”",
+      "revert": "撤消此项及其后的 {count} 项",
+      "revert-label": "撤消“{ask}”及其后的 {count} 项",
+      "hint-accent": "把强调色改成橙色",
+      "hint-sensor": "换一个传感器",
+      "hint-simpler": "简单一些",
+      "hint-icon": "选一个合适的图标",
+      "hint-phases": "把进度条分成几个阶段",
+      "hint-tile": "给第一个磁贴加上标签和颜色",
+      "hint-rows": "把最重要的一行放在最前面",
+      "starter-setup": "帮我设置好",
+      "starter-bold": "色彩丰富一些",
+      "starter-calm": "保持简约",
+      "starter-restyle": "换个新样式",
+      "starter-simpler": "简化一下",
+      "rejected": {
+        "no_entity": "{field}：不存在实体 {value}",
+        "no_attribute": "{field}：没有此属性（{value}）",
+        "not_a_color": "{field}：{value} 不是可用的颜色",
+        "not_a_symbol": "{field}：{value} 不是 SF Symbols 符号",
+        "not_an_option": "{field}：{value} 不是可选项",
+        "bad_template": "{field}：模板无法使用",
+        "bad_value": "{field}：无法使用 {value}",
+        "already_there": "{field}：{value} 已存在",
+        "list_full": "{field}：没有空间容纳 {value}",
+        "no_value": "{field}：它还没有显示任何内容，因此无从设置样式"
+      },
+      "detail-added": "添加了 {count} 个",
+      "detail-removed": "移除了 {count} 个",
+      "detail-reordered": "调整了顺序",
+      "detail-more": "还有 {count} 个",
+      "detail-source": "读取来源",
+      "detail-color": "颜色",
+      "detail-format": "格式",
+      "detail-style": "样式"
+    },
+    "preview": {
+      "title": "实时预览",
+      "missing": "要保存，请设置{fields}。",
+      "missing-count": "{count} 项待设置",
+      "fix-count": "{count} 项待修复",
+      "resolving": "正在解析…",
+      "payload-title": "将发送的内容",
+      "island-note": "灵动岛（近似效果）",
+      "banner-note": "锁定屏幕横幅（近似效果）",
+      "done-at": "{time} 完成",
+      "none-for-template": "{template} 没有预览",
+      "press-hint": "点按预览的任意部分即可跳转到其设置。",
+      "region-label": "{region}：转到其设置",
+      "skeleton-hint": "暂无可显示的内容。点按其中某个部分即可跳转到其设置。",
+      "size-label": "预览尺寸",
+      "as": "预览为",
+      "as-now": "当前",
+      "size-small": "小",
+      "size-medium": "中",
+      "tile-off": "关",
+      "tile-on": "开",
+      "tile-active": "活动中",
+      "energy-source": "太阳能",
+      "energy-grid": "电网",
+      "energy-battery": "电池",
+      "energy-home": "家庭",
+      "budget-of": "共 {amount}",
+      "energy-today": "今日 {energy}",
+      "price-low": "低",
+      "price-medium": "中",
+      "price-high": "高",
+      "reported-now": "刚刚",
+      "in-a-moment": "马上",
+      "waiting": "{field}读到“{reading}”时不会发送任何内容。",
+      "waiting-none": "{field}没有值时不会发送任何内容。",
+      "waiting-any": "在{fields}中有一项有值之前不会发送任何内容。",
+      "waiting-hint": "点按预览即可跳转到{field}。"
+    },
+    "slot": {
+      "surface": {
+        "island": "灵动岛",
+        "banner": "锁定屏幕"
+      }
+    },
+    "ramp": {
+      "mode-label": "圆环颜色",
+      "mode-solid": "单色",
+      "mode-ramp": "颜色范围",
+      "solid-hint": "整个圆环都是这个颜色。",
+      "solid-pick": "选择颜色",
+      "fallback-aria": "没有读数时的{field}",
+      "fallback-hint": "读数不是数字时，整个圆环显示此颜色。",
+      "fallback-empty": "读数不是数字时，圆环保持内置的颜色范围。",
+      "solid-empty": "在您选择颜色之前，表盘保持其颜色范围。",
+      "presets-label": "预设颜色范围",
+      "preset": {
+        "builtin": "内置",
+        "cool-warm": "冷到暖",
+        "good-bad": "好到差",
+        "bad-good": "差到好"
+      },
+      "preset-applied": "已应用{name}",
+      "add": "添加颜色",
+      "one-stop": "一种颜色会填满整个圆环。再添加一种即可形成范围。",
+      "count": "{count}/{max}",
+      "full": "最多 {max} 种颜色",
+      "reverse": "反转",
+      "reversed": "颜色顺序已反转",
+      "at-value": "位于 {value}",
+      "pick-color": "颜色 {position}：{color}",
+      "remove-stop": "移除颜色 {position}（{color}）",
+      "move-up": "上移颜色 {position}（{color}）",
+      "move-down": "下移颜色 {position}（{color}）",
+      "added": "已添加颜色 {position}，共 {count} 种",
+      "removed": "已移除{color}，剩余 {count} 种",
+      "moved": "{color}已移至第 {position} 位，共 {count} 位",
+      "picked": "颜色 {position} 现为{color}"
+    },
+    "enum": {
+      "color": {
+        "red": "红色",
+        "orange": "橙色",
+        "yellow": "黄色",
+        "green": "绿色",
+        "mint": "薄荷色",
+        "teal": "深青色",
+        "cyan": "青色",
+        "blue": "蓝色",
+        "indigo": "靛蓝色",
+        "purple": "紫色",
+        "pink": "粉色",
+        "brown": "棕色",
+        "gray": "灰色",
+        "gray2": "灰色 2",
+        "gray3": "灰色 3",
+        "gray4": "灰色 4",
+        "gray5": "灰色 5",
+        "gray6": "灰色 6"
+      },
+      "rendering-mode": {
+        "monochrome": "单色",
+        "hierarchical": "分层",
+        "palette": "调色板",
+        "multicolor": "多色"
+      },
+      "color-rendering": {
+        "flat": "纯色",
+        "gradient": "渐变"
+      },
+      "track-fill": {
+        "solid": "纯色",
+        "hatched": "斜纹"
+      },
+      "primary_column": {
+        "left": "左",
+        "right": "右"
+      },
+      "display": {
+        "remaining": "剩余",
+        "spent": "已花费"
+      },
+      "scale": {
+        "cents": "分（× 100）"
+      },
+      "image_fit": {
+        "contain": "抠图",
+        "cover": "照片"
+      }
+    },
+    "template": {
+      "status": {
+        "label": "Status",
+        "hint": "一目了然的单一状态"
+      },
+      "progress": {
+        "label": "Progress",
+        "hint": "正在进行直至完成的事情"
+      },
+      "gauge": {
+        "label": "Gauge",
+        "hint": "某个范围内的读数"
+      },
+      "countdown": {
+        "label": "Countdown",
+        "hint": "距离某一时刻的剩余时间"
+      },
+      "list": {
+        "label": "List",
+        "hint": "一个小组件中的多个读数"
+      },
+      "battery": {
+        "label": "Battery",
+        "hint": "各设备的电量"
+      },
+      "switchboard": {
+        "label": "Switchboard",
+        "hint": "可在主屏幕上点按的按钮和开关"
+      },
+      "monitor": {
+        "label": "Monitor",
+        "hint": "两栏读数"
+      },
+      "generic": {
+        "label": "Generic",
+        "retired": "Aivi 已不再支持的旧模板。请在 Aivi App 中将其切换为 Progress 或 Monitor。"
+      },
+      "budget": {
+        "label": "Budget",
+        "hint": "按类别对照预算的支出"
+      },
+      "trend": {
+        "label": "Trend",
+        "hint": "一个读数及其近期历史"
+      },
+      "prices": {
+        "label": "Prices",
+        "hint": "电价时间线"
+      },
+      "energy": {
+        "label": "Energy",
+        "hint": "太阳能、电网、电池和家庭用电一目了然"
+      },
+      "showcase": {
+        "label": "展示",
+        "hint": "事物的图片、状态和读数"
+      },
+      "remote": {
+        "label": "遥控器",
+        "hint": "物品的图片、一个读数和可按的按钮"
+      }
+    },
+    "field-label": {
+      "state": "状态",
+      "value": "数值",
+      "progress": "进度",
+      "target": "目标时间",
+      "rows": "实体",
+      "devices": "电池传感器",
+      "actions": "磁贴",
+      "icon": "图标",
+      "accent": "强调色",
+      "tap_url": "轻点时打开",
+      "end_date": "结束时间",
+      "unit": "单位",
+      "label": "标签",
+      "subtitle": "副标题",
+      "bar_color": "进度条颜色",
+      "min_value": "最小值",
+      "max_value": "最大值",
+      "ring": "圆环颜色",
+      "expired_text": "到期文字",
+      "segments": "进度条",
+      "header_left": "标题行",
+      "header_right": "标题行（右）",
+      "footer_left": "脚注",
+      "footer_right": "脚注（右）",
+      "compact_value": "灵动岛",
+      "right_value": "右栏数值",
+      "right_header": "右栏页眉",
+      "right_footer": "右栏页脚",
+      "left_value": "左栏数值",
+      "left_header": "左栏页眉",
+      "left_footer": "左栏页脚",
+      "primary_column": "主栏",
+      "spent": "已花费",
+      "budget": "预算",
+      "currency": "货币",
+      "categories": "类别",
+      "display": "标题数字",
+      "total_color": "圆环颜色",
+      "points": "历史",
+      "color": "线条颜色",
+      "entries": "电价传感器",
+      "scale": "价格单位",
+      "sources": "发电",
+      "grid_power": "电网功率",
+      "battery_power": "电池功率",
+      "battery_level": "电池电量",
+      "home_power": "家庭功率",
+      "grid_today": "今日电网",
+      "home_today": "今日家庭用电",
+      "image": "图片",
+      "image_fit": "图片样式",
+      "image_alt": "图片描述",
+      "state_icon": "状态图标",
+      "stats": "读数",
+      "reported_at": "最近报告",
+      "badge": "徽标",
+      "badge_alt": "徽标描述",
+      "value_label": "数值下方"
+    },
+    "field-hint": {
+      "state": "小组件显示其状态的实体",
+      "progress": "报告 0–100 的传感器",
+      "target": "要倒计时到的时间戳",
+      "rows": "每个选中的实体成为一行",
+      "devices": "每个选中的传感器成为一行",
+      "actions": "每个选中的实体成为一个磁贴：按下时灯和开关切换开关状态，场景和脚本运行",
+      "icon": "Apple SF Symbols 符号；开始输入即可按名称或关键词搜索",
+      "accent": "小组件的强调色：用于图标底色，以及没有自身颜色的文字",
+      "tap_url": "轻点小组件时前往的位置：仪表盘、App 或网页",
+      "end_date": "倒计时到此时间，代替显示状态",
+      "min_value": "表盘范围的下限（默认为 0）",
+      "max_value": "表盘范围的上限（默认为 1）",
+      "ring": "表盘在其范围内从低端到高端的着色方式",
+      "expired_text": "目标时间过后显示",
+      "compact_value": "灵动岛收起时显示在图标旁的那个数值",
+      "spent": "目前已花费的金额",
+      "budget": "计划花费的金额：一个数字，或实时来自某个实体",
+      "currency": "三个字母的代码，例如 CNY 或 USD",
+      "categories": "每个选中的传感器成为一个类别；在其选项中设置预算",
+      "display": "“剩余”从预算往下减，“已花费”往上加",
+      "total_color": "标题数字周围的圆环",
+      "points": "取自 Home Assistant 已记录的数据，因此从第一次更新起就有",
+      "entries": "电价传感器（Nord Pool、ENTSO-e、Octopus Energy、Amber 等）：从其属性读取时间线。每天更新一次即可让小组件保持最新。",
+      "scale": "选“分”时，0.25 EUR/kWh 显示为 25 ct/kWh",
+      "color": "线条及其下方的填充",
+      "header_left": "横幅顶行的左侧",
+      "header_right": "横幅顶行的右侧",
+      "footer_left": "横幅底行的左侧",
+      "footer_right": "横幅底行的右侧",
+      "left_value": "左栏的读数，大字显示",
+      "left_header": "左侧读数上方的小字",
+      "left_footer": "左侧读数下方的小字",
+      "right_value": "右栏的读数，大字显示",
+      "right_header": "右侧读数上方的小字",
+      "right_footer": "右侧读数下方的小字",
+      "primary_column": "灵动岛收起时显示的那一栏",
+      "image": "设备自行下载的公开 https 网址，例如透明背景上的汽车",
+      "image_alt": "VoiceOver 会代替图片朗读",
+      "reported_at": "小组件会显示这个实体上次报告是多久以前"
+    },
+    "field-hint-template": {
+      "state": "小组件显示的内容，即模板的结果",
+      "progress": "0 到 100 之间的数字"
+    },
+    "switchboard": {
+      "subtitle": "第二行",
+      "subtitle-aria": "{name} 第二行显示的内容",
+      "subtitle-area": "房间",
+      "subtitle-state": "状态，例如 2700 K",
+      "subtitle-none": "无",
+      "subtitle-custom": "自定义文字",
+      "subtitle-hint": "磁贴名称下方的小字。",
+      "subtitle-custom-aria": "{name} 的自定义第二行",
+      "press": "按下时",
+      "press-toggle": "开启或关闭 {name}",
+      "press-on": "开启 {name}",
+      "press-open": "打开或关上 {name}",
+      "press-lock": "锁定或解锁 {name}",
+      "press-scene": "激活 {name}",
+      "press-script": "运行 {name}",
+      "press-button": "按下 {name}",
+      "color-hint": "开启时为磁贴着色。默认为小组件的强调色。",
+      "subtitle-placeholder": "例如 楼上",
+      "color-invalid": "请使用调色板名称或 #RRGGBB。",
+      "gradient": "渐变",
+      "gradient-aria": "{name} 的渐变",
+      "gradient-hint": "开启时用渐变代替颜色为磁贴着色。",
+      "gradient-color": "某个色标不是颜色：请使用调色板名称或 #RRGGBB。",
+      "gradient-count": "渐变需要 2 或 3 种颜色。",
+      "image": "图片 URL",
+      "image-aria": "{name} 的图片 URL",
+      "image-alt": "图片描述",
+      "image-alt-aria": "{name} 的图片描述",
+      "image-alt-hint": "由旁白代替图片朗读。",
+      "picture": "图片",
+      "picture-custom": "来自 URL",
+      "picture-entity": "实体的图片",
+      "image-hint": "设备会自行下载的公开 https URL。请保持小巧：最大 256 KB，每边不超过 1024 像素且不超过 100 万像素，格式为 PNG、JPEG、HEIC、WebP 或 GIF。设备会缓存一天，因此换一个新 URL 会立即显示新图片。",
+      "image-https": "URL 必须以 https:// 开头。",
+      "image-long": "URL 超过 2048 个字符。",
+      "image-space": "URL 不能包含空格。",
+      "image-host": "https:// 后面需要主机名。",
+      "picture-use": "使用实体的图片",
+      "picture-warn": "仅当该 URL 公开且固定时适用：设备获取它时不带 Home Assistant 凭据，带有轮换令牌的 URL 会失效。",
+      "picture-local": "此实体的图片是设备无法获取的 Home Assistant 地址，因此无法使用。",
+      "too-big": "超出 Aivi 的大小限制：{bytes}/{limit} 字节。在缩小到限制以内之前不会发送任何内容：请缩短图片 URL 或第二行，或移除磁贴。",
+      "fix-options": "请修复标红的选项后再保存：{rows}。",
+      "words": "状态文字",
+      "words-changed": "已更改 {count} 个",
+      "words-hint": "磁贴在各状态下显示的文字。留空则使用当前显示的文字，也可以隐藏。最多 24 个字符。",
+      "word-aria": "{name} 的“{state}”文字",
+      "word-hide": "隐藏",
+      "word-hide-aria": "隐藏 {name} 的“{state}”文字",
+      "word-hidden": "已隐藏",
+      "word-none": "无文字",
+      "word-on": "开",
+      "word-off": "关",
+      "word-turning-on": "正在开启",
+      "word-turning-off": "正在关闭",
+      "word-no-response": "无响应",
+      "word-idle": "空闲",
+      "word-active": "活动中",
+      "word-sent": "已发送"
+    },
+    "field-hint-budget": {
+      "subtitle": "与总额一起显示，例如“还剩 20 天”"
+    },
+    "field-hint-trend": {
+      "value": "当前读数，大字显示",
+      "unit": "默认为传感器自身的单位",
+      "min_value": "图表的固定下限（否则自动适应数据）",
+      "max_value": "图表的固定上限（否则自动适应数据）"
+    },
+    "field-hint-prices": {
+      "unit": "默认为传感器自身的单位"
+    },
+    "delivery": {
+      "stale-label": "多久后显示为过时",
+      "stale-hint": "内容超过这么久没有更新时，小组件会将其调暗，并显示上次更新的时间。",
+      "stale-keep": "按 Aivi App 中的设置",
+      "stale-never": "从不",
+      "throttle-label": "最短更新间隔",
+      "throttle-hint": "iOS 允许一个实时活动更新约 240 次。间隔内的变化会暂缓，时间一到就发出最新的一次；开始和结束永远不会延迟。",
+      "throttle-off": "每次变化（不限制）"
+    },
+    "duration": {
+      "seconds-other": "{count} 秒",
+      "minutes-other": "{count} 分钟",
+      "hours-other": "{count} 小时",
+      "days-other": "{count} 天"
+    },
+    "color-field": {
+      "pick": "{label}：{color}",
+      "picker-aria": "{label}，自定义颜色",
+      "hex-aria": "{label}，十六进制代码",
+      "invalid": "请使用十六进制代码，例如 #FFD27A。"
+    },
+    "gradient": {
+      "auto": "自动",
+      "none": "无",
+      "custom": "自定义",
+      "auto-hint": "灯开着时跟随灯本身的颜色。",
+      "none-hint": "无渐变：磁贴使用其颜色。",
+      "stop-aria": "渐变颜色 {n}",
+      "remove-aria": "移除渐变颜色 {n}",
+      "add": "添加颜色"
+    },
+    "section": {
+      "content": "显示内容",
+      "look": "外观",
+      "behavior": "行为",
+      "runs": "运行时机"
+    },
+    "fold": {
+      "set": "已设置 {count} 项"
+    },
+    "group": {
+      "progress": "进度",
+      "reading": "读数",
+      "range": "范围",
+      "countdown": "倒计时",
+      "total": "总计",
+      "prices": "价格",
+      "grid": "电网",
+      "battery": "电池",
+      "home": "家庭",
+      "headline": "标题行",
+      "footnote": "脚注",
+      "left-column": "左栏",
+      "right-column": "右栏"
+    },
+    "group-hint-gauge": {
+      "range": "表盘的两端。留空则从 0 到 1。"
+    },
+    "group-hint-trend": {
+      "range": "图表的固定范围。留空则自动适应数据。"
+    },
+    "field-short": {
+      "min_value": "最小值",
+      "max_value": "最大值",
+      "left_value": "数值",
+      "left_header": "页眉",
+      "left_footer": "页脚",
+      "right_value": "数值",
+      "right_header": "页眉",
+      "right_footer": "页脚",
+      "header_left": "左",
+      "header_right": "右",
+      "footer_left": "左",
+      "footer_right": "右",
+      "grid_power": "功率",
+      "grid_today": "今日",
+      "battery_power": "功率",
+      "battery_level": "电量",
+      "home_power": "功率",
+      "home_today": "今日",
+      "segments": "进度条",
+      "progress": "数值"
+    },
+    "field-placeholder-gauge": {
+      "min_value": "0",
+      "max_value": "1",
+      "unit": "°C",
+      "label": "客厅"
+    },
+    "field-placeholder-trend": {
+      "min_value": "自动",
+      "max_value": "自动",
+      "unit": "kWh"
+    },
+    "symbols": {
+      "placeholder": "搜索符号，例如 washer 或 lightbulb",
+      "categories": "符号类别",
+      "cat-all": "全部",
+      "cat-home": "家居",
+      "cat-devices": "设备",
+      "cat-objectsandtools": "物品",
+      "cat-weather": "天气",
+      "cat-nature": "自然",
+      "cat-transportation": "交通",
+      "cat-automotive": "汽车",
+      "cat-privacyandsecurity": "安全",
+      "cat-human": "人物",
+      "cat-health": "健康",
+      "cat-media": "媒体",
+      "cat-communication": "通信",
+      "cat-commerce": "金钱",
+      "cat-time": "时间",
+      "list": "匹配的符号",
+      "loading": "正在加载 Apple 的符号名称…",
+      "failed": "无法加载符号列表。直接输入任意符号名称仍然有效。",
+      "no-matches": "没有匹配的符号。直接输入任意名称仍然有效。",
+      "unknown": "不在 Apple 的符号列表中。将按输入内容保留。",
+      "ios": "iOS {version}+",
+      "help": "预览显示的是相似图标，没有相似图标时显示 ✦。您的设备上会显示 Apple 自己的符号。"
+    },
+    "field-hint-status": {
+      "value": "大字显示的读数；状态随之移到下方一行"
+    },
+    "field-hint-gauge": {
+      "value": "表盘指针指向的读数",
+      "unit": "显示在读数之后，例如 °C 或 %",
+      "label": "表盘上方的小字；留空时显示小组件名称"
+    },
+    "field-hint-countdown": {
+      "subtitle": "倒计时下方的小字"
+    },
+    "field-hint-energy": {
+      "sources": "发电设备的功率传感器：太阳能、风能、发电机",
+      "grid_power": "从电网取电时为正，向电网送电时为负",
+      "grid_today": "能耗计量表；今日数值从午夜开始计算",
+      "battery_power": "充电时为正，放电时为负",
+      "battery_level": "电池电量，0–100",
+      "home_power": "家庭当前的用电",
+      "home_today": "能耗计量表；今日数值从午夜开始计算"
+    },
+    "field-placeholder": {
+      "tap_url": "https://…",
+      "image": "https://…/car.png",
+      "image_alt": "汽车侧面"
+    },
+    "field-placeholder-countdown": {
+      "expired_text": "完成"
+    },
+    "field-placeholder-budget": {
+      "currency": "CNY"
+    },
+    "field-placeholder-prices": {
+      "unit": "ct/kWh"
+    },
+    "field-placeholder-monitor": {
+      "left_header": "室内",
+      "right_header": "室外",
+      "left_footer": "湿度 46%",
+      "right_footer": "体感 9°"
+    },
+    "field-idle": {
+      "primary_column": "两栏都有内容时才生效：只有一栏时无需选择。"
+    },
+    "events": {
+      "title": "来自您设备的事件",
+      "button": "事件：{state}",
+      "tooltip": "事件",
+      "state-ok": "已连接",
+      "state-warn": "暂时未连接",
+      "state-bad": "已断开",
+      "state-idle": "未在监听",
+      "stream-connected": "已连接",
+      "stream-reconnecting": "正在重新连接…",
+      "stream-paused": "已暂停",
+      "stream-stopped": "已断开",
+      "stream-idle": "未在监听",
+      "since": "自 {time} 起监听",
+      "paused-why": "Aivi 订阅未生效，因此收不到来自您设备的事件。",
+      "idle-why": "这里设置的内容都不接收输入，因此无需监听。这是正常的：一旦有内容需要输入（例如 Switchboard 或遥控器），监听会自动开始。",
+      "list-label": "最新事件",
+      "empty": "暂无事件。在您的设备上点按磁贴，它会即时显示在这里。",
+      "see-all": "查看全部事件"
+    },
+    "log": {
+      "title": "日志",
+      "open": "打开日志",
+      "account-label": "账户",
+      "show-label": "显示",
+      "show-all": "全部",
+      "show-pushes": "发往 Aivi 的推送",
+      "show-presses": "来自您设备的点按",
+      "show-problems": "仅问题",
+      "for-label": "对象",
+      "for-any": "任意",
+      "option-count": "{label}（{count}）",
+      "showing-other": "共 {count} 条，显示 {shown} 条",
+      "show-everything": "显示全部",
+      "list-label": "日志，最新在前",
+      "empty": "还没有记录。发往 Aivi 的推送和来自您设备的点按会在发生时显示在这里。",
+      "no-matches": "没有符合这些筛选条件的记录",
+      "footer-memory": "保存在内存中：Home Assistant 重启后列表会重新开始。要保留它，请在账户选项中开启“重启后保留日志”。",
+      "footer-kept": "重启后保留：此账户会把日志写入磁盘。"
+    },
+    "conflict": {
+      "also-fed": "还有自动化在为它提供数据：{names}。两者会相互覆盖。",
+      "also-fed-several": "还有自动化在更新它：{names}。它们和此面板会互相覆盖。",
+      "mark": "也有自动化在提供数据",
+      "fed": "由自动化提供数据：{names}",
+      "turn-off": "关闭该自动化",
+      "turn-off-all": "全部关闭",
+      "turn-off-named": "关闭 {names}",
+      "turned-off": "自动化已关闭。现在仅由此面板提供数据。",
+      "keep-shared": "{name} 也在为其他小组件提供数据，因此不会在这里关闭。",
+      "keep-initial_state": "{name} 每次 Home Assistant 启动时都会自动重新开启，请在它自己的设置中关闭。"
+    },
+    "field-hint-showcase": {
+      "image_fit": "抠图立在小组件上；照片铺满它的一侧",
+      "state": "描述状态的词，例如已上锁或充电中",
+      "state_icon": "显示在状态词的前面",
+      "stats": "每个选中的实体都成为一个读数：小尺寸显示第一个，中尺寸显示三个",
+      "badge": "报告时间旁的小品牌标志，照片中不显示",
+      "badge_alt": "VoiceOver 会代替徽标朗读",
+      "icon": "没有图片时代替图片显示"
+    },
+    "field-placeholder-showcase": {
+      "badge": "https://…/logo.png",
+      "badge_alt": "品牌标志"
+    },
+    "group-showcase": {
+      "picture": "图片",
+      "state": "状态",
+      "badge": "徽标"
+    },
+    "showcase": {
+      "too-big": "对 Aivi 来说太大：{bytes} / {limit} 字节。在符合大小之前不会发送任何内容：请缩短图片网址或标签，或移除读数。"
+    },
+    "field-label-remote": {
+      "actions": "按钮",
+      "value": "读数"
+    },
+    "field-hint-remote": {
+      "value": "大号读数，比如汽车的电量；数字会保留其实体的单位",
+      "actions": "每个选中的实体都会成为一个按钮：小号显示前两个，中号最多五个",
+      "stats": "最多三个读数，从大号尺寸起显示",
+      "image_fit": "抠图立在读数旁；照片放在圆角框中",
+      "icon": "没有图片时代替图片显示"
+    },
+    "group-remote": {
+      "picture": "图片",
+      "reading": "读数",
+      "bar": "进度条"
+    },
+    "remote": {
+      "too-big": "对 Aivi 来说太大：{bytes} / {limit} 字节。在放得下之前不会发送任何内容：缩短图片 URL 或第二行，或移除按钮。"
+    },
+    "field-hint-activity-remote": {
+      "value": "醒目显示的读数，例如扫地机器人的电量；单位是单独的字段",
+      "actions": "每个选中的实体成为一个按钮：最多三个，不超过两个时显示标签",
+      "stats": "最多两个读数，没有进度条时显示在锁定屏幕上",
+      "image": "公开的 https 网址；应用下载后设备即会显示，在此之前显示图标",
+      "state": "描述当前状态的词，例如清扫中或充电中",
+      "unit": "紧跟在数值后面，例如 % 或 km",
+      "value_label": "数值下方的词，例如剩余",
+      "progress": "根据报告 0–100 的传感器绘制进度条；读数会为它让出位置",
+      "bar_color": "进度条的颜色；未设置时使用状态的颜色，否则使用强调色",
+      "compact_value": "灵动岛收起时显示在图标旁；未设置时显示数值及其单位"
+    },
+    "field-placeholder-activity-remote": {
+      "unit": "%",
+      "value_label": "剩余"
+    },
+    "every": {
+      "seconds-other": "每 {count} 秒",
+      "minutes-other": "每 {count} 分钟",
+      "hours-other": "每 {count} 小时",
+      "days-other": "每 {count} 天"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "name": "事件流",
+        "state_attributes": {
+          "reason": {
+            "name": "原因",
+            "state": {
+              "subscription_inactive": "没有有效订阅",
+              "auth_failed": "令牌被拒绝"
+            }
+          },
+          "last_error": {
+            "name": "上次错误"
+          },
+          "connected_since": {
+            "name": "连接起始时间"
+          },
+          "reconnects": {
+            "name": "重连次数"
+          },
+          "last_event": {
+            "name": "上次事件"
+          }
+        }
+      },
+      "problem": {
+        "name": "运行状况",
+        "state_attributes": {
+          "problems": {
+            "name": "问题列表"
+          },
+          "subscription": {
+            "name": "订阅",
+            "state": {
+              "expired": "已过期",
+              "none": "没有订阅"
+            }
+          },
+          "event_stream": {
+            "name": "事件流",
+            "state": {
+              "auth_failed": "令牌被拒绝"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "name": "点按",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "已开启",
+              "toggle_off": "已关闭",
+              "pressed": "已按下"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "name": "上次发送"
+      },
+      "push_status": {
+        "name": "更新状态",
+        "state": {
+          "ok": "正常",
+          "retrying": "正在重试",
+          "auth_failed": "令牌被拒绝",
+          "not_found": "不在 Aivi App 中",
+          "rejected": "内容被拒绝",
+          "too_large": "内容过大",
+          "template_error": "Home Assistant 模板错误",
+          "template_mismatch": "模板不一致",
+          "no_subscription": "没有有效订阅",
+          "quota_exceeded": "已达实时活动上限",
+          "error": "错误",
+          "waiting": "正在等待值"
+        },
+        "state_attributes": {
+          "last_error": {
+            "name": "上次错误"
+          },
+          "waiting_for": {
+            "name": "等待的字段"
+          }
+        }
+      },
+      "subscription": {
+        "name": "订阅",
+        "state": {
+          "active": "有效",
+          "expired": "已过期",
+          "none": "没有订阅"
+        },
+        "state_attributes": {
+          "expires_at": {
+            "name": "到期时间"
+          },
+          "renews": {
+            "name": "自动续订"
+          },
+          "expired_at": {
+            "name": "结束时间"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1617 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Połącz konto Aivi",
+        "description": "Wklej token API z karty Settings w aplikacji Aivi. Jeśli łączysz więcej niż jedno konto, nadaj mu nazwę.",
+        "data": {
+          "token": "Token API",
+          "name": "Nazwa konta"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Opcje zaawansowane",
+            "description": "Opcjonalne. Zmień bazowy URL tylko wtedy, gdy łączysz się z innym API Aivi niż domyślne.",
+            "data": {
+              "base_url": "Bazowy URL API"
+            }
+          }
+        }
+      },
+      "reauth_confirm": {
+        "title": "Połącz ponownie Aivi",
+        "description": "Aivi odrzuciło Twój token API. Wklej nowy z karty Settings w aplikacji Aivi.",
+        "data": {
+          "token": "Token API"
+        }
+      },
+      "reconfigure": {
+        "title": "Zmień konfigurację Aivi",
+        "description": "Zaktualizuj token API. Aby zmienić bazowy URL, otwórz Opcje zaawansowane.",
+        "data": {
+          "token": "Token API"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Opcje zaawansowane",
+            "description": "Opcjonalne. Zmień bazowy URL tylko wtedy, gdy łączysz się z innym API Aivi niż domyślne.",
+            "data": {
+              "base_url": "Bazowy URL API"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aivi odrzuciło ten token API. Sprawdź go i spróbuj ponownie.",
+      "cannot_connect": "Nie udało się połączyć z Aivi. Sprawdź połączenie i spróbuj ponownie.",
+      "no_subscription": "To konto Aivi nie ma aktywnej subskrypcji. Wykup ją w aplikacji Aivi i spróbuj ponownie."
+    },
+    "abort": {
+      "reauth_successful": "Ponownie połączono z Aivi.",
+      "reconfigure_successful": "Połączenie z Aivi zaktualizowano.",
+      "already_configured": "To konto Aivi jest już połączone."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opcje Aivi",
+        "data": {
+          "keep_log": "Zachowuj dziennik między restartami"
+        },
+        "data_description": {
+          "keep_log": "Dziennik wysyłek do Aivi i naciśnięć z Twoich urządzeń jest trzymany w pamięci i zaczyna się od nowa po restarcie Home Assistanta. Po włączeniu jest też co jakiś czas zapisywany na dysku, więc przetrwa restart. Na karcie SD, którą chcesz oszczędzać, zostaw wyłączone."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_rejected": {
+      "message": "Aivi odrzuciło token API. Połącz konto ponownie, aby widżety i Aktywności na żywo nadal się aktualizowały."
+    },
+    "cannot_connect": {
+      "message": "Nie udało się połączyć z Aivi: {error}"
+    }
+  },
+  "issues": {
+    "widget_missing": {
+      "title": "Widżetu „{name}” nie ma w aplikacji Aivi",
+      "description": "Aplikacja Aivi nie ma widżetu ze slugiem „{slug}”, więc Home Assistant nie ma czego aktualizować dla „{name}”. Utwórz go ponownie na karcie **Widgets** w aplikacji Aivi z dokładnie tym slugiem albo przestań aktualizować „{name}” w panelu Aivi."
+    },
+    "content_rejected": {
+      "title": "Aivi odrzuciło treść dla „{name}”",
+      "description": "Aivi odrzuciło jako nieprawidłowe to, co Home Assistant wysłał dla „{name}” ({slug}). Sprawdź jego źródła danych w panelu Aivi. Aktualizacje wznowią się, gdy Aivi przyjmie treść."
+    },
+    "content_too_large": {
+      "title": "Treść dla „{name}” przekracza limit rozmiaru Aivi",
+      "description": "To, co Home Assistant wysłałby dla „{name}” ({slug}), przekracza 4 KiB akceptowane przez Aivi, więc nie zostaje wysłane, a Twoje urządzenia pokazują ostatnią aktualizację. W panelu Aivi skróć adresy URL obrazów lub drugie linie albo usuń kafelki. Aktualizacje wznowią się, gdy treść się zmieści."
+    },
+    "unsupported_template": {
+      "title": "„{name}” używa szablonu, którego ta wersja nie obsługuje",
+      "description": "„{name}” używa szablonu „{template}”, którego ta wersja integracji Aivi nie obsługuje. Zaktualizuj integrację, aby to umożliwić, albo przestań aktualizować „{name}” w panelu Aivi."
+    },
+    "activity_missing": {
+      "title": "Aktywności na żywo „{name}” nie ma w aplikacji Aivi",
+      "description": "Aplikacja Aivi nie ma Aktywności na żywo ze slugiem „{slug}”, więc Home Assistant nie ma czego aktualizować dla „{name}”. Utwórz ją ponownie na karcie **Activities** w aplikacji Aivi z dokładnie tym slugiem albo przestań aktualizować „{name}” w panelu Aivi."
+    },
+    "template_mismatch": {
+      "title": "„{name}” ma inny szablon w aplikacji Aivi",
+      "description": "Aivi odmówiło przyjęcia treści dla „{name}” ({slug}), ponieważ widżet lub Aktywność na żywo z tym slugiem ma w aplikacji Aivi inny szablon niż „{template}”. Przestań aktualizować i skonfiguruj od nowa w panelu Aivi. Aktualizacje wznowią się, gdy szablony będą zgodne."
+    },
+    "activity_quota": {
+      "title": "Za dużo trwających Aktywności na żywo dla „{name}”",
+      "description": "Aivi nie uruchomiło Aktywności na żywo „{name}” ({slug}), ponieważ konto ma już tyle trwających Aktywności na żywo, ile pozwala. Zakończ inną; następna aktualizacja spróbuje ponownie."
+    },
+    "subscription_inactive": {
+      "title": "Subskrypcja Aivi nie jest aktywna",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Sprawdź subskrypcję Aivi",
+            "description": "Konto Aivi „{account}” nie ma aktywnej subskrypcji, więc widżety i Aktywności na żywo są wstrzymane.\n\nWszystko, co skonfigurowano w panelu Aivi, zostaje zachowane. Odnów subskrypcję w aplikacji Aivi, a aktualizacje wznowią się w ciągu godziny. Już odnowiona? Wybierz **Sprawdź teraz**.",
+            "submit": "Sprawdź teraz"
+          },
+          "still_inactive": {
+            "title": "Jeszcze nie odnowiono",
+            "description": "Aivi nadal nie widzi aktywnej subskrypcji dla „{account}”. Odnów ją w aplikacji Aivi, a potem wybierz **Sprawdź ponownie**. Jest też sprawdzana co godzinę.",
+            "submit": "Sprawdź ponownie"
+          },
+          "cannot_connect": {
+            "title": "Brak połączenia z Aivi",
+            "description": "Sprawdź połączenie, a potem wybierz **Spróbuj ponownie**.",
+            "submit": "Spróbuj ponownie"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi odrzuciło token API. Najpierw połącz konto ponownie.",
+          "not_loaded": "Konto Aivi nie działa. Wczytaj je ponownie w **Ustawienia → Urządzenia oraz usługi** i spróbuj jeszcze raz."
+        }
+      }
+    },
+    "subscription_expired": {
+      "title": "Subskrypcja Aivi nie jest aktywna",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Sprawdź subskrypcję Aivi",
+            "description": "Subskrypcja Aivi dla „{account}” wygasła {expired}, więc widżety i Aktywności na żywo są wstrzymane.\n\nWszystko, co skonfigurowano w panelu Aivi, zostaje zachowane. Odnów subskrypcję w aplikacji Aivi, a aktualizacje wznowią się w ciągu godziny. Już odnowiona? Wybierz **Sprawdź teraz**.",
+            "submit": "Sprawdź teraz"
+          },
+          "still_inactive": {
+            "title": "Jeszcze nie odnowiono",
+            "description": "Aivi nadal nie widzi aktywnej subskrypcji dla „{account}”. Odnów ją w aplikacji Aivi, a potem wybierz **Sprawdź ponownie**. Jest też sprawdzana co godzinę.",
+            "submit": "Sprawdź ponownie"
+          },
+          "cannot_connect": {
+            "title": "Brak połączenia z Aivi",
+            "description": "Sprawdź połączenie, a potem wybierz **Spróbuj ponownie**.",
+            "submit": "Spróbuj ponownie"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi odrzuciło token API. Najpierw połącz konto ponownie.",
+          "not_loaded": "Konto Aivi nie działa. Wczytaj je ponownie w **Ustawienia → Urządzenia oraz usługi** i spróbuj jeszcze raz."
+        }
+      }
+    },
+    "automation_conflict": {
+      "title": "„{name}” aktualizuje też automatyzacja",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Wyłącz automatyzację aktualizującą „{name}”",
+            "description": "Panel Aivi aktualizuje „{name}” ({slug}), ale robi to też: {automations}. Jedno nadpisuje drugie, więc Twoje urządzenia przeskakują między nimi.\n\nWyłączenie automatyzacji jej nie usuwa. Możesz ją ponownie włączyć w **Ustawienia → Automatyzacje oraz sceny**.",
+            "submit": "Wyłącz"
+          }
+        }
+      }
+    },
+    "automation_conflict_manual": {
+      "title": "„{name}” aktualizuje też automatyzacja",
+      "description": "Panel Aivi aktualizuje „{name}” ({slug}), ale robi to też: {automations}. Jedno nadpisuje drugie, więc Twoje urządzenia przeskakują między nimi. Ta automatyzacja aktualizuje też inne widżety albo włącza się ponownie przy starcie Home Assistanta, więc integracja Aivi nie wyłącza jej za Ciebie. Zmień ją w **Ustawienia → Automatyzacje oraz sceny** albo przestań aktualizować „{name}” w panelu Aivi."
+    }
+  },
+  "config_panel": {
+    "common": {
+      "retry": "Ponów",
+      "edit": "Edytuj",
+      "back": "Wstecz",
+      "save": "Zapisz",
+      "saving": "Zapisywanie…",
+      "required": "wymagane",
+      "none": "Brak",
+      "default": "Domyślny",
+      "clear": "Wyczyść",
+      "remove": "Usuń",
+      "move-up": "Przenieś wyżej",
+      "move-down": "Przenieś niżej",
+      "done": "Gotowe",
+      "close": "Zamknij",
+      "color": "Kolor",
+      "live-activity": "Aktywność na żywo",
+      "menu": "Otwórz pasek boczny"
+    },
+    "error": {
+      "boot-title": "Nie udało się wczytać Aivi"
+    },
+    "route": {
+      "widget-missing": "Nie znaleziono tego widżetu. Zamiast tego pokazano Twoje widżety.",
+      "activity-missing": "Nie znaleziono tej Aktywności na żywo. Zamiast tego pokazano Twoje widżety."
+    },
+    "onboarding": {
+      "title": "Połącz konto Aivi",
+      "body": "Widżety tworzy się w aplikacji Aivi, a Home Assistant dostarcza im dane na żywo. Połącz konto, a każdy jego widżet pojawi się tutaj, gotowy do konfiguracji.",
+      "connect": "Połącz konto",
+      "token-help": "Gdzie znajdę token?",
+      "first-bind-title": "Twój pierwszy widżet działa.",
+      "first-bind-body": "{name} aktualizuje się teraz przy każdej zmianie encji, z których pobiera dane. Nie trzeba niczego odświeżać.",
+      "first-bind-dismiss": "OK"
+    },
+    "hub": {
+      "widgets": "Widżety",
+      "live-activities": "Aktywności na żywo",
+      "accounts": "Konta",
+      "account-connected": "Połączone",
+      "account-paused": "Subskrypcja wstrzymana",
+      "account-unreachable": "Nieosiągalne",
+      "add-account": "Dodaj konto",
+      "manage-accounts": "Zarządzaj w Ustawieniach",
+      "docs": "Dokumentacja",
+      "support": "Pomoc",
+      "version": "Wersja {version}",
+      "fed-dot": "Aktualizowane przez Home Assistant",
+      "running-dot": "Aktywna",
+      "idle-dot": "Nieaktywna",
+      "waiting-dot": "Czeka na wartość",
+      "empty-title": "Brak widżetów i aktywności na żywo",
+      "empty-body": "Tworzysz je w aplikacji Aivi. Tutaj wybierasz, co je aktualizuje.",
+      "empty-step-create": "Utwórz widżet lub aktywność na żywo w aplikacji Aivi na iPhonie lub iPadzie.",
+      "empty-step-refresh": "Naciśnij tutaj Odśwież. Nowe pojawiają się dopiero wtedy, nie same.",
+      "empty-step-feed": "Naciśnij Skonfiguruj i wybierz encje, które go zasilają.",
+      "empty-cta": "Otwórz aplikację Aivi",
+      "empty-widgets-note": "Brak widżetów. Utwórz go w aplikacji Aivi, a potem odśwież.",
+      "empty-activities-note": "Brak aktywności na żywo. Utwórz ją w aplikacji Aivi, a potem odśwież.",
+      "offline": "Aivi jest nieosiągalne. Widoczne są tylko skonfigurowane widżety.",
+      "subscription-inactive": "Twoja subskrypcja Aivi nie jest aktywna. Wszystko, co skonfigurowano, zostaje zachowane i wznowi działanie po odnowieniu.",
+      "check-again": "Sprawdź ponownie",
+      "bind": "Skonfiguruj",
+      "unbind": "Przestań aktualizować",
+      "unbind-confirm": "Przestać aktualizować?",
+      "unbound-toast": "Przestano aktualizować: {name}",
+      "unbind-failed": "Nie udało się przestać aktualizować „{name}”: {error}",
+      "fed-by": "Dane z: {sources}",
+      "nothing-yet": "jeszcze nic",
+      "template-count-one": "{count} pole z szablonem",
+      "template-count-few": "{count} pola z szablonem",
+      "template-count-many": "{count} pól z szablonem",
+      "template-count-other": "{count} pola z szablonem",
+      "unsupported": "Wymaga nowszej integracji Aivi",
+      "widget-gone": "Nie ma go w aplikacji Aivi, więc nic nie jest wyświetlane. Przestań go aktualizować albo utwórz go tam ponownie z tym samym slugiem.",
+      "runs-on": "sterowana przez {entity}",
+      "activity-gone": "Nie ma jej w aplikacji Aivi, więc nic nie jest wyświetlane. Przestań ją aktualizować albo utwórz ją tam ponownie z tym samym slugiem.",
+      "search-placeholder": "Szukaj widżetów i Aktywności na żywo…",
+      "search-label": "Szukaj widżetów i Aktywności na żywo po nazwie lub szablonie",
+      "refresh": "Odśwież",
+      "refresh-same": "Aktualne: nic się nie zmieniło w aplikacji Aivi.",
+      "refresh-changed": "Zaktualizowano z aplikacji Aivi.",
+      "refresh-failed": "Nie udało się połączyć z Aivi.",
+      "filter-label": "Filtruj według stanu",
+      "filter-all": "Wszystkie",
+      "filter-bound": "Aktualizowane",
+      "filter-unbound": "Nieaktualizowane",
+      "filter-unsupported": "Nieobsługiwane",
+      "no-matches": "Brak wyników dla „{query}”",
+      "no-matches-filter": "Nic nie pasuje do tego filtra",
+      "clear-search": "Wyczyść filtry",
+      "results-one": "Pokazano {count} wynik",
+      "results-few": "Pokazano {count} wyniki",
+      "results-many": "Pokazano {count} wyników",
+      "results-other": "Pokazano {count} wyniku",
+      "subscription-inactive-some-one": "Subskrypcja Aivi dla konta {names} nie jest aktywna. Jego widżety i Aktywności na żywo są wstrzymane do czasu odnowienia. Wszystko, co skonfigurowano, zostaje zachowane.",
+      "subscription-inactive-some-few": "Subskrypcje Aivi dla kont {names} nie są aktywne. Ich widżety i Aktywności na żywo są wstrzymane do czasu odnowienia. Wszystko, co skonfigurowano, zostaje zachowane.",
+      "subscription-inactive-some-many": "Subskrypcje Aivi dla kont {names} nie są aktywne. Ich widżety i Aktywności na żywo są wstrzymane do czasu odnowienia. Wszystko, co skonfigurowano, zostaje zachowane.",
+      "subscription-inactive-some-other": "Subskrypcje Aivi dla kont {names} nie są aktywne. Ich widżety i Aktywności na żywo są wstrzymane do czasu odnowienia. Wszystko, co skonfigurowano, zostaje zachowane.",
+      "paused-mark": "Wstrzymane",
+      "account-ended": "Subskrypcja wygasła {date}"
+    },
+    "editor": {
+      "activity-chip": "Aktywność na żywo",
+      "widget-chip": "Widżet",
+      "slug-hint": "Jego slug: identyfikator, którego używają aplikacja Aivi, automatyzacje i komunikaty w Problemach",
+      "unknown-template": "Nieznany szablon „{template}”",
+      "save-failed": "Nie udało się zapisać: {error}",
+      "saved-toast": "Home Assistant aktualizuje teraz: {name}",
+      "active-label": "Encja aktywująca",
+      "active-hint": "Uruchamia Aktywność na żywo, gdy się włącza; kończy ją, gdy się wyłącza",
+      "template-error-blocks": "Popraw błąd szablonu w: {fields}, aby zapisać.",
+      "fix-fields": "Popraw pola zaznaczone na czerwono, aby zapisać.",
+      "one-of": "jedno z: {fields}",
+      "leave-title": "Odrzucić zmiany?",
+      "leave-body": "Zmiany w „{name}” nie zostaną zapisane.",
+      "leave-keep": "Edytuj dalej",
+      "leave-discard": "Odrzuć"
+    },
+    "presses": {
+      "count": "×{count}",
+      "type-toggle_on": "Wł.",
+      "type-toggle_off": "Wył.",
+      "type-pressed": "Naciśnięcie",
+      "outcome-played": "Obsłużone",
+      "outcome-expired": "Wygasłe",
+      "outcome-not_bound": "Nieobsłużone",
+      "outcome-ignored": "Zignorowane",
+      "outcome-failed": "Nieudane"
+    },
+    "recent": {
+      "title": "Dziennik",
+      "hint": "Co Home Assistant ostatnio wysłał do Aivi dla tego elementu, co odesłały Twoje urządzenia i co z tego wynikło.",
+      "empty": "Jeszcze nic. Pierwsza wysyłka do Aivi pojawi się tutaj, podobnie jak naciśnięcie na jednym z Twoich urządzeń."
+    },
+    "pushes": {
+      "to-aivi": "Do Aivi",
+      "from-devices": "Z Twoich urządzeń",
+      "outcome-delivered": "Dostarczono",
+      "outcome-unchanged": "Bez zmian",
+      "outcome-retrying": "Ponawianie",
+      "outcome-failed": "Nie powiodło się",
+      "unchanged-why": "Ta sama treść co przy ostatniej wysyłce, więc nic nie wysłano.",
+      "took": "{ms} ms",
+      "content": "Co wysłano",
+      "content-cut": "Ucięte w tym miejscu: treść jest dłuższa, niż dziennik przechowuje.",
+      "content-none": "Nic nie dało się rozwiązać, więc nie było czego wysłać.",
+      "outcome-waiting": "Czeka",
+      "outcome-held": "Wstrzymano",
+      "waiting": "Nic nie wysłano: pole {field} odczytuje „{reading}”.",
+      "waiting-none": "Nic nie wysłano: pole {field} nie ma wartości.",
+      "waiting-any": "Nic nie wysłano: żadne z pól {fields} nie ma wartości.",
+      "held": "Wstrzymano do {time}: ta aktywność na żywo aktualizuje się najwyżej {every}. Zmienisz to w „{setting}”, w sekcji {section}."
+    },
+    "source": {
+      "entity": "Encja",
+      "attribute": "Atrybut",
+      "template": "Szablon",
+      "bands": "Według wartości",
+      "literal": "Stała wartość",
+      "fixed": "Stała wartość"
+    },
+    "bands": {
+      "follows": "Śledzi",
+      "follows-aria": "Odczyt, który śledzi {field}",
+      "follows-placeholder": "Wybierz czujnik",
+      "list": "{field} według wartości",
+      "below": "Poniżej {limit}",
+      "between": "Od {from} do {limit}",
+      "above": "Od {from} w górę",
+      "limit-aria": "Gdzie kończy się „{range}”",
+      "color-aria": "Kolor dla „{range}”",
+      "remove": "Usuń przedział „{range}”",
+      "add": "Dodaj przedział",
+      "full": "Do {max} przedziałów",
+      "as-template": "Zapisz jako szablon",
+      "now": "Teraz {reading}, więc {color}",
+      "now-none": "{name} nie ma teraz odczytu, więc wyświetla się stały kolor",
+      "order": "Wpisz liczbę większą od poprzedniego progu i mniejszą od następnego.",
+      "lock-hint": "Kolory nie są widoczne na ekranie blokady, na przyciemnionym ekranie początkowym ani gdy ekran się ściemnia. Pokaż też odczyt w widżecie albo zmieniaj razem z nim ikonę."
+    },
+    "field": {
+      "also-on": "Widoczne też na: {surface}",
+      "source-label": "Źródło: {field}",
+      "template-aria": "Szablon: {field}",
+      "pick-entity-first": "Najpierw wybierz encję, potem jej atrybut",
+      "entity-missing": "Ta encja nie jest teraz dostępna w Home Assistant.",
+      "choose-attribute": "Wybierz atrybut…",
+      "no-attributes": "Ta encja nie ma atrybutów do wyboru.",
+      "style-title": "Kolor i format tekstu",
+      "format": "Format",
+      "format-as-is": "Bez zmian",
+      "source-unusable": "Odczytano „{value}”, czego nie można tu użyć. Obowiązuje wartość zastępcza poniżej.",
+      "source-unavailable": "Teraz nie ma czego odczytać. Obowiązuje wartość zastępcza poniżej.",
+      "fallback": "Wartość zastępcza",
+      "fallback-hint": "Używana, gdy nie da się odczytać źródła powyżej",
+      "source-of": "Źródło: {field}",
+      "template-error": "Błąd szablonu:",
+      "error-details": "Szczegóły",
+      "template-empty": "Ten szablon nic teraz nie zwraca; pole liczy się jako nieustawione.",
+      "result": "Wynik",
+      "kind-text": "tekst",
+      "kind-number": "liczba",
+      "kind-bool": "prawda lub fałsz",
+      "kind-nothing": "nic",
+      "kind-list-one": "lista: {count} element",
+      "kind-list-few": "lista: {count} elementy",
+      "kind-list-many": "lista: {count} elementów",
+      "kind-list-other": "lista: {count} elementu",
+      "kind-numbers-one": "lista: {count} liczba",
+      "kind-numbers-few": "lista: {count} liczby",
+      "kind-numbers-many": "lista: {count} liczb",
+      "kind-numbers-other": "lista: {count} liczby",
+      "kind-range": "od {min} do {max}",
+      "updates-on": "Wyzwalacze aktualizacji",
+      "updates-domain": "dowolna encja {domain}",
+      "updates-all": "każda zmiana stanu",
+      "updates-time": "początek każdej minuty",
+      "updates-more-one": "i jeszcze {count}",
+      "updates-more-few": "i jeszcze {count}",
+      "updates-more-many": "i jeszcze {count}",
+      "updates-more-other": "i jeszcze {count}",
+      "updates-limit-one": "najwyżej raz na sekundę",
+      "updates-limit-few": "najwyżej raz na {count} sekundy",
+      "updates-limit-many": "najwyżej raz na {count} sekund",
+      "updates-limit-other": "najwyżej raz na {count} sekundy",
+      "updates-never": "Nic, co odczytuje, nie może się zmienić, więc sam nigdy się nie aktualizuje.",
+      "unknown-entity": "W Home Assistant nie ma {id}.",
+      "did-you-mean": "Czy chodziło o:",
+      "use-entity": "Użyj {id}",
+      "badge-error": "Szablon zawiera błąd",
+      "error-at-line": "Wiersz {line}:",
+      "error-at": "Wiersz {line}, kolumna {column}:",
+      "error-unclosed": "Coś nie jest zamknięte. Sprawdź, czy każde {output} i {statement} jest kompletne.",
+      "error-unclosed_block": "Blok {tag} nigdy nie jest zamknięty. Dodaj {end} tam, gdzie się kończy.",
+      "error-unexpected_end": "Szablon kończy się, zanim zamknie wszystko, co otwiera.",
+      "error-stray_end": "{tag} zamyka blok, który nigdy nie został otwarty.",
+      "error-unknown_tag": "„{tag}” to nie jest instrukcja znana szablonom. Sprawdź pisownię.",
+      "error-unknown_filter": "Nie ma filtra o nazwie „{name}”.",
+      "error-unknown_test": "Nie ma testu o nazwie „{name}”.",
+      "error-bad_char": "Znaku „{char}” nie można tu użyć.",
+      "error-missing": "Brakuje tu „{token}”.",
+      "error-incomplete": "Wyrażenie kończy się za wcześnie: na jego końcu czegoś brakuje.",
+      "error-extra": "„{token}” nie pasuje w tym miejscu. Czy brakuje przed nim operatora albo |?",
+      "error-unexpected": "„{token}” nie jest tu oczekiwane.",
+      "error-undefined": "Nic o nazwie „{name}” tu nie istnieje. Sprawdź pisownię.",
+      "error-no_attribute": "„{value}” nie ma atrybutu „{name}”.",
+      "error-none_attribute": "Tu odczytywane jest „{name}” z czegoś, co nie istnieje, często z identyfikatora encji z literówką.",
+      "error-no_default": "{function} dostała „{value}”, co nie jest liczbą, i nie ma wartości domyślnej. Podaj ją, np. {example}.",
+      "error-type": "Tekst i liczby są tu wymieszane. Najpierw zamień tekst na liczbę, np. {example}.",
+      "error-division_by_zero": "Tu następuje dzielenie przez zero.",
+      "number-placeholder": "np. 100",
+      "icon-placeholder": "np. washer.fill",
+      "symbol-styling": "Styl symbolu",
+      "rendering": "Styl symbolu",
+      "secondary": "Drugi kolor",
+      "tertiary": "Trzeci kolor",
+      "color-style": "Styl koloru",
+      "suggestions": "Propozycje",
+      "device-chip": "Urządzenie: {name}",
+      "history-chip": "Historia: {name}",
+      "dashboard-chip": "Panel",
+      "url-invalid": "Użyj pełnego URL ze schematem, np. https:// dla strony WWW lub homeassistant:// dla widoku Home Assistant.",
+      "url-long": "URL jest dłuższy niż 256 znaków.",
+      "invert": "Odwróć znak",
+      "icon-color": "Kolor ikony",
+      "points-source": "Źródło historii",
+      "points-history": "Historia",
+      "points-list": "Lista",
+      "points-template": "Szablon",
+      "points-window": "Okres",
+      "points-entity": "Historia encji",
+      "points-same": "Jak {field}",
+      "points-list-hint": "Atrybut z listą liczb, od najstarszej",
+      "points-template-hint": "Szablon Home Assistant zwracający listę liczb od najstarszej, np. prognozę przekształconą w temperatury",
+      "points-no-history": "Ustaw encję jako źródło pola „{field}” albo wybierz ją tutaj, aby pokazać jej historię na wykresie.",
+      "source-waiting": "Teraz odczytuje „{value}”, więc nic nie zostanie wysłane, dopóki nie będzie wartości.",
+      "source-waiting-none": "Teraz nie ma czego odczytać, więc nic nie zostanie wysłane, dopóki się to nie zmieni.",
+      "source-left-out": "Teraz nie ma czego odczytać, więc to zostanie pominięte.",
+      "source-unusable-left-out": "Odczytano „{value}”, czego nie można tu użyć, więc to zostanie pominięte.",
+      "badge-waiting": "Teraz nie ma czego odczytać",
+      "name": "„{field}”",
+      "name-grouped": "„{group}: {field}”",
+      "name-case": "as-is"
+    },
+    "code": {
+      "completions": "Podpowiedzi",
+      "fn-states": "Stan encji jako tekst",
+      "fn-state_attr": "Jeden atrybut encji",
+      "fn-is_state": "Czy encja ma dany stan",
+      "fn-is_state_attr": "Czy atrybut encji ma daną wartość",
+      "fn-has_value": "Czy encja ma stan, czyli nie jest nieznana ani niedostępna",
+      "fn-expand": "Encje należące do grup i list",
+      "fn-area_name": "Nazwa obszaru, w którym jest encja",
+      "fn-area_entities": "Wszystkie encje w obszarze",
+      "fn-device_attr": "Informacja o urządzeniu encji, na przykład model",
+      "fn-now": "Bieżąca data i godzina",
+      "fn-today_at": "Dziś o danej godzinie, na przykład today_at('18:30')",
+      "fn-as_timestamp": "Data lub godzina w sekundach od 1970 roku",
+      "fn-relative_time": "Jak dawno to było, na przykład 5 minut",
+      "fn-timedelta": "Odcinek czasu do dodania lub odjęcia od godziny",
+      "fn-timestamp_custom": "Formatuje znacznik czasu, na przykład timestamp_custom('%H:%M')",
+      "fn-iif": "Jedna wartość, gdy warunek jest spełniony, inna, gdy nie",
+      "fn-float": "Liczba z częścią dziesiętną, z wartością zastępczą dla tekstu",
+      "fn-int": "Liczba całkowita, z wartością zastępczą dla tekstu",
+      "fn-is_number": "Czy wartość jest liczbą",
+      "fn-round": "Zaokrągla liczbę do podanej liczby miejsc po przecinku",
+      "fn-default": "Wartość używana, gdy nie ma żadnej",
+      "fn-min": "Najmniejsza z kilku wartości",
+      "fn-max": "Największa z kilku wartości",
+      "fn-selectattr": "Zostawia elementy, których atrybut przechodzi test",
+      "fn-map": "Bierze jeden atrybut każdego elementu lub stosuje filtr do każdego",
+      "fn-list": "Zamienia wynik w listę",
+      "fn-count": "Ile jest elementów",
+      "fn-sum": "Sumuje wszystkie liczby",
+      "fn-join": "Łączy elementy w tekst z separatorem",
+      "fn-replace": "Zamienia tekst na inny",
+      "fn-state_translated": "Stan encji w Twoim języku",
+      "fn-device_id": "Identyfikator urządzenia encji",
+      "fn-device_entities": "Wszystkie encje urządzenia",
+      "fn-area_id": "Identyfikator obszaru, po nazwie lub encji w nim",
+      "fn-area_devices": "Wszystkie urządzenia w obszarze",
+      "fn-areas": "Wszystkie obszary",
+      "fn-floor_name": "Nazwa piętra",
+      "fn-label_entities": "Wszystkie encje z etykietą",
+      "fn-integration_entities": "Wszystkie encje integracji, na przykład 'hue'",
+      "fn-utcnow": "Bieżąca data i godzina w UTC",
+      "fn-as_datetime": "Tekst lub znacznik czasu jako data i godzina",
+      "fn-as_local": "Data i godzina w Twojej strefie czasowej",
+      "fn-strptime": "Odczytuje datę i godzinę z tekstu w podanym formacie",
+      "fn-time_since": "Jak dawno to było, słownie",
+      "fn-time_until": "Ile zostało do danej chwili, słownie",
+      "fn-as_timedelta": "Tekst taki jak '00:10:00' jako odcinek czasu",
+      "fn-timestamp_local": "Znacznik czasu jako lokalna data i godzina",
+      "fn-timestamp_utc": "Znacznik czasu jako data i godzina w UTC",
+      "fn-bool": "Prawda lub fałsz, z tekstu takiego jak on, yes lub 1",
+      "fn-abs": "Liczba bez znaku",
+      "fn-average": "Średnia kilku liczb",
+      "fn-median": "Środkowa wartość kilku liczb",
+      "fn-string": "Zamienia wartość w tekst",
+      "fn-format": "Wypełnia wzorzec tekstu, na przykład '%.1f' | format(x)",
+      "fn-lower": "Zamienia tekst na małe litery",
+      "fn-upper": "Zamienia tekst na wielkie litery",
+      "fn-title": "Każde słowo wielką literą",
+      "fn-capitalize": "Pierwsza litera wielka",
+      "fn-trim": "Usuwa spacje wokół tekstu",
+      "fn-truncate": "Skraca tekst do podanej długości",
+      "fn-slugify": "Zamienia tekst w identyfikator z małych liter i podkreśleń",
+      "fn-regex_replace": "Zamienia to, co pasuje do wyrażenia regularnego",
+      "fn-regex_match": "Czy tekst zaczyna się od dopasowania wyrażenia regularnego",
+      "fn-regex_search": "Czy tekst zawiera dopasowanie wyrażenia regularnego",
+      "fn-from_json": "Odczytuje tekst JSON jako wartości",
+      "fn-rejectattr": "Pomija elementy, których atrybut przechodzi test",
+      "fn-select": "Zostawia elementy, które przechodzą test",
+      "fn-reject": "Pomija elementy, które przechodzą test",
+      "fn-length": "Ile jest elementów lub znaków",
+      "fn-first": "Pierwszy element",
+      "fn-last": "Ostatni element",
+      "fn-sort": "Sortuje elementy",
+      "fn-unique": "Pomija powtórzone elementy",
+      "fn-reverse": "Odwraca kolejność",
+      "fn-contains": "Czy lista lub tekst zawiera wartość",
+      "fn-range": "Liczby od 0 do podanej liczby",
+      "fn-namespace": "Przechowuje wartości, które pętla może zmieniać",
+      "test-defined": "Czy wartość istnieje",
+      "test-none": "Czy wartość to None",
+      "test-number": "Czy wartość jest liczbą",
+      "test-string": "Czy wartość jest tekstem",
+      "test-in": "Czy wartość jest na liście lub w tekście",
+      "test-match": "Czy tekst zaczyna się od dopasowania wyrażenia regularnego",
+      "test-search": "Czy tekst zawiera dopasowanie wyrażenia regularnego",
+      "test-contains": "Czy lista lub tekst zawiera wartość"
+    },
+    "sheet": {
+      "expand": "Rozwiń",
+      "expand-label": "Rozwiń szablon: {field}",
+      "insert": "Wstaw",
+      "in-template": "W tym szablonie",
+      "all-entities": "Wszystkie encje",
+      "matches": "Pasujące encje",
+      "keys": "Klawisze szablonu",
+      "key-output": "Wyrażenie",
+      "key-statement": "Instrukcja",
+      "key-pipe": "Filtr",
+      "key-quote": "Apostrof",
+      "recipes": "Przepisy",
+      "more": "Przepisy i atrybuty",
+      "recipe-pick": "Wybierz encję, dla której jest",
+      "recipe-without": "Bez encji, do uzupełnienia",
+      "fits": "Pasujące encje",
+      "or": "Lub",
+      "recipe-words": "Słowa dla włączenia i wyłączenia, np. Otwarte i Zamknięte",
+      "recipe-rounded-unit": "Stan zaokrąglony, z jednostką",
+      "recipe-translated": "Jego stan tak, jak pokazuje go Home Assistant",
+      "recipe-fallback": "Słowa na czas niedostępności",
+      "recipe-time-since": "Czas od ostatniej zmiany",
+      "recipe-time-of-day": "Jej pora dnia",
+      "recipe-rounded": "Stan jako liczba, zaokrąglony",
+      "recipe-number": "Stan jako liczba",
+      "recipe-share": "Procent jako ułamek od 0 do 1",
+      "recipe-entity-time": "Moment, który przechowuje",
+      "recipe-last-changed": "Kiedy ostatnio się zmieniła",
+      "recipe-in-minutes": "Za 5 minut",
+      "recipe-attribute-list": "Liczby z atrybutu-listy",
+      "recipe-color-by-state": "Kolor dla włączenia i wyłączenia",
+      "recipe-color-by-number": "Kolor powyżej progu",
+      "recipe-icon-on-off": "Ikona dla włączonego i wyłączonego",
+      "recipe-icon-by-level": "Ikona zależna od poziomu",
+      "recipe-is-on": "Czy jest włączona",
+      "recipe-above": "Czy przekracza próg",
+      "word-on": "Włączone",
+      "word-off": "Wyłączone",
+      "word-open": "Otwarte",
+      "word-closed": "Zamknięte",
+      "word-detected": "Wykryto",
+      "word-clear": "Brak",
+      "word-home": "W domu",
+      "word-away": "Poza domem",
+      "word-wet": "Mokro",
+      "word-dry": "Sucho",
+      "word-problem": "Problem",
+      "word-ok": "OK",
+      "word-unsafe": "Niebezpiecznie",
+      "word-safe": "Bezpiecznie",
+      "word-connected": "Połączono",
+      "word-disconnected": "Rozłączono",
+      "word-unlocked": "Odblokowane",
+      "word-locked": "Zablokowane",
+      "word-low": "Niski",
+      "word-normal": "Normalny",
+      "word-charging": "Ładowanie",
+      "word-not-charging": "Nie ładuje",
+      "word-no-data": "Brak danych",
+      "writes": "Wstawia"
+    },
+    "workspace": {
+      "search": "Szukaj encji i przepisów",
+      "no-matches": "Brak wyników",
+      "list-keys": "↑ ↓ wybór, Enter wstawia, → więcej",
+      "inserted": "Wstawiono {name}",
+      "find": "Znajdź",
+      "find-count": "{current} z {total}",
+      "find-none": "Brak dopasowań",
+      "find-previous": "Poprzedni",
+      "find-next": "Następny",
+      "output": "Wynik",
+      "docs": "Dokumentacja",
+      "tab-hint": "Tab wcina, {keys} sprawia, że przenosi fokus",
+      "position": "Wiersz {line}, kolumna {column}",
+      "wrap": "Zawijanie",
+      "key-left": "W lewo",
+      "key-right": "W prawo",
+      "key-undo": "Cofnij",
+      "strip-open": "Podgląd i wynik",
+      "search-entity": "Szukaj encji",
+      "step-keys": "↑ ↓ wybór, Enter wstawia, ← wstecz",
+      "step-back": "Wróć do wszystkiego",
+      "hints": "Wskazówki",
+      "hint-limit": "Aivi przyjmuje tu {limit} znaków; reszta jest obcinana.",
+      "hint-clipped": "Widżet {size} obcina tekst na tej długości.",
+      "hint-kind-number": "To pole przyjmuje liczbę, a „{value}” nią nie jest, więc wyświetla się wartość zastępcza.",
+      "hint-kind-bool": "To pole przyjmuje true lub false, a „{value}” nie jest żadną z nich, więc wyświetla się wartość zastępcza.",
+      "hint-kind-color": "„{value}” to nie kolor, który przyjmuje to pole, więc wyświetla się wartość zastępcza.",
+      "hint-kind-time": "To pole przyjmuje datę i godzinę, a „{value}” nią nie jest, więc wyświetla się wartość zastępcza.",
+      "hint-kind-other": "To pole nie może użyć „{value}”, więc wyświetla się wartość zastępcza.",
+      "hint-unavailable": "{name} ma teraz stan {state}, więc widżet pokazuje „{state}”.",
+      "hint-none": "Wyświetla się „None”: odczytywana wartość jest teraz pusta, często to atrybut, którego encja nie ma.",
+      "hint-decimals-one": "Pokazuje {count} miejsce po przecinku.",
+      "hint-decimals-few": "Pokazuje {count} miejsca po przecinku.",
+      "hint-decimals-many": "Pokazuje {count} miejsc po przecinku.",
+      "hint-decimals-other": "Pokazuje {count} miejsca po przecinku.",
+      "hint-symbol": "„{value}” nie ma na liście symboli Apple, więc urządzenie może nie pokazać żadnej ikony.",
+      "fix-round": "Zaokrąglij",
+      "fix-unit": "Usuń jednostkę",
+      "fix-is-state": "Porównaj z „{state}”",
+      "fix-unavailable": "Pokaż zamiast tego „{words}”",
+      "fix-symbol": "Użyj „{name}”",
+      "card-changed": "Zmieniono {when}",
+      "card-more-one": "Jeszcze {count} atrybut",
+      "card-more-few": "Jeszcze {count} atrybuty",
+      "card-more-many": "Jeszcze {count} atrybutów",
+      "card-more-other": "Jeszcze {count} atrybutu"
+    },
+    "formatter": {
+      "time-since": "Czas od (licznik na żywo, w górę)",
+      "time-until": "Czas do (licznik na żywo, w dół)"
+    },
+    "combobox": {
+      "placeholder": "Szukaj encji…",
+      "no-matches": "Brak pasujących encji",
+      "more": "Pokazano {shown} z {total}. Pisz, aby zawęzić listę."
+    },
+    "checklist": {
+      "full": "To już wszystkie ({max}). Usuń jedną, aby dodać inną.",
+      "over": "Wysyłane są tylko pierwsze ({max}). Usuń pozostałe.",
+      "none-left": "Nie ma już czego dodać: każda pasująca encja jest w użyciu.",
+      "add": "Dodaj encję…",
+      "add-more": "Dodaj kolejną…",
+      "add-label": "Dodaj encję",
+      "count": "{count} z {max}",
+      "order-label": "Wybrane wiersze w kolejności widżetu",
+      "reorder": "Zmień kolejność: {name}",
+      "reorder-hint": "Przeciągnij, aby zmienić kolejność; Alt+strzałka przenosi zaznaczony wiersz",
+      "moved": "{name} na pozycji {position} z {count}",
+      "move-up": "Przenieś wyżej: {name}",
+      "move-down": "Przenieś niżej: {name}",
+      "remove": "Usuń: {name}",
+      "fix": "Do poprawy",
+      "label-aria": "Etykieta: {name}",
+      "icon-aria": "Ikona: {name}",
+      "color-aria": "Kolor: {name}",
+      "budget": "Budżet",
+      "budget-aria": "Budżet: {name}",
+      "budget-placeholder": "Bez budżetu",
+      "budget-invalid": "Podaj kwotę większą od 0, np. 250 lub 99,50.",
+      "charging": "Ładowanie",
+      "charging-aria": "Sensor ładowania: {name}",
+      "charging-auto": "Automatycznie",
+      "charging-off": "Bez błyskawicy ładowania",
+      "charging-off-aria": "Bez błyskawicy ładowania: {name}",
+      "charging-hint": "Sensor binarny albo sensor o stanie „charging”. Gdy pole jest puste, przy zapisie zostanie uzupełniony własny sensor ładowania urządzenia.",
+      "charging-unavailable": "Nie można teraz odczytać tego sensora, więc błyskawica ładowania nie jest pokazywana.",
+      "today": "Dziś",
+      "today-aria": "Dzisiejsza energia: {name}",
+      "today-hint": "Licznik energii: dzisiejsza wartość liczona jest od północy.",
+      "unit-aria": "Jednostka dla {name}",
+      "unit-placeholder": "Bez jednostki",
+      "max": "Wskaźnik do",
+      "max-aria": "Maksimum wskaźnika dla {name}",
+      "max-placeholder": "Bez wskaźnika",
+      "max-invalid": "Podaj liczbę większą od 0, np. 100.",
+      "max-hint": "Wypełnia wskaźnik do tej wartości tam, gdzie odczyt stoi sam, na ekranie blokady.",
+      "max-words": "Teraz pokazuje {value}, co nie jest liczbą, więc wyświetla się jako tekst bez wskaźnika."
+    },
+    "bar": {
+      "mode-label": "Styl paska",
+      "mode-solid": "Jednolity",
+      "mode-segmented": "Segmentowy",
+      "mode-layered": "Warstwowy",
+      "mode-caption-solid": "Jeden kolor wypełnienia na całym pasku",
+      "mode-caption-segmented": "Każda faza to osobna kapsułka, wypełniana po kolei wraz ze wzrostem wartości",
+      "mode-caption-layered": "Jeden ciągły pasek, jak w Aktywności na żywo",
+      "mode-announced": "Styl paska: {mode}"
+    },
+    "segments": {
+      "bar-label": "Fazy",
+      "phase": "Faza {index}",
+      "segment-aria": "{name}: {pct}% paska",
+      "boundary-aria": "Granica między {left} a {right}",
+      "boundary-at": "{left} {leftPct}%, {right} {rightPct}%",
+      "add": "Dodaj fazę",
+      "added": "Dodano {name}, faz: {count} z {max}",
+      "removed": "Usunięto {name}; jej miejsce zajęła {neighbor}",
+      "removed-last": "Usunięto {name}",
+      "split": "Podziel",
+      "split-aria": "Podziel {name}",
+      "split-too-thin": "{name}: za mała do podziału",
+      "remove-aria": "Usuń {name}",
+      "size": "Rozmiar",
+      "size-label": "Rozmiar w procentach",
+      "size-applied": "{name}: ustawiono {pct}%",
+      "label-placeholder": "Etykieta",
+      "label-aria": "Etykieta: {name}",
+      "fill-label": "Kolor wypełnienia",
+      "track": "Jeszcze nieosiągnięte",
+      "track-label": "Kolor części jeszcze nieosiągniętej",
+      "track-style-label": "Wzór części jeszcze nieosiągniętej",
+      "gray-default": "Szary (domyślny)",
+      "source": "Rozmiar z",
+      "source-label": "Źródło rozmiaru: {name}",
+      "fallback": "Wartość zastępcza",
+      "fallback-label": "Zastępczy rozmiar w procentach: {name}",
+      "sourced-hint": "Na żywo z {source}; wartość zastępcza obowiązuje, gdy nie da się go odczytać",
+      "fallback-in-use": "Używany jest zastępczy rozmiar ({pct}%).",
+      "result-share": "{pct}% paska",
+      "template-empty": "Ten szablon nic teraz nie zwraca; używany jest zastępczy rozmiar ({pct}%).",
+      "source-fallback": "To źródło nie daje teraz użytecznego rozmiaru; używany jest zastępczy rozmiar ({pct}%).",
+      "segment-live-aria": "{name}: {pct}% paska, na żywo z {source}",
+      "boundary-locked": "Ta granica podąża za źródłem na żywo; zmień źródło lub wartość zastępczą tej fazy."
+    },
+    "suggest": {
+      "open": "Zaproponuj",
+      "title": "Zaproponuj konfigurację",
+      "title-off": "Sugestie AI",
+      "intro": "Opisz własnymi słowami, co ma pokazywać, a formularz się wypełni. Albo zacznij tutaj:",
+      "input-label": "Opisz",
+      "send": "Wyślij",
+      "stop": "Zatrzymaj",
+      "stopped": "Zatrzymano: odpowiedź odrzucono.",
+      "retry": "Ponów",
+      "problem-failed": "Nie udało się: {error}",
+      "footer": "Nic nie zostanie zapisane, dopóki nie naciśniesz Zapisz.",
+      "options-label": "Proponowane odpowiedzi",
+      "model-label": "Model",
+      "model-hint": "Ustawienia każdego modelu (np. poziom rozumowania) znajdują się przy nim w Home Assistant.",
+      "enter-hint": "Enter wysyła, Shift+Enter dodaje nową linię",
+      "thinking": "Myślę…",
+      "still-working": "Nadal pracuję…",
+      "placeholder-initial": "Co ma pokazywać?",
+      "placeholder-refine": "Co zmienić?",
+      "no-mapping": "Model nie zwrócił niczego, co dałoby się tu użyć. Podaj nazwę encji lub opisz dokładniej.",
+      "round-none": "Nic się nie zmieniło.",
+      "done-quiet": "Gotowe.",
+      "change-set": "ustawiono: {field}",
+      "change-changed": "zmieniono: {field}",
+      "change-unsourced": "{field}: już nie podąża za stanem na żywo",
+      "change-cleared": "wyczyszczono: {field}",
+      "not-applied": "Nie zastosowano: {list}",
+      "undo": "Cofnij",
+      "undone": "Cofnięto: formularz wrócił do poprzedniego stanu.",
+      "undone-kept": "Cofnięto. Twoje ręczne zmiany wprowadzone od tego czasu zostały zachowane.",
+      "undone-count": "Cofnięto: {count}.",
+      "redo": "Ponów",
+      "failed": "Propozycja nie powiodła się: {error}",
+      "stale": "Formularz zmienił się, zanim dotarła odpowiedź, więc jej nie zastosowano.",
+      "off-not-loaded": "Wymaga dostawcy AI w Home Assistant. Żaden nie obsługuje jeszcze AI Task.",
+      "off-cta-not-loaded": "Dodaj w Integracjach",
+      "off-no-entity": "AI Task jest skonfigurowane, ale żaden model nie obsługuje jeszcze generowania danych.",
+      "off-cta-no-entity": "Dodaj w Sugestiach AI",
+      "off-what": "Opisz widżet własnymi słowami, a ten formularz się wypełni.",
+      "undo-label": "Cofnij „{ask}”",
+      "revert": "Cofnij to i kolejne ({count})",
+      "revert-label": "Cofnij „{ask}” i kolejne ({count})",
+      "hint-accent": "Ustaw pomarańczowy kolor akcentu",
+      "hint-sensor": "Użyj innego sensora",
+      "hint-simpler": "Uprość to",
+      "hint-icon": "Dobierz pasującą ikonę",
+      "hint-phases": "Podziel pasek na fazy",
+      "hint-tile": "Nadaj pierwszemu kafelkowi etykietę i kolor",
+      "hint-rows": "Ustaw najważniejszy wiersz na początku",
+      "starter-setup": "Skonfiguruj to za mnie",
+      "starter-bold": "Dodaj kolorów",
+      "starter-calm": "Zachowaj minimalizm",
+      "starter-restyle": "Odśwież wygląd",
+      "starter-simpler": "Uprość",
+      "rejected": {
+        "no_entity": "{field}: nie ma encji {value}",
+        "no_attribute": "{field}: nie ma takiego atrybutu ({value})",
+        "not_a_color": "{field}: {value} nie jest jednym z kolorów",
+        "not_a_symbol": "{field}: {value} nie jest symbolem SF Symbols",
+        "not_an_option": "{field}: {value} nie jest dostępną opcją",
+        "bad_template": "{field}: szablon nie działa",
+        "bad_value": "{field}: nie można użyć {value}",
+        "already_there": "{field}: {value} już tam jest",
+        "list_full": "{field}: brak miejsca na {value}",
+        "no_value": "{field}: jeszcze nic nie pokazuje, więc nie ma czego stylizować"
+      },
+      "detail-added": "dodano: {count}",
+      "detail-removed": "usunięto: {count}",
+      "detail-reordered": "zmieniono kolejność",
+      "detail-more": "jeszcze {count}",
+      "detail-source": "źródło danych",
+      "detail-color": "kolor",
+      "detail-format": "format",
+      "detail-style": "styl"
+    },
+    "preview": {
+      "title": "Podgląd na żywo",
+      "missing": "Aby zapisać, ustaw: {fields}.",
+      "missing-count": "Do ustawienia: {count}",
+      "fix-count": "Do poprawy: {count}",
+      "resolving": "Ustalanie…",
+      "payload-title": "Co zostanie wysłane",
+      "island-note": "Dynamic Island (w przybliżeniu)",
+      "banner-note": "Baner na ekranie blokady (w przybliżeniu)",
+      "done-at": "koniec {time}",
+      "none-for-template": "Brak podglądu dla {template}",
+      "press-hint": "Naciśnij dowolną część podglądu, aby przejść do jej ustawień.",
+      "region-label": "{region}: przejdź do ustawień",
+      "skeleton-hint": "Na razie nie ma nic do pokazania. Naciśnij część podglądu, aby przejść do jej ustawień.",
+      "size-label": "Rozmiar podglądu",
+      "as": "Podgląd dla",
+      "as-now": "Teraz",
+      "size-small": "Mały",
+      "size-medium": "Średni",
+      "tile-off": "Wył.",
+      "tile-on": "Wł.",
+      "tile-active": "Aktywne",
+      "energy-source": "Słońce",
+      "energy-grid": "Sieć",
+      "energy-battery": "Bateria",
+      "energy-home": "Dom",
+      "budget-of": "z {amount}",
+      "energy-today": "Dziś {energy}",
+      "price-low": "Niska",
+      "price-medium": "Średnia",
+      "price-high": "Wysoka",
+      "reported-now": "Przed chwilą",
+      "in-a-moment": "Za chwilę",
+      "waiting": "Nic nie zostanie wysłane, dopóki pole {field} odczytuje „{reading}”.",
+      "waiting-none": "Nic nie zostanie wysłane, dopóki pole {field} nie ma wartości.",
+      "waiting-any": "Nic nie zostanie wysłane, dopóki żadne z pól {fields} nie ma wartości.",
+      "waiting-hint": "Naciśnij podgląd, aby przejść do pola {field}."
+    },
+    "slot": {
+      "surface": {
+        "island": "Dynamic Island",
+        "banner": "Ekran blokady"
+      }
+    },
+    "ramp": {
+      "mode-label": "Kolor pierścienia",
+      "mode-solid": "Jeden kolor",
+      "mode-ramp": "Zakres kolorów",
+      "solid-hint": "Cały pierścień ma ten kolor.",
+      "solid-pick": "Wybierz kolor",
+      "fallback-aria": "{field} bez odczytu",
+      "fallback-hint": "Cały pierścień ma ten kolor, dopóki odczyt nie jest liczbą.",
+      "fallback-empty": "Dopóki odczyt nie jest liczbą, pierścień zachowuje wbudowany zakres.",
+      "solid-empty": "Dopóki go nie wybierzesz, tarcza zachowuje swój zakres kolorów.",
+      "presets-label": "Gotowe zakresy kolorów",
+      "preset": {
+        "builtin": "Wbudowany",
+        "cool-warm": "Od zimnego do ciepłego",
+        "good-bad": "Od dobrego do złego",
+        "bad-good": "Od złego do dobrego"
+      },
+      "preset-applied": "Zastosowano: {name}",
+      "add": "Dodaj kolor",
+      "one-stop": "Jeden kolor wypełnia cały pierścień. Dodaj kolejny, aby utworzyć zakres.",
+      "count": "{count} z {max}",
+      "full": "Limit kolorów: {max}",
+      "reverse": "Odwróć",
+      "reversed": "Odwrócono kolejność kolorów",
+      "at-value": "przy {value}",
+      "pick-color": "Kolor {position}: {color}",
+      "remove-stop": "Usuń kolor {position}, {color}",
+      "move-up": "Przenieś wyżej kolor {position}, {color}",
+      "move-down": "Przenieś niżej kolor {position}, {color}",
+      "added": "Dodano kolor {position}, łącznie: {count}",
+      "removed": "Usunięto {color}, pozostało: {count}",
+      "moved": "{color} na pozycji {position} z {count}",
+      "picked": "Kolor {position} to teraz {color}"
+    },
+    "enum": {
+      "color": {
+        "red": "Czerwony",
+        "orange": "Pomarańczowy",
+        "yellow": "Żółty",
+        "green": "Zielony",
+        "mint": "Miętowy",
+        "teal": "Morski",
+        "cyan": "Cyjan",
+        "blue": "Niebieski",
+        "indigo": "Indygo",
+        "purple": "Fioletowy",
+        "pink": "Różowy",
+        "brown": "Brązowy",
+        "gray": "Szary",
+        "gray2": "Szary 2",
+        "gray3": "Szary 3",
+        "gray4": "Szary 4",
+        "gray5": "Szary 5",
+        "gray6": "Szary 6"
+      },
+      "rendering-mode": {
+        "monochrome": "Monochromatyczny",
+        "hierarchical": "Hierarchiczny",
+        "palette": "Paleta",
+        "multicolor": "Wielokolorowy"
+      },
+      "color-rendering": {
+        "flat": "Jednolity",
+        "gradient": "Gradient"
+      },
+      "track-fill": {
+        "solid": "Jednolity",
+        "hatched": "Kreskowany"
+      },
+      "primary_column": {
+        "left": "Lewa",
+        "right": "Prawa"
+      },
+      "display": {
+        "remaining": "Pozostało",
+        "spent": "Wydano"
+      },
+      "scale": {
+        "cents": "Centy (× 100)"
+      },
+      "image_fit": {
+        "contain": "Wycinek",
+        "cover": "Zdjęcie"
+      }
+    },
+    "template": {
+      "status": {
+        "label": "Status",
+        "hint": "Jeden stan w skrócie"
+      },
+      "progress": {
+        "label": "Progress",
+        "hint": "Coś, co zmierza do końca"
+      },
+      "gauge": {
+        "label": "Gauge",
+        "hint": "Odczyt w zakresie"
+      },
+      "countdown": {
+        "label": "Countdown",
+        "hint": "Czas pozostały do danej chwili"
+      },
+      "list": {
+        "label": "List",
+        "hint": "Kilka odczytów w jednym widżecie"
+      },
+      "battery": {
+        "label": "Battery",
+        "hint": "Poziomy naładowania urządzeń"
+      },
+      "switchboard": {
+        "label": "Switchboard",
+        "hint": "Przyciski i przełączniki do naciskania z ekranu początkowego"
+      },
+      "monitor": {
+        "label": "Monitor",
+        "hint": "Dwie kolumny odczytów"
+      },
+      "generic": {
+        "label": "Generic",
+        "retired": "Starszy szablon, którego Aivi już nie obsługuje. Przełącz go na Progress lub Monitor w aplikacji Aivi."
+      },
+      "budget": {
+        "label": "Budget",
+        "hint": "Wydatki względem budżetu, według kategorii"
+      },
+      "trend": {
+        "label": "Trend",
+        "hint": "Odczyt i jego niedawna historia"
+      },
+      "prices": {
+        "label": "Prices",
+        "hint": "Oś czasu cen energii elektrycznej"
+      },
+      "energy": {
+        "label": "Energy",
+        "hint": "Słońce, sieć, bateria i dom w skrócie"
+      },
+      "showcase": {
+        "label": "Wizytówka",
+        "hint": "Zdjęcie rzeczy, jej stan i odczyty"
+      },
+      "remote": {
+        "label": "Pilot",
+        "hint": "Zdjęcie rzeczy, odczyt i przyciski do naciśnięcia"
+      }
+    },
+    "field-label": {
+      "state": "Stan",
+      "value": "Wartość",
+      "progress": "Postęp",
+      "target": "Czas docelowy",
+      "rows": "Encje",
+      "devices": "Sensory baterii",
+      "actions": "Kafelki",
+      "icon": "Ikona",
+      "accent": "Kolor akcentu",
+      "tap_url": "Otwiera po dotknięciu",
+      "end_date": "Czas zakończenia",
+      "unit": "Jednostka",
+      "label": "Etykieta",
+      "subtitle": "Podtytuł",
+      "bar_color": "Kolor paska",
+      "min_value": "Minimum",
+      "max_value": "Maksimum",
+      "ring": "Kolor pierścienia",
+      "expired_text": "Tekst po upływie",
+      "segments": "Pasek postępu",
+      "header_left": "Nagłówek",
+      "header_right": "Nagłówek po prawej",
+      "footer_left": "Stopka",
+      "footer_right": "Stopka po prawej",
+      "compact_value": "Dynamic Island",
+      "right_value": "Wartość prawej kolumny",
+      "right_header": "Nagłówek prawej kolumny",
+      "right_footer": "Stopka prawej kolumny",
+      "left_value": "Wartość lewej kolumny",
+      "left_header": "Nagłówek lewej kolumny",
+      "left_footer": "Stopka lewej kolumny",
+      "primary_column": "Główna kolumna",
+      "spent": "Wydano",
+      "budget": "Budżet",
+      "currency": "Waluta",
+      "categories": "Kategorie",
+      "display": "Główna liczba",
+      "total_color": "Kolor pierścienia",
+      "points": "Historia",
+      "color": "Kolor linii",
+      "entries": "Sensor cen",
+      "scale": "Skala cen",
+      "sources": "Produkcja",
+      "grid_power": "Moc sieci",
+      "battery_power": "Moc baterii",
+      "battery_level": "Naładowanie baterii",
+      "home_power": "Moc domu",
+      "grid_today": "Sieć dziś",
+      "home_today": "Dom dziś",
+      "image": "Zdjęcie",
+      "image_fit": "Styl zdjęcia",
+      "image_alt": "Opis zdjęcia",
+      "state_icon": "Ikona stanu",
+      "stats": "Odczyty",
+      "reported_at": "Ostatni raport",
+      "badge": "Odznaka",
+      "badge_alt": "Opis odznaki",
+      "value_label": "Pod wartością"
+    },
+    "field-hint": {
+      "state": "Encja, której stan pokazuje widżet",
+      "progress": "Sensor podający wartość 0–100",
+      "target": "Znacznik czasu, do którego trwa odliczanie",
+      "rows": "Każda wybrana encja staje się wierszem",
+      "devices": "Każdy wybrany sensor staje się wierszem",
+      "actions": "Każda wybrana encja staje się kafelkiem: światła i przełączniki przełączają się, sceny i skrypty uruchamiają po naciśnięciu",
+      "icon": "Symbol Apple SF Symbols; zacznij pisać, aby szukać po nazwie lub słowie kluczowym",
+      "accent": "Kolor wyróżnienia widżetu: tło ikony i tekst bez własnego koloru",
+      "tap_url": "Dokąd prowadzi dotknięcie widżetu: panel, aplikacja, strona WWW",
+      "end_date": "Odlicza do tego czasu zamiast pokazywać stan",
+      "min_value": "Dolny koniec zakresu tarczy (domyślnie 0)",
+      "max_value": "Górny koniec zakresu tarczy (domyślnie 1)",
+      "ring": "Jak kolorowana jest tarcza w całym zakresie, od dolnego do górnego końca",
+      "expired_text": "Wyświetlany po upływie czasu docelowego",
+      "compact_value": "Jedyna wartość widoczna obok ikony, gdy Dynamic Island jest zwinięta",
+      "spent": "Ile wydano do tej pory",
+      "budget": "Kwota do wydania: liczba lub wartość na żywo z encji",
+      "currency": "Trzyliterowy kod, np. USD lub EUR",
+      "categories": "Każdy wybrany sensor staje się kategorią; ustaw jej budżet w opcjach",
+      "display": "Pozostało odlicza w dół od budżetu, Wydano liczy w górę",
+      "total_color": "Pierścień wokół głównej liczby",
+      "points": "Rysowana z danych zapisanych przez Home Assistant, więc jest widoczna od pierwszej aktualizacji",
+      "entries": "Sensor cen (Nord Pool, ENTSO-e, Octopus Energy, Amber i podobne): oś czasu jest odczytywana z jego atrybutów. Jedna aktualizacja dziennie wystarczy, by widżet był aktualny.",
+      "scale": "Centy pokazują 0,25 EUR/kWh jako 25 ct/kWh",
+      "color": "Linia i wypełnienie pod nią",
+      "header_left": "Górna linia banera, po lewej",
+      "header_right": "Górna linia banera, po prawej",
+      "footer_left": "Dolna linia banera, po lewej",
+      "footer_right": "Dolna linia banera, po prawej",
+      "left_value": "Odczyt lewej kolumny, dużą czcionką",
+      "left_header": "Mała linia nad lewym odczytem",
+      "left_footer": "Mała linia pod lewym odczytem",
+      "right_value": "Odczyt prawej kolumny, dużą czcionką",
+      "right_header": "Mała linia nad prawym odczytem",
+      "right_footer": "Mała linia pod prawym odczytem",
+      "primary_column": "Kolumna, którą pokazuje zwinięta Dynamic Island",
+      "image": "Publiczny adres https, który urządzenie samo pobiera, np. samochód na przezroczystym tle",
+      "image_alt": "Odczytywany przez VoiceOver zamiast zdjęcia",
+      "reported_at": "Widżet podaje, ile czasu minęło od ostatniego raportu tej encji"
+    },
+    "field-hint-template": {
+      "state": "To, co pokazuje widżet, tak jak zwraca to szablon",
+      "progress": "Liczba od 0 do 100"
+    },
+    "switchboard": {
+      "subtitle": "Druga linia",
+      "subtitle-aria": "Co pokazuje druga linia: {name}",
+      "subtitle-area": "Pomieszczenie",
+      "subtitle-state": "Stan, np. 2700 K",
+      "subtitle-none": "Nic",
+      "subtitle-custom": "Własny tekst",
+      "subtitle-hint": "Mały tekst pod nazwą kafelka.",
+      "subtitle-custom-aria": "Własna druga linia: {name}",
+      "press": "Po naciśnięciu",
+      "press-toggle": "Włącza lub wyłącza: {name}",
+      "press-on": "Włącza: {name}",
+      "press-open": "Otwiera lub zamyka: {name}",
+      "press-lock": "Blokuje lub odblokowuje: {name}",
+      "press-scene": "Aktywuje: {name}",
+      "press-script": "Uruchamia: {name}",
+      "press-button": "Naciska: {name}",
+      "color-hint": "Koloruje kafelek, gdy jest włączony. Domyślnie kolor akcentu widżetu.",
+      "subtitle-placeholder": "Na przykład Piętro",
+      "color-invalid": "Użyj nazwy z palety lub #RRGGBB.",
+      "gradient": "Gradient",
+      "gradient-aria": "Gradient: {name}",
+      "gradient-hint": "Gradient koloruje kafelek, gdy jest włączony, zamiast jego koloru.",
+      "gradient-color": "Jeden z punktów nie jest kolorem: użyj nazwy z palety lub #RRGGBB.",
+      "gradient-count": "Gradient wymaga 2 lub 3 kolorów.",
+      "image": "URL obrazu",
+      "image-aria": "URL obrazu: {name}",
+      "image-alt": "Opis obrazu",
+      "image-alt-aria": "Opis obrazu: {name}",
+      "image-alt-hint": "Odczytywany przez VoiceOver zamiast obrazu.",
+      "picture": "Obraz",
+      "picture-custom": "Z adresu URL",
+      "picture-entity": "Obraz encji",
+      "image-hint": "Publiczny adres https, który urządzenie pobiera samo. Plik powinien być mały: najwyżej 256 KB, 1024 px na bok i 1 megapiksel, w formacie PNG, JPEG, HEIC, WebP lub GIF. Urządzenie przechowuje go przez dobę, więc nowy URL od razu pokazuje nowy obraz.",
+      "image-https": "URL musi zaczynać się od https://.",
+      "image-long": "URL jest dłuższy niż 2048 znaków.",
+      "image-space": "URL nie może zawierać spacji.",
+      "image-host": "URL wymaga nazwy hosta po https://.",
+      "picture-use": "Użyj obrazu encji",
+      "picture-warn": "Tylko jeśli ten URL jest publiczny i stały: urządzenie pobiera go bez danych logowania Home Assistant, a URL ze zmieniającym się tokenem przestaje działać.",
+      "picture-local": "Obraz tej encji to adres Home Assistant, którego urządzenie nie może pobrać, więc nie da się go użyć.",
+      "too-big": "Za duże dla Aivi: {bytes} z {limit} bajtów. Nic nie zostanie wysłane, dopóki się nie zmieści: skróć adresy URL obrazów lub drugie linie albo usuń kafelki.",
+      "fix-options": "Popraw opcje zaznaczone na czerwono, aby zapisać: {rows}.",
+      "words": "Słowa stanów",
+      "words-changed": "Zmienione: {count}",
+      "words-hint": "Co kafelek mówi w każdym stanie. Zostaw puste, aby użyć pokazanego słowa, lub je ukryj. Najwyżej 24 znaki.",
+      "word-aria": "Słowo dla stanu {state}: {name}",
+      "word-hide": "Ukryj",
+      "word-hide-aria": "Ukryj słowo dla stanu {state}: {name}",
+      "word-hidden": "Ukryte",
+      "word-none": "Bez słowa",
+      "word-on": "Włączone",
+      "word-off": "Wyłączone",
+      "word-turning-on": "Włączanie",
+      "word-turning-off": "Wyłączanie",
+      "word-no-response": "Brak odpowiedzi",
+      "word-idle": "Bezczynne",
+      "word-active": "Aktywne",
+      "word-sent": "Wysłano"
+    },
+    "field-hint-budget": {
+      "subtitle": "Wyświetlany z sumą, np. „zostało 20 dni”"
+    },
+    "field-hint-trend": {
+      "value": "Bieżący odczyt, dużą czcionką",
+      "unit": "Domyślnie jednostka sensora",
+      "min_value": "Stały dół wykresu (inaczej dopasowuje się do danych)",
+      "max_value": "Stała góra wykresu (inaczej dopasowuje się do danych)"
+    },
+    "field-hint-prices": {
+      "unit": "Domyślnie jednostka sensora"
+    },
+    "delivery": {
+      "stale-label": "Oznacz jako nieaktualne po",
+      "stale-hint": "Gdy treść jest tak stara bez aktualizacji, widżet ją przyciemnia i pokazuje czas ostatniej aktualizacji.",
+      "stale-keep": "Jak w aplikacji Aivi",
+      "stale-never": "Nigdy",
+      "throttle-label": "Aktualizuj najwyżej co",
+      "throttle-hint": "iOS pozwala Aktywności na żywo na około 240 aktualizacji. Zmiany w międzyczasie są wstrzymywane, a najnowsza zostaje wysłana po upływie tego czasu; rozpoczęcie i zakończenie nigdy nie są opóźniane.",
+      "throttle-off": "Każda zmiana (bez limitu)"
+    },
+    "duration": {
+      "seconds-one": "{count} sekunda",
+      "seconds-few": "{count} sekundy",
+      "seconds-many": "{count} sekund",
+      "seconds-other": "{count} sekundy",
+      "minutes-one": "{count} minuta",
+      "minutes-few": "{count} minuty",
+      "minutes-many": "{count} minut",
+      "minutes-other": "{count} minuty",
+      "hours-one": "{count} godzina",
+      "hours-few": "{count} godziny",
+      "hours-many": "{count} godzin",
+      "hours-other": "{count} godziny",
+      "days-one": "{count} dzień",
+      "days-few": "{count} dni",
+      "days-many": "{count} dni",
+      "days-other": "{count} dnia"
+    },
+    "color-field": {
+      "pick": "{label}: {color}",
+      "picker-aria": "{label}, własny kolor",
+      "hex-aria": "{label}, kod hex",
+      "invalid": "Użyj kodu hex, np. #FFD27A."
+    },
+    "gradient": {
+      "auto": "Automatyczny",
+      "none": "Brak",
+      "custom": "Własny",
+      "auto-hint": "Podąża za kolorem światła, gdy jest włączone.",
+      "none-hint": "Bez gradientu: kafelek używa swojego koloru.",
+      "stop-aria": "Kolor gradientu {n}",
+      "remove-aria": "Usuń kolor gradientu {n}",
+      "add": "Dodaj kolor"
+    },
+    "section": {
+      "content": "Co pokazuje",
+      "look": "Wygląd",
+      "behavior": "Zachowanie",
+      "runs": "Kiedy działa"
+    },
+    "fold": {
+      "set": "Ustawione: {count}"
+    },
+    "group": {
+      "progress": "Postęp",
+      "reading": "Odczyt",
+      "range": "Zakres",
+      "countdown": "Odliczanie",
+      "total": "Suma",
+      "prices": "Ceny",
+      "grid": "Sieć",
+      "battery": "Bateria",
+      "home": "Dom",
+      "headline": "Nagłówek",
+      "footnote": "Stopka",
+      "left-column": "Lewa kolumna",
+      "right-column": "Prawa kolumna"
+    },
+    "group-hint-gauge": {
+      "range": "Dwa końce tarczy. Gdy puste, zakres to od 0 do 1."
+    },
+    "group-hint-trend": {
+      "range": "Stały zakres wykresu. Gdy puste, dopasowuje się do danych."
+    },
+    "field-short": {
+      "min_value": "Minimum",
+      "max_value": "Maksimum",
+      "left_value": "Wartość",
+      "left_header": "Nagłówek",
+      "left_footer": "Stopka",
+      "right_value": "Wartość",
+      "right_header": "Nagłówek",
+      "right_footer": "Stopka",
+      "header_left": "Lewo",
+      "header_right": "Prawo",
+      "footer_left": "Lewo",
+      "footer_right": "Prawo",
+      "grid_power": "Moc",
+      "grid_today": "Dziś",
+      "battery_power": "Moc",
+      "battery_level": "Naładowanie",
+      "home_power": "Moc",
+      "home_today": "Dziś",
+      "segments": "Pasek",
+      "progress": "Wartość"
+    },
+    "field-placeholder-gauge": {
+      "min_value": "0",
+      "max_value": "1",
+      "unit": "°C",
+      "label": "Salon"
+    },
+    "field-placeholder-trend": {
+      "min_value": "Auto",
+      "max_value": "Auto",
+      "unit": "kWh"
+    },
+    "symbols": {
+      "placeholder": "Szukaj symboli, np. washer lub lightbulb",
+      "categories": "Kategorie symboli",
+      "cat-all": "Wszystkie",
+      "cat-home": "Dom",
+      "cat-devices": "Urządzenia",
+      "cat-objectsandtools": "Przedmioty",
+      "cat-weather": "Pogoda",
+      "cat-nature": "Natura",
+      "cat-transportation": "Transport",
+      "cat-automotive": "Samochód",
+      "cat-privacyandsecurity": "Ochrona",
+      "cat-human": "Ludzie",
+      "cat-health": "Zdrowie",
+      "cat-media": "Media",
+      "cat-communication": "Komunikacja",
+      "cat-commerce": "Pieniądze",
+      "cat-time": "Czas",
+      "list": "Pasujące symbole",
+      "loading": "Wczytywanie nazw symboli Apple…",
+      "failed": "Nie udało się wczytać listy symboli. Wpisana nazwa dowolnego symbolu nadal działa.",
+      "no-matches": "Brak pasujących symboli. Wpisana dowolna nazwa nadal działa.",
+      "unknown": "Tej nazwy nie ma na liście symboli Apple. Zostaje zachowana tak, jak ją wpisano.",
+      "ios": "iOS {version}+",
+      "help": "Podgląd pokazuje podobną ikonę albo ✦, gdy takiej nie ma. Twoje urządzenie rysuje oryginalny symbol Apple."
+    },
+    "field-hint-status": {
+      "value": "Odczyt dużą czcionką; stan przenosi się wtedy do linii pod nim"
+    },
+    "field-hint-gauge": {
+      "value": "Odczyt, który wskazuje tarcza",
+      "unit": "Wyświetlana po odczycie, np. °C lub %",
+      "label": "Mała linia nad tarczą; gdy pusta, nazwa widżetu"
+    },
+    "field-hint-countdown": {
+      "subtitle": "Mała linia pod odliczaniem"
+    },
+    "field-hint-energy": {
+      "sources": "Sensory mocy tego, co produkuje energię: słońca, wiatru, generatora",
+      "grid_power": "Dodatnia przy poborze z sieci, ujemna przy oddawaniu",
+      "grid_today": "Licznik energii; dzisiejsza wartość liczona jest od północy",
+      "battery_power": "Dodatnia przy ładowaniu, ujemna przy rozładowywaniu",
+      "battery_level": "Naładowanie baterii, 0–100",
+      "home_power": "Ile dom zużywa w tej chwili",
+      "home_today": "Licznik energii; dzisiejsza wartość liczona jest od północy"
+    },
+    "field-placeholder": {
+      "tap_url": "https://…",
+      "image": "https://…/car.png",
+      "image_alt": "Samochód z boku"
+    },
+    "field-placeholder-countdown": {
+      "expired_text": "Gotowe"
+    },
+    "field-placeholder-budget": {
+      "currency": "EUR"
+    },
+    "field-placeholder-prices": {
+      "unit": "ct/kWh"
+    },
+    "field-placeholder-monitor": {
+      "left_header": "W środku",
+      "right_header": "Na zewnątrz",
+      "left_footer": "Wilgotność 46%",
+      "right_footer": "Odczuwalna 9°"
+    },
+    "field-idle": {
+      "primary_column": "Działa, gdy obie kolumny coś pokazują: przy jednej kolumnie nie ma wyboru."
+    },
+    "events": {
+      "title": "Zdarzenia z Twoich urządzeń",
+      "button": "Zdarzenia: {state}",
+      "tooltip": "Zdarzenia",
+      "state-ok": "połączono",
+      "state-warn": "chwilowo brak połączenia",
+      "state-bad": "rozłączono",
+      "state-idle": "nie nasłuchuje",
+      "stream-connected": "Połączono",
+      "stream-reconnecting": "Ponowne łączenie…",
+      "stream-paused": "Wstrzymano",
+      "stream-stopped": "Rozłączono",
+      "stream-idle": "Nie nasłuchuje",
+      "since": "Nasłuchuje od {time}",
+      "paused-why": "Subskrypcja Aivi nie jest aktywna, więc zdarzenia z Twoich urządzeń nie docierają.",
+      "idle-why": "Nic, co tu skonfigurowano, nie reaguje na naciśnięcia, więc nie ma czego nasłuchiwać. Tak ma być: nasłuchiwanie zacznie się samo, gdy coś takiego się pojawi, np. Switchboard lub Pilot.",
+      "list-label": "Najnowsze zdarzenia",
+      "empty": "Na razie nic. Naciśnij kafelek na jednym ze swoich urządzeń, a od razu pojawi się tutaj.",
+      "see-all": "Zobacz wszystkie zdarzenia"
+    },
+    "log": {
+      "title": "Dziennik",
+      "open": "Otwórz dziennik",
+      "account-label": "Konto",
+      "show-label": "Pokaż",
+      "show-all": "Wszystko",
+      "show-pushes": "Wysyłki do Aivi",
+      "show-presses": "Naciśnięcia z Twoich urządzeń",
+      "show-problems": "Tylko problemy",
+      "for-label": "Dla",
+      "for-any": "Czegokolwiek",
+      "option-count": "{label} ({count})",
+      "showing-one": "{shown} z {count} wpisu",
+      "showing-few": "{shown} z {count} wpisów",
+      "showing-many": "{shown} z {count} wpisów",
+      "showing-other": "{shown} z {count} wpisu",
+      "show-everything": "Pokaż wszystko",
+      "list-label": "Dziennik, od najnowszych",
+      "empty": "Jeszcze nic. Wysyłki do Aivi i naciśnięcia z Twoich urządzeń pojawiają się tutaj na bieżąco.",
+      "no-matches": "Nic nie pasuje do tych filtrów",
+      "footer-memory": "W pamięci: lista zaczyna się od nowa po restarcie Home Assistanta. Aby ją zachować, włącz „Zachowuj dziennik między restartami” w opcjach konta.",
+      "footer-kept": "Zachowywany między restartami: to konto zapisuje swój dziennik na dysku."
+    },
+    "conflict": {
+      "also-fed": "Automatyzacja też to aktualizuje: {names}. Jedno nadpisuje drugie.",
+      "also-fed-several": "Zasilają to też automatyzacje: {names}. One i ten panel nadpisują się nawzajem.",
+      "mark": "Automatyzacja też to aktualizuje",
+      "fed": "Dane z automatyzacji: {names}",
+      "turn-off": "Wyłącz automatyzację",
+      "turn-off-all": "Wyłącz je",
+      "turn-off-named": "Wyłącz: {names}",
+      "turned-off": "Automatyzację wyłączono. Teraz aktualizuje to tylko ten panel.",
+      "keep-shared": "Automatyzacja {name} aktualizuje też inne widżety, więc nie można jej wyłączyć stąd.",
+      "keep-initial_state": "Automatyzacja {name} włącza się ponownie przy każdym starcie Home Assistanta, więc wyłącz ją w jej własnych ustawieniach."
+    },
+    "field-hint-showcase": {
+      "image_fit": "Wycinek stoi na widżecie; zdjęcie wypełnia jego bok",
+      "state": "Słowo opisujące stan, np. Zamknięte albo Ładowanie",
+      "state_icon": "Wyświetlana przed słowem stanu",
+      "stats": "Każda wybrana encja staje się odczytem: Mały pokazuje pierwszy, Średni trzy",
+      "badge": "Mały znak marki obok czasu raportu, pomijany na zdjęciach",
+      "badge_alt": "Odczytywany przez VoiceOver zamiast odznaki",
+      "icon": "Zastępuje zdjęcie, dopóki go nie ma"
+    },
+    "field-placeholder-showcase": {
+      "badge": "https://…/logo.png",
+      "badge_alt": "Logo marki"
+    },
+    "group-showcase": {
+      "picture": "Zdjęcie",
+      "state": "Stan",
+      "badge": "Odznaka"
+    },
+    "showcase": {
+      "too-big": "Za duże dla Aivi: {bytes} z {limit} bajtów. Nic nie zostanie wysłane, dopóki się nie zmieści: skróć adresy zdjęć lub etykiety albo usuń odczyty."
+    },
+    "field-label-remote": {
+      "actions": "Przyciski",
+      "value": "Odczyt"
+    },
+    "field-hint-remote": {
+      "value": "Duży odczyt, na przykład naładowanie auta; liczba zachowuje jednostkę swojej encji",
+      "actions": "Każda wybrana encja staje się przyciskiem: Mały pokazuje pierwsze dwa, Średni do pięciu",
+      "stats": "Do trzech odczytów, widocznych od rozmiaru Duży",
+      "image_fit": "Wycinek stoi obok odczytu; zdjęcie mieści się w zaokrąglonej ramce",
+      "icon": "Zastępuje zdjęcie, dopóki go nie ma"
+    },
+    "group-remote": {
+      "picture": "Zdjęcie",
+      "reading": "Odczyt",
+      "bar": "Pasek"
+    },
+    "remote": {
+      "too-big": "Za duże dla Aivi: {bytes} z {limit} bajtów. Nic nie zostanie wysłane, dopóki się nie zmieści: skróć adresy URL zdjęć lub drugie linie albo usuń przyciski."
+    },
+    "field-hint-activity-remote": {
+      "value": "Duży odczyt, np. bateria robota sprzątającego; jednostka to osobne pole",
+      "actions": "Każda wybrana encja staje się przyciskiem: do trzech, z etykietą, dopóki są najwyżej dwa",
+      "stats": "Do dwóch odczytów, na ekranie blokady, dopóki nie ma paska",
+      "image": "Publiczny adres URL https; urządzenie pokaże zdjęcie, gdy aplikacja je pobierze, a do tego czasu ikonę",
+      "state": "Słowo o tym, jak jest, np. Sprząta lub Ładuje",
+      "unit": "Tuż za wartością, np. % lub km",
+      "value_label": "Słowo pod wartością, np. zostało",
+      "progress": "Rysuje pasek z czujnika podającego 0–100; odczyty ustępują mu miejsca",
+      "bar_color": "Kolor paska; bez ustawienia kolor stanu, a w braku tego kolor akcentu",
+      "compact_value": "Widoczne obok ikony, gdy Island jest zwinięta; bez ustawienia wartość z jednostką"
+    },
+    "field-placeholder-activity-remote": {
+      "unit": "%",
+      "value_label": "zostało"
+    },
+    "every": {
+      "seconds-one": "co sekundę",
+      "seconds-other": "co {count} sekundy",
+      "minutes-one": "co minutę",
+      "minutes-other": "co {count} minuty",
+      "hours-one": "co godzinę",
+      "hours-other": "co {count} godziny",
+      "days-one": "codziennie",
+      "days-other": "co {count} dnia",
+      "seconds-few": "co {count} sekundy",
+      "seconds-many": "co {count} sekund",
+      "minutes-few": "co {count} minuty",
+      "minutes-many": "co {count} minut",
+      "hours-few": "co {count} godziny",
+      "hours-many": "co {count} godzin",
+      "days-few": "co {count} dni",
+      "days-many": "co {count} dni"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "name": "Strumień zdarzeń",
+        "state_attributes": {
+          "reason": {
+            "name": "Powód",
+            "state": {
+              "subscription_inactive": "Brak aktywnej subskrypcji",
+              "auth_failed": "Token odrzucony"
+            }
+          },
+          "last_error": {
+            "name": "Ostatni błąd"
+          },
+          "connected_since": {
+            "name": "Połączono od"
+          },
+          "reconnects": {
+            "name": "Ponowne połączenia"
+          },
+          "last_event": {
+            "name": "Ostatnie zdarzenie"
+          }
+        }
+      },
+      "problem": {
+        "name": "Stan",
+        "state_attributes": {
+          "problems": {
+            "name": "Problemy"
+          },
+          "subscription": {
+            "name": "Subskrypcja",
+            "state": {
+              "expired": "Wygasła",
+              "none": "Brak subskrypcji"
+            }
+          },
+          "event_stream": {
+            "name": "Strumień zdarzeń",
+            "state": {
+              "auth_failed": "Token odrzucony"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "name": "Naciśnięcia",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "Włączono",
+              "toggle_off": "Wyłączono",
+              "pressed": "Naciśnięto"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "name": "Ostatnio wysłano"
+      },
+      "push_status": {
+        "name": "Stan aktualizacji",
+        "state": {
+          "ok": "OK",
+          "retrying": "Ponawianie",
+          "auth_failed": "Token odrzucony",
+          "not_found": "Brak w aplikacji Aivi",
+          "rejected": "Treść odrzucona",
+          "too_large": "Treść za duża",
+          "template_error": "Błąd szablonu Home Assistant",
+          "template_mismatch": "Niezgodny szablon widżetu",
+          "no_subscription": "Brak aktywnej subskrypcji",
+          "quota_exceeded": "Osiągnięto limit Aktywności na żywo",
+          "error": "Błąd",
+          "waiting": "Czeka na wartość"
+        },
+        "state_attributes": {
+          "last_error": {
+            "name": "Ostatni błąd"
+          },
+          "waiting_for": {
+            "name": "Czeka na"
+          }
+        }
+      },
+      "subscription": {
+        "name": "Subskrypcja",
+        "state": {
+          "active": "Aktywna",
+          "expired": "Wygasła",
+          "none": "Brak subskrypcji"
+        },
+        "state_attributes": {
+          "expires_at": {
+            "name": "Kończy się"
+          },
+          "renews": {
+            "name": "Odnawia się"
+          },
+          "expired_at": {
+            "name": "Wygasła dnia"
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "default": "mdi:lan-disconnect",
+        "state": {
+          "on": "mdi:lan-connect"
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "default": "mdi:gesture-tap",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "mdi:toggle-switch",
+              "toggle_off": "mdi:toggle-switch-off-outline",
+              "pressed": "mdi:gesture-tap-button"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "default": "mdi:cloud-upload-outline"
+      },
+      "push_status": {
+        "default": "mdi:cloud-check-outline",
+        "state": {
+          "ok": "mdi:cloud-check-outline",
+          "retrying": "mdi:cloud-refresh-outline"
+        }
+      },
+      "subscription": {
+        "default": "mdi:account-check-outline",
+        "state": {
+          "expired": "mdi:account-cancel-outline",
+          "none": "mdi:account-off-outline"
+        }
+      }
+    }
+  }
+}

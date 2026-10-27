@@ -1,0 +1,42 @@
+name: Bug report
+description: Something in the integration or its panel does not work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Questions about the Aivi app or your account belong at https://docs.getaivi.app/support/.
+        If the Marketplace itself fails to download or update any integration, report it at https://github.com/home-assistant/core/issues; for HACS, at https://github.com/hacs/integration/issues.
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened
+      description: What you did, what you expected, and what you saw instead.
+    validations:
+      required: true
+  - type: input
+    id: ha
+    attributes:
+      label: Home Assistant version
+      placeholder: "2026.9.4"
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Integration version
+      description: Shown in the Marketplace (or HACS) and in the panel's account menu.
+    validations:
+      required: true
+  - type: input
+    id: template
+    attributes:
+      label: Widget or Live Activity template
+      placeholder: "Gauge"
+  - type: textarea
+    id: diagnostics
+    attributes:
+      label: Diagnostics and logs
+      description: >-
+        Download diagnostics from Settings → Devices & services → Aivi and attach the file
+        (the API token is removed from it). Add any related lines from the Home Assistant log.

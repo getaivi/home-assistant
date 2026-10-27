@@ -1,0 +1,106 @@
+[project]
+name = "aivi-home-assistant"
+version = "0.1.0"
+description = "Home Assistant integration for Aivi widgets and Live Activities"
+# The Home Assistant this is developed against needs Python 3.14.
+requires-python = ">=3.14.2"
+
+[dependency-groups]
+dev = [
+    "homeassistant>=2026.8.0",
+    "pytest-homeassistant-custom-component",
+    "pytest-cov",
+    "ruff",
+    "ty",
+    "openapi-core>=0.23.1",
+    "jsonschema[format-nongpl]>=4.26.0",
+    # The Suggest schema tests convert it the way AI Task providers do;
+    # Home Assistant stopped installing it by itself in 2026.9.
+    "voluptuous-openapi",
+]
+
+[tool.uv]
+package = false
+
+[tool.uv.workspace]
+members = ["qa/mock-aivi"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
+addopts = "-p no:cacheprovider --cov=custom_components.aivi --cov-report=term-missing:skip-covered --cov-fail-under=95"
+asyncio_mode = "auto"
+
+[tool.ty.src]
+include = ["custom_components"]
+
+[tool.ty.rules]
+# Every rule at error severity, except the first three below, which ty's
+# own docs flag as having unavoidable false positives. They stay visible as
+# warnings and never break CI. See "Stricter checking with ty":
+# https://docs.astral.sh/ty/coming-from-mypy-or-pyright/#stricter-checking-with-ty
+all = "error"
+division-by-zero = "warn"
+possibly-missing-attribute = "warn"
+possibly-missing-import = "warn"
+# Also a warning: it reads a flag as constant across an `await` that another
+# task sets meanwhile (push.py's rerun flag), and calls the checks on what
+# comes over the websocket redundant because of how the value is annotated.
+redundant-condition-strict = "warn"
+# Also a warning: much of the code tests an optional on purpose so that an
+# empty one counts as absent, which `is not None` would change.
+truthiness-test-of-none-union = "warn"
+# Also a warning: Home Assistant declares entity state as cached properties,
+# and entities override them with plain properties as its docs show.
+invalid-property-type-override = "warn"
+
+[tool.ty.analysis]
+# Narrow `x == <literal>` comparisons; part of the docs' stricter config
+# and not covered by `all` (it is an analysis setting, not a rule).
+strict-literal-narrowing = true
+
+[tool.ty.terminal]
+# Without this, warnings also exit 1, which would defeat demoting the
+# rules above.
+error-on-warning = false
+
+[tool.ruff]
+# The lowest Python the minimum supported Home Assistant (hacs.json) runs on.
+target-version = "py313"
+line-length = 88
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "ASYNC"]
+extend-select = [
+    # With preview, per the ty docs' stricter-checking config.
+    "ANN",
+    "PYI",
+    "PGH003",
+    # Security checks; the few false positives carry a noqa with the reason.
+    "S",
+    # A broad `except Exception` has to say why it is broad.
+    "BLE001",
+    # Imports at the top, except for the optional Home Assistant components.
+    "PLC0415",
+    "SLF001",
+    # A noqa that suppresses nothing is an error.
+    "RUF100",
+]
+preview = true
+# ANN401: the integration's `Any`s are boundary types (HA state attributes,
+# Jinja render results, JSON wire payloads, LLM output) that are consumed
+# dynamically; `object` there would fail the ty gate. Home Assistant core
+# ignores ANN401 for the same reason.
+# S404: importing subprocess is not a finding; the calls are checked.
+ignore = ["B008", "ANN401", "S404"]
+
+[tool.ruff.lint.per-file-ignores]
+# S101: tests assert. ANN: annotating every test function and fixture adds
+# nothing, the typed code they call is checked. PLC0415 and SLF001: tests
+# import next to the case that needs the name, and reach into private state
+# to set up and inspect it.
+"tests/*" = ["S101", "ANN", "PLC0415", "SLF001"]
+
+[tool.ruff.lint.isort]
+# tests/helpers.py, which the test modules import by its bare name.
+known-first-party = ["helpers"]

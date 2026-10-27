@@ -1,0 +1,31 @@
+name: Dependabot auto-merge
+
+on: pull_request
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  auto-merge:
+    name: Auto-merge
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - id: meta
+        uses: dependabot/fetch-metadata@v3.1.0
+      - name: Check auto-merge is allowed
+        id: allowed
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          allowed=$(gh api "repos/${GITHUB_REPOSITORY}" --jq .allow_auto_merge)
+          echo "allowed=${allowed}" >> "$GITHUB_OUTPUT"
+          if [ "${allowed}" != true ]; then
+            echo "::notice::Auto-merge is off for this repository; merge by hand."
+          fi
+      - if: steps.allowed.outputs.allowed == 'true' && steps.meta.outputs.update-type != 'version-update:semver-major'
+        run: gh pr merge --auto --squash "$PR_URL"
+        env:
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          GH_TOKEN: ${{ github.token }}

@@ -1,0 +1,46 @@
+name: Validate
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 4 * * 1" # weekly: catches new hassfest/HACS requirements
+
+permissions:
+  contents: read
+
+jobs:
+  hassfest:
+    name: hassfest
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      # hassfest and hacs/action (below) track a branch, not a release:
+      # actions.lock holds their commits, and `gh actions-lock --relock`
+      # moves them forward when the weekly run flags a change.
+      - uses: home-assistant/actions/hassfest@master
+
+  hacs:
+    name: HACS validation
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      # The action refuses a private repository: it reads the files without
+      # a token. Until this one is public, the job says so and passes.
+      - name: Check visibility
+        id: visibility
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          private=$(gh api "repos/${GITHUB_REPOSITORY}" --jq .private)
+          echo "private=${private}" >> "$GITHUB_OUTPUT"
+          if [ "${private}" = true ]; then
+            echo "::notice::HACS validation skipped: the repository is private."
+          fi
+      - uses: hacs/action@main
+        if: steps.visibility.outputs.private == 'false'
+        with:
+          category: integration

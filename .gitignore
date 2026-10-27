@@ -1,0 +1,33 @@
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# The QA Home Assistant config dir is a live, disposable instance: only its
+# configuration.yaml is source. Everything Home Assistant writes at runtime
+# (.storage, database, logs, .cloud, blueprints, …) is ignored. Pre-onboarded
+# seed storage lives under qa/seed/ and is copied in on first boot.
+qa/homeassistant/*
+!qa/homeassistant/configuration.yaml
+# `make e2e`'s own Home Assistant config dir.
+.e2e/
+.coverage
+
+# The panel bundle is generated (Vite, `make bundle` / `npm run build`),
+# never committed: HACS installs come from the release zip, which builds it.
+custom_components/aivi/frontend/aivi-panel.js
+custom_components/aivi/frontend/aivi-code-editor*.js
+# The SF Symbols index's gzipped copy, which the release zip carries
+# beside the index.
+custom_components/aivi/frontend/sf-symbols.json.gz
+
+# Dev tooling (snapshot harness)
+node_modules/
+snapshots/
+snapshots-*/
+
+# Playwright Test output: the HTML reports and the failure traces
+playwright-report/
+test-results/
+

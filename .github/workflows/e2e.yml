@@ -1,0 +1,45 @@
+# E2E smoke journeys over the real qa stack (docker compose: Home Assistant
+# + the mock aivi), driven by Playwright. Kept out of ci.yml on purpose:
+# booting docker + HA is slow, and the fast feedback loop must not wait on
+# it. A failed journey is retried once (tests/e2e/qa/playwright.config.ts);
+# a pass on retry shows as flaky in the report.
+name: E2E
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: e2e-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  e2e:
+    name: Smoke journeys (qa stack)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: make e2e
+      # The HTML report, with the failed journeys' screenshots and traces
+      # (npx playwright show-report <dir>, or show-trace <zip>).
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: playwright-report-qa
+          path: |
+            playwright-report/qa/
+            test-results/qa/
+          if-no-files-found: ignore

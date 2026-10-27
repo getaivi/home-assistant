@@ -1,0 +1,89 @@
+name: Release
+
+# One-click release: computes the next semver from Conventional Commits with
+# git-cliff, stamps manifest.json, regenerates CHANGELOG.md, tags, and
+# publishes a GitHub release with the aivi.zip asset that HACS installs
+# (hacs.json: zip_release).
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: release
+  cancel-in-progress: false
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+        with:
+          fetch-depth: 0 # git-cliff needs full history + tags
+
+      - uses: astral-sh/setup-uv@v10.3.2
+
+      - name: Compute next version
+        id: version
+        run: |
+          latest="$(git describe --tags --abbrev=0 2>/dev/null || true)"
+          next="$(uvx git-cliff --bumped-version)"
+          if [ "$next" = "$latest" ]; then
+            echo "No release-worthy commits since $latest; nothing to do." >&2
+            exit 1
+          fi
+          echo "tag=$next" >> "$GITHUB_OUTPUT"
+          echo "version=${next#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Stamp manifest and changelog
+        run: |
+          tmp="$(mktemp)"
+          jq --arg v "${{ steps.version.outputs.version }}" '.version = $v' \
+            custom_components/aivi/manifest.json > "$tmp"
+          mv "$tmp" custom_components/aivi/manifest.json
+          uvx git-cliff --tag "${{ steps.version.outputs.tag }}" -o CHANGELOG.md
+
+      - name: Commit, tag, push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add custom_components/aivi/manifest.json CHANGELOG.md
+          git commit -m "chore(release): ${{ steps.version.outputs.tag }}"
+          git tag "${{ steps.version.outputs.tag }}"
+          git push origin HEAD:main "${{ steps.version.outputs.tag }}"
+
+      # The panel bundle is generated (gitignored), so the zip needs a fresh
+      # build — HACS installs come from this asset (hacs.json: zip_release).
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Build panel bundle
+        run: |
+          npm ci
+          npm run build
+
+      # A fresh checkout holds one build: the panel bundle and the one
+      # content-hashed template editor it imports, which it names. The SF
+      # Symbols index goes in gzipped too, which the panel's file view
+      # sends a browser that takes gzip: 40 KB instead of 330.
+      - name: Build HACS zip
+        run: |
+          cd custom_components/aivi
+          gzip -9 -n -k frontend/sf-symbols.json
+          editors=(frontend/aivi-code-editor-*.js)
+          test "${#editors[@]}" -eq 1 && test -f "${editors[0]}"
+          grep -qF "$(basename "${editors[0]}")" frontend/aivi-panel.js
+          zip -r ../../aivi.zip . -x '*__pycache__*'
+          unzip -l ../../aivi.zip | grep -F frontend/
+
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          uvx git-cliff --latest --strip header > notes.md
+          gh release create "${{ steps.version.outputs.tag }}" aivi.zip \
+            --title "${{ steps.version.outputs.tag }}" \
+            --notes-file notes.md

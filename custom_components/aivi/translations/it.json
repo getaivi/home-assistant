@@ -1,0 +1,1597 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Collega il tuo account Aivi",
+        "description": "Incolla il token API dalla scheda Settings dell'app Aivi. Se colleghi più di un account, dagli un nome.",
+        "data": {
+          "token": "Token API",
+          "name": "Nome dell'account"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Opzioni avanzate",
+            "description": "Facoltativo. Cambia l'URL di base solo per collegarti a un'API Aivi diversa da quella predefinita.",
+            "data": {
+              "base_url": "URL di base dell'API"
+            }
+          }
+        }
+      },
+      "reauth_confirm": {
+        "title": "Ricollega Aivi",
+        "description": "Aivi ha rifiutato il tuo token API. Incollane uno nuovo dalla scheda Settings dell'app Aivi.",
+        "data": {
+          "token": "Token API"
+        }
+      },
+      "reconfigure": {
+        "title": "Riconfigura Aivi",
+        "description": "Aggiorna il token API. Apri Opzioni avanzate per cambiare l'URL di base.",
+        "data": {
+          "token": "Token API"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Opzioni avanzate",
+            "description": "Facoltativo. Cambia l'URL di base solo per collegarti a un'API Aivi diversa da quella predefinita.",
+            "data": {
+              "base_url": "URL di base dell'API"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aivi ha rifiutato quel token API. Controllalo e riprova.",
+      "cannot_connect": "Impossibile raggiungere Aivi. Controlla la connessione e riprova.",
+      "no_subscription": "Questo account Aivi non ha un abbonamento attivo. Abbonati nell'app Aivi, poi riprova."
+    },
+    "abort": {
+      "reauth_successful": "Aivi ricollegato.",
+      "reconfigure_successful": "Connessione ad Aivi aggiornata.",
+      "already_configured": "Questo account Aivi è già collegato."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opzioni Aivi",
+        "data": {
+          "keep_log": "Conserva il registro tra i riavvii"
+        },
+        "data_description": {
+          "keep_log": "Il registro degli invii ad Aivi e delle pressioni dai tuoi dispositivi vive in memoria e riparte da zero quando Home Assistant si riavvia. Se attivo, viene anche scritto su disco ogni tanto, così sopravvive a un riavvio. Lascialo disattivato su una scheda SD che vuoi risparmiare."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_rejected": {
+      "message": "Aivi ha rifiutato il token API. Ricollega l'account per continuare ad aggiornare i tuoi widget e le tue Attività Live."
+    },
+    "cannot_connect": {
+      "message": "Impossibile raggiungere Aivi: {error}"
+    }
+  },
+  "issues": {
+    "widget_missing": {
+      "title": "Il widget \"{name}\" non è nell'app Aivi",
+      "description": "L'app Aivi non ha nessun widget con lo slug \"{slug}\", quindi Home Assistant non ha niente da alimentare per \"{name}\". Crealo di nuovo nella scheda **Widgets** dell'app Aivi con esattamente quello slug, oppure smetti di alimentare \"{name}\" nel pannello Aivi."
+    },
+    "content_rejected": {
+      "title": "Aivi ha rifiutato il contenuto per \"{name}\"",
+      "description": "Aivi ha rifiutato come non valido ciò che Home Assistant ha inviato per \"{name}\" ({slug}). Controlla le sue origini nel pannello Aivi. Gli aggiornamenti riprendono non appena Aivi accetta il contenuto."
+    },
+    "content_too_large": {
+      "title": "Il contenuto per \"{name}\" supera il limite di dimensione di Aivi",
+      "description": "Ciò che Home Assistant invierebbe per \"{name}\" ({slug}) supera i 4 KiB accettati da Aivi, quindi non viene inviato e i tuoi dispositivi continuano a mostrare l'ultimo aggiornamento. Nel pannello Aivi accorcia gli URL delle immagini o le seconde righe, oppure rimuovi dei riquadri. Gli aggiornamenti riprendono non appena rientra nel limite."
+    },
+    "unsupported_template": {
+      "title": "\"{name}\" usa un template che questa versione non può alimentare",
+      "description": "\"{name}\" usa il template \"{template}\", che questa versione dell'integrazione Aivi non supporta. Aggiorna l'integrazione per alimentarlo, oppure smetti di alimentare \"{name}\" nel pannello Aivi."
+    },
+    "activity_missing": {
+      "title": "L'Attività Live \"{name}\" non è nell'app Aivi",
+      "description": "L'app Aivi non ha nessuna Attività Live con lo slug \"{slug}\", quindi Home Assistant non ha niente da alimentare per \"{name}\". Creala di nuovo nella scheda **Activities** dell'app Aivi con esattamente quello slug, oppure smetti di alimentare \"{name}\" nel pannello Aivi."
+    },
+    "template_mismatch": {
+      "title": "\"{name}\" ha un template diverso nell'app Aivi",
+      "description": "Aivi ha rifiutato il contenuto per \"{name}\" ({slug}) perché il widget o l'Attività Live con quello slug ha nell'app Aivi un template diverso da \"{template}\". Smetti di alimentarlo e configuralo di nuovo nel pannello Aivi. Gli aggiornamenti riprendono non appena i template coincidono."
+    },
+    "activity_quota": {
+      "title": "Troppe Attività Live in corso per \"{name}\"",
+      "description": "Aivi non ha avviato l'Attività Live \"{name}\" ({slug}) perché l'account ha già il numero massimo di Attività Live in corso consentite. Terminane un'altra; il prossimo aggiornamento riproverà."
+    },
+    "subscription_inactive": {
+      "title": "L'abbonamento Aivi non è attivo",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Controlla l'abbonamento Aivi",
+            "description": "L'account Aivi \"{account}\" non ha un abbonamento attivo, quindi widget e Attività Live sono in pausa.\n\nTutto ciò che hai configurato nel pannello Aivi viene conservato. Rinnova nell'app Aivi e gli aggiornamenti riprendono entro un'ora. Hai già rinnovato? Seleziona **Controlla ora**.",
+            "submit": "Controlla ora"
+          },
+          "still_inactive": {
+            "title": "Non ancora rinnovato",
+            "description": "Aivi non segnala ancora un abbonamento attivo per \"{account}\". Rinnovalo nell'app Aivi, poi seleziona **Controlla di nuovo**. Viene comunque controllato ogni ora.",
+            "submit": "Controlla di nuovo"
+          },
+          "cannot_connect": {
+            "title": "Impossibile raggiungere Aivi",
+            "description": "Controlla la connessione, poi seleziona **Riprova**.",
+            "submit": "Riprova"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi ha rifiutato il token API. Prima ricollega l'account.",
+          "not_loaded": "L'account Aivi non è in esecuzione. Ricaricalo in **Impostazioni → Dispositivi e servizi**, poi riprova."
+        }
+      }
+    },
+    "subscription_expired": {
+      "title": "L'abbonamento Aivi non è attivo",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Controlla l'abbonamento Aivi",
+            "description": "L'abbonamento Aivi per \"{account}\" è scaduto il {expired}, quindi widget e Attività Live sono in pausa.\n\nTutto ciò che hai configurato nel pannello Aivi viene conservato. Rinnova nell'app Aivi e gli aggiornamenti riprendono entro un'ora. Hai già rinnovato? Seleziona **Controlla ora**.",
+            "submit": "Controlla ora"
+          },
+          "still_inactive": {
+            "title": "Non ancora rinnovato",
+            "description": "Aivi non segnala ancora un abbonamento attivo per \"{account}\". Rinnovalo nell'app Aivi, poi seleziona **Controlla di nuovo**. Viene comunque controllato ogni ora.",
+            "submit": "Controlla di nuovo"
+          },
+          "cannot_connect": {
+            "title": "Impossibile raggiungere Aivi",
+            "description": "Controlla la connessione, poi seleziona **Riprova**.",
+            "submit": "Riprova"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi ha rifiutato il token API. Prima ricollega l'account.",
+          "not_loaded": "L'account Aivi non è in esecuzione. Ricaricalo in **Impostazioni → Dispositivi e servizi**, poi riprova."
+        }
+      }
+    },
+    "automation_conflict": {
+      "title": "Anche un'automazione alimenta \"{name}\"",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Disattiva l'automazione che alimenta \"{name}\"",
+            "description": "Il pannello Aivi alimenta \"{name}\" ({slug}), ma lo fa anche: {automations}. I due si sovrascrivono a vicenda, quindi i tuoi dispositivi passano dall'uno all'altro.\n\nDisattivare l'automazione non la elimina. Puoi riattivarla in **Impostazioni → Automazioni e scenari**.",
+            "submit": "Disattiva"
+          }
+        }
+      }
+    },
+    "automation_conflict_manual": {
+      "title": "Anche un'automazione alimenta \"{name}\"",
+      "description": "Il pannello Aivi alimenta \"{name}\" ({slug}), ma lo fa anche: {automations}. I due si sovrascrivono a vicenda, quindi i tuoi dispositivi passano dall'uno all'altro. Questa automazione alimenta anche altri widget, oppure si riattiva da sola all'avvio di Home Assistant, quindi l'integrazione Aivi non la disattiva al posto tuo. Modificala in **Impostazioni → Automazioni e scenari**, oppure smetti di alimentare \"{name}\" nel pannello Aivi."
+    }
+  },
+  "config_panel": {
+    "common": {
+      "retry": "Riprova",
+      "edit": "Modifica",
+      "back": "Indietro",
+      "save": "Salva",
+      "saving": "Salvataggio…",
+      "required": "obbligatorio",
+      "none": "Nessuno",
+      "default": "Predefinito",
+      "clear": "Cancella",
+      "remove": "Rimuovi",
+      "move-up": "Sposta su",
+      "move-down": "Sposta giù",
+      "done": "Fatto",
+      "close": "Chiudi",
+      "color": "Colore",
+      "live-activity": "Attività Live",
+      "menu": "Apri la barra laterale"
+    },
+    "error": {
+      "boot-title": "Impossibile caricare Aivi"
+    },
+    "route": {
+      "widget-missing": "Widget non trovato. Ecco invece i tuoi widget.",
+      "activity-missing": "Attività Live non trovata. Ecco invece i tuoi widget."
+    },
+    "onboarding": {
+      "title": "Collega il tuo account Aivi",
+      "body": "I widget si creano nell'app Aivi; Home Assistant li alimenta con dati in tempo reale. Collega il tuo account e ogni suo widget appare qui, pronto da configurare.",
+      "connect": "Collega account",
+      "token-help": "Dove trovo il mio token?",
+      "first-bind-title": "Il tuo primo widget è attivo.",
+      "first-bind-body": "{name} ora si aggiorna ogni volta che cambiano le entità che lo alimentano. Non c'è niente da ricaricare.",
+      "first-bind-dismiss": "Ho capito"
+    },
+    "hub": {
+      "widgets": "Widget",
+      "live-activities": "Attività Live",
+      "accounts": "Account",
+      "account-connected": "Collegato",
+      "account-paused": "Abbonamento in pausa",
+      "account-unreachable": "Non raggiungibile",
+      "add-account": "Aggiungi account",
+      "manage-accounts": "Gestisci in Impostazioni",
+      "docs": "Documentazione",
+      "support": "Assistenza",
+      "version": "Versione {version}",
+      "fed-dot": "Alimentato da Home Assistant",
+      "running-dot": "In corso",
+      "idle-dot": "Non in corso",
+      "waiting-dot": "In attesa di un valore",
+      "empty-title": "Ancora nessun widget o Attività Live",
+      "empty-body": "Li crei nell'app Aivi. Qui scegli cosa li tiene aggiornati.",
+      "empty-step-create": "Crea un widget o un'Attività Live nell'app Aivi sul tuo iPhone o iPad.",
+      "empty-step-refresh": "Premi Aggiorna qui. I nuovi compaiono allora, non da soli.",
+      "empty-step-feed": "Premi Configura e scegli le entità che lo alimentano.",
+      "empty-cta": "Apri l'app Aivi",
+      "empty-widgets-note": "Ancora nessun widget. Creane uno nell'app Aivi, poi aggiorna.",
+      "empty-activities-note": "Ancora nessuna Attività Live. Creane una nell'app Aivi, poi aggiorna.",
+      "offline": "Aivi non è raggiungibile. Vengono mostrati solo i widget che hai configurato.",
+      "subscription-inactive": "Il tuo abbonamento Aivi non è attivo. Tutto ciò che hai configurato viene conservato e riprende quando rinnovi.",
+      "check-again": "Controlla di nuovo",
+      "bind": "Configura",
+      "unbind": "Smetti di alimentare",
+      "unbind-confirm": "Smettere di alimentare?",
+      "unbound-toast": "Home Assistant non alimenta più {name}",
+      "unbind-failed": "Impossibile smettere di alimentare {name}: {error}",
+      "fed-by": "Dati da {sources}",
+      "nothing-yet": "ancora nulla",
+      "template-count-one": "{count} campo con modello",
+      "template-count-many": "{count} di campi con modello",
+      "template-count-other": "{count} campi con modello",
+      "unsupported": "Richiede un'integrazione Aivi più recente",
+      "widget-gone": "Non è nell'app Aivi, quindi non viene mostrato nulla. Smetti di alimentarlo, oppure crealo di nuovo lì con lo stesso slug.",
+      "runs-on": "segue {entity}",
+      "activity-gone": "Non è nell'app Aivi, quindi non viene mostrato nulla. Smetti di alimentarla, oppure creala di nuovo lì con lo stesso slug.",
+      "search-placeholder": "Cerca widget e Attività Live…",
+      "search-label": "Cerca widget e Attività Live per nome o template",
+      "refresh": "Aggiorna",
+      "refresh-same": "Tutto aggiornato: nell'app Aivi non è cambiato nulla.",
+      "refresh-changed": "Aggiornato dall'app Aivi.",
+      "refresh-failed": "Impossibile raggiungere Aivi.",
+      "filter-label": "Filtra per stato",
+      "filter-all": "Tutti",
+      "filter-bound": "Alimentati",
+      "filter-unbound": "Non alimentati",
+      "filter-unsupported": "Non supportati",
+      "no-matches": "Nessun risultato per “{query}”",
+      "no-matches-filter": "Nessun elemento corrisponde a questo filtro",
+      "clear-search": "Cancella filtri",
+      "results-one": "{count} risultato mostrato",
+      "results-many": "{count} di risultati mostrati",
+      "results-other": "{count} risultati mostrati",
+      "subscription-inactive-some-one": "L'abbonamento Aivi di {names} non è attivo. I suoi widget e le sue Attività Live sono in pausa finché non viene rinnovato. Tutto ciò che hai configurato viene conservato.",
+      "subscription-inactive-some-other": "Gli abbonamenti Aivi di {names} non sono attivi. I loro widget e le loro Attività Live sono in pausa finché non vengono rinnovati. Tutto ciò che hai configurato viene conservato.",
+      "paused-mark": "In pausa",
+      "account-ended": "Abbonamento scaduto il {date}"
+    },
+    "editor": {
+      "activity-chip": "Attività Live",
+      "widget-chip": "Widget",
+      "slug-hint": "Il suo slug: l'ID con cui lo riconoscono l'app Aivi, le riparazioni e le automazioni",
+      "unknown-template": "Template sconosciuto “{template}”",
+      "save-failed": "Impossibile salvare: {error}",
+      "saved-toast": "Home Assistant ora alimenta {name}",
+      "active-label": "Entità di attivazione",
+      "active-hint": "Avvia l'Attività Live quando si accende; la termina quando si spegne",
+      "template-error-blocks": "Per salvare, correggi l'errore nel modello in: {fields}.",
+      "fix-fields": "Per salvare, correggi i campi segnati in rosso.",
+      "one-of": "uno tra {fields}",
+      "leave-title": "Scartare le modifiche?",
+      "leave-body": "Le modifiche a {name} non verranno salvate.",
+      "leave-keep": "Continua a modificare",
+      "leave-discard": "Scarta"
+    },
+    "presses": {
+      "count": "×{count}",
+      "type-toggle_on": "Acceso",
+      "type-toggle_off": "Spento",
+      "type-pressed": "Pressione",
+      "outcome-played": "Gestita",
+      "outcome-expired": "Scaduta",
+      "outcome-not_bound": "Non gestita",
+      "outcome-ignored": "Ignorata",
+      "outcome-failed": "Non riuscita"
+    },
+    "recent": {
+      "title": "Registro",
+      "hint": "Cosa Home Assistant ha inviato per ultimo ad Aivi per questo, cosa hanno rimandato i tuoi dispositivi e cosa ne è stato.",
+      "empty": "Ancora niente. Il primo invio ad Aivi comparirà qui, e così una pressione su uno dei tuoi dispositivi."
+    },
+    "pushes": {
+      "to-aivi": "Ad Aivi",
+      "from-devices": "Dai tuoi dispositivi",
+      "outcome-delivered": "Consegnato",
+      "outcome-unchanged": "Invariato",
+      "outcome-retrying": "Nuovo tentativo",
+      "outcome-failed": "Non riuscito",
+      "unchanged-why": "Lo stesso contenuto dell'ultimo invio, quindi non è stato inviato nulla.",
+      "took": "{ms} ms",
+      "content": "Cosa è stato inviato",
+      "content-cut": "Tagliato qui: il contenuto è più lungo di quanto il registro conservi.",
+      "content-none": "Non è stato risolto nulla, quindi non c'era niente da inviare.",
+      "outcome-waiting": "In attesa",
+      "outcome-held": "Trattenuto",
+      "waiting": "Niente inviato: il campo {field} legge “{reading}”.",
+      "waiting-none": "Niente inviato: il campo {field} non ha un valore.",
+      "waiting-any": "Niente inviato: nessuno dei campi {fields} ha un valore.",
+      "held": "Trattenuto fino alle {time}: questa Attività Live si aggiorna al massimo {every}. Puoi cambiarlo in “{setting}”, in {section}."
+    },
+    "source": {
+      "entity": "Entità",
+      "attribute": "Attributo",
+      "template": "Modello",
+      "bands": "In base al valore",
+      "literal": "Valore fisso",
+      "fixed": "Valore fisso"
+    },
+    "bands": {
+      "follows": "Segue",
+      "follows-aria": "La lettura che {field} segue",
+      "follows-placeholder": "Scegli un sensore",
+      "list": "{field} in base al valore",
+      "below": "Sotto {limit}",
+      "between": "Da {from} a {limit}",
+      "above": "Da {from} in su",
+      "limit-aria": "Dove finisce “{range}”",
+      "color-aria": "Colore per “{range}”",
+      "remove": "Rimuovi la fascia “{range}”",
+      "add": "Aggiungi una fascia",
+      "full": "Fino a {max} fasce",
+      "as-template": "Scrivi come modello",
+      "now": "Ora {reading}, quindi {color}",
+      "now-none": "{name} non ha una lettura ora, quindi si vede il colore fisso",
+      "order": "Inserisci un numero sopra il limite precedente e sotto quello successivo.",
+      "lock-hint": "I colori non si vedono nella schermata di blocco, in una schermata Home colorata o quando lo schermo si attenua. Mostra anche la lettura nel widget, o fai cambiare l'icona con essa."
+    },
+    "field": {
+      "also-on": "Appare anche in: {surface}",
+      "source-label": "Origine di {field}",
+      "template-aria": "Modello per {field}",
+      "pick-entity-first": "Scegli prima un'entità, poi il suo attributo",
+      "entity-missing": "Questa entità al momento non è disponibile in Home Assistant.",
+      "choose-attribute": "Scegli un attributo…",
+      "no-attributes": "Questa entità non ha attributi da scegliere.",
+      "style-title": "Colore e formato del testo",
+      "format": "Formato",
+      "format-as-is": "Così com'è",
+      "source-unusable": "Legge “{value}”, che qui non si può usare. Vale il valore di riserva qui sotto.",
+      "source-unavailable": "Al momento non c'è niente da leggere. Vale il valore di riserva qui sotto.",
+      "fallback": "Valore di riserva",
+      "fallback-hint": "Usato ogni volta che l'origine qui sopra non si può leggere",
+      "source-of": "Origine di {field}",
+      "template-error": "Errore nel modello:",
+      "error-details": "Dettagli",
+      "template-empty": "Al momento questo modello non produce nulla; il campo conta come non impostato.",
+      "result": "Risultato",
+      "kind-text": "testo",
+      "kind-number": "numero",
+      "kind-bool": "vero o falso",
+      "kind-nothing": "niente",
+      "kind-list-one": "elenco di {count} elemento",
+      "kind-list-many": "elenco di {count} di elementi",
+      "kind-list-other": "elenco di {count} elementi",
+      "kind-numbers-one": "elenco di {count} numero",
+      "kind-numbers-many": "elenco di {count} di numeri",
+      "kind-numbers-other": "elenco di {count} numeri",
+      "kind-range": "da {min} a {max}",
+      "updates-on": "Si aggiorna con",
+      "updates-domain": "qualsiasi entità {domain}",
+      "updates-all": "qualsiasi cambio di stato",
+      "updates-time": "l'inizio di ogni minuto",
+      "updates-more-one": "e {count} altro",
+      "updates-more-many": "e altri {count}",
+      "updates-more-other": "e altri {count}",
+      "updates-limit-one": "al massimo una volta al secondo",
+      "updates-limit-many": "al massimo una volta ogni {count} di secondi",
+      "updates-limit-other": "al massimo una volta ogni {count} secondi",
+      "updates-never": "Niente di ciò che legge può cambiare, quindi non si aggiorna mai da solo.",
+      "unknown-entity": "In Home Assistant non esiste {id}.",
+      "did-you-mean": "Forse intendevi:",
+      "use-entity": "Usa {id}",
+      "badge-error": "Il modello contiene un errore",
+      "error-at-line": "Riga {line}:",
+      "error-at": "Riga {line}, colonna {column}:",
+      "error-unclosed": "Qualcosa non è chiuso. Controlla che ogni {output} e ogni {statement} sia completo.",
+      "error-unclosed_block": "Il blocco {tag} non viene mai chiuso. Aggiungi {end} dove finisce.",
+      "error-unexpected_end": "Il modello finisce prima che tutto ciò che apre sia chiuso.",
+      "error-stray_end": "{tag} chiude un blocco che non è mai stato aperto.",
+      "error-unknown_tag": "“{tag}” non è un'istruzione che i modelli conoscono. Controlla come è scritto.",
+      "error-unknown_filter": "Non esiste un filtro chiamato “{name}”.",
+      "error-unknown_test": "Non esiste un test chiamato “{name}”.",
+      "error-bad_char": "Il carattere “{char}” qui non si può usare.",
+      "error-missing": "Qui manca un “{token}”.",
+      "error-incomplete": "L'espressione si ferma troppo presto: manca qualcosa alla fine.",
+      "error-extra": "“{token}” qui non c'entra. Manca un operatore o un | prima?",
+      "error-unexpected": "“{token}” qui non è previsto.",
+      "error-undefined": "Qui non esiste niente che si chiami “{name}”. Controlla come è scritto.",
+      "error-no_attribute": "“{value}” non ha l'attributo “{name}”.",
+      "error-none_attribute": "Qui si legge “{name}” da qualcosa che non esiste, spesso un ID di entità scritto male.",
+      "error-no_default": "{function} ha ricevuto “{value}”, che non è un numero, e non ha un valore predefinito. Dagliene uno, come {example}.",
+      "error-type": "Qui testo e numeri sono mescolati. Converti prima il testo in numero, come {example}.",
+      "error-division_by_zero": "Qui si divide per zero.",
+      "number-placeholder": "es. 100",
+      "icon-placeholder": "es. washer.fill",
+      "symbol-styling": "Stile del simbolo",
+      "rendering": "Stile del simbolo",
+      "secondary": "Secondo colore",
+      "tertiary": "Terzo colore",
+      "color-style": "Stile del colore",
+      "suggestions": "Suggerimenti",
+      "device-chip": "Dispositivo: {name}",
+      "history-chip": "Storico: {name}",
+      "dashboard-chip": "Plancia",
+      "url-invalid": "Usa un URL completo con lo schema, come https:// per una pagina web o homeassistant:// per una vista di Home Assistant.",
+      "url-long": "L'URL supera i 256 caratteri.",
+      "invert": "Inverti il segno",
+      "icon-color": "Colore dell'icona",
+      "points-source": "Origine dello storico",
+      "points-history": "Storico",
+      "points-list": "Elenco",
+      "points-template": "Modello",
+      "points-window": "Intervallo di tempo",
+      "points-entity": "Storico di",
+      "points-same": "Come {field}",
+      "points-list-hint": "Un attributo che contiene un elenco di numeri, dal più vecchio",
+      "points-template-hint": "Un modello di Home Assistant che produce un elenco di numeri, dal più vecchio, per esempio una previsione ridotta alle sue temperature",
+      "points-no-history": "Alimenta {field} da un'entità, o sceglila qui, per mostrarne lo storico nel grafico.",
+      "source-waiting": "Ora legge “{value}”, quindi non viene inviato niente finché non ha un valore.",
+      "source-waiting-none": "Al momento non c'è niente da leggere, quindi non viene inviato niente finché non c'è.",
+      "source-left-out": "Al momento non c'è niente da leggere, quindi questo viene omesso.",
+      "source-unusable-left-out": "Legge “{value}”, che qui non si può usare, quindi questo viene omesso.",
+      "badge-waiting": "Al momento non c'è niente da leggere",
+      "name": "“{field}”",
+      "name-grouped": "“{group}: {field}”",
+      "name-case": "as-is"
+    },
+    "code": {
+      "completions": "Suggerimenti",
+      "fn-states": "Lo stato di un'entità, come testo",
+      "fn-state_attr": "Un attributo di un'entità",
+      "fn-is_state": "Se un'entità è in un certo stato",
+      "fn-is_state_attr": "Se un attributo di un'entità ha un certo valore",
+      "fn-has_value": "Se un'entità ha uno stato, né sconosciuto né non disponibile",
+      "fn-expand": "Le entità che compongono gruppi ed elenchi",
+      "fn-area_name": "Il nome dell'area in cui si trova un'entità",
+      "fn-area_entities": "Tutte le entità di un'area",
+      "fn-device_attr": "Un dato del dispositivo di un'entità, come il modello",
+      "fn-now": "La data e l'ora attuali",
+      "fn-today_at": "Oggi a un certo orario, come today_at('18:30')",
+      "fn-as_timestamp": "Una data o un orario in secondi dal 1970",
+      "fn-relative_time": "Quanto tempo fa, come 5 minuti",
+      "fn-timedelta": "Un intervallo di tempo da aggiungere o togliere a un orario",
+      "fn-timestamp_custom": "Formatta un timestamp, come timestamp_custom('%H:%M')",
+      "fn-iif": "Un valore se una condizione è vera, un altro se no",
+      "fn-float": "Un numero con decimali, con un valore di riserva per il testo",
+      "fn-int": "Un numero intero, con un valore di riserva per il testo",
+      "fn-is_number": "Se un valore è un numero",
+      "fn-round": "Arrotonda un numero a un certo numero di decimali",
+      "fn-default": "Un valore da usare quando non ce n'è uno",
+      "fn-min": "Il più piccolo di più valori",
+      "fn-max": "Il più grande di più valori",
+      "fn-selectattr": "Tiene gli elementi il cui attributo supera un test",
+      "fn-map": "Prende un attributo di ogni elemento o applica un filtro a ciascuno",
+      "fn-list": "Trasforma il risultato in un elenco",
+      "fn-count": "Quanti elementi ci sono",
+      "fn-sum": "Somma tutti i numeri",
+      "fn-join": "Unisce gli elementi in un testo con un separatore",
+      "fn-replace": "Sostituisce un testo con un altro",
+      "fn-state_translated": "Lo stato di un'entità, nella tua lingua",
+      "fn-device_id": "L'id del dispositivo di un'entità",
+      "fn-device_entities": "Tutte le entità di un dispositivo",
+      "fn-area_id": "L'id di un'area, dal suo nome o da un'entità che contiene",
+      "fn-area_devices": "Tutti i dispositivi di un'area",
+      "fn-areas": "Tutte le aree",
+      "fn-floor_name": "Il nome di un piano",
+      "fn-label_entities": "Tutte le entità con un'etichetta",
+      "fn-integration_entities": "Tutte le entità di un'integrazione, come 'hue'",
+      "fn-utcnow": "La data e l'ora attuali in UTC",
+      "fn-as_datetime": "Un testo o un timestamp come data e ora",
+      "fn-as_local": "Una data e ora nel tuo fuso orario",
+      "fn-strptime": "Legge una data e ora da un testo in un formato dato",
+      "fn-time_since": "Quanto tempo fa, a parole",
+      "fn-time_until": "Quanto manca a un orario, a parole",
+      "fn-as_timedelta": "Un testo come '00:10:00' come intervallo di tempo",
+      "fn-timestamp_local": "Un timestamp come data e ora locali",
+      "fn-timestamp_utc": "Un timestamp come data e ora in UTC",
+      "fn-bool": "Vero o falso, da testo come on, yes o 1",
+      "fn-abs": "Un numero senza segno",
+      "fn-average": "La media di più numeri",
+      "fn-median": "Il valore centrale di più numeri",
+      "fn-string": "Trasforma un valore in testo",
+      "fn-format": "Riempie un modello di testo, come '%.1f' | format(x)",
+      "fn-lower": "Trasforma il testo in minuscolo",
+      "fn-upper": "Trasforma il testo in maiuscolo",
+      "fn-title": "Mette la maiuscola a ogni parola",
+      "fn-capitalize": "Mette la maiuscola alla prima lettera",
+      "fn-trim": "Toglie gli spazi attorno al testo",
+      "fn-truncate": "Accorcia il testo a una lunghezza",
+      "fn-slugify": "Trasforma il testo in un id minuscolo con trattini bassi",
+      "fn-regex_replace": "Sostituisce ciò che corrisponde a un'espressione regolare",
+      "fn-regex_match": "Se il testo inizia con una corrispondenza di un'espressione regolare",
+      "fn-regex_search": "Se il testo contiene una corrispondenza di un'espressione regolare",
+      "fn-from_json": "Legge un testo JSON come valori",
+      "fn-rejectattr": "Esclude gli elementi il cui attributo supera un test",
+      "fn-select": "Tiene gli elementi che superano un test",
+      "fn-reject": "Esclude gli elementi che superano un test",
+      "fn-length": "Quanti elementi o caratteri ci sono",
+      "fn-first": "Il primo elemento",
+      "fn-last": "L'ultimo elemento",
+      "fn-sort": "Ordina gli elementi",
+      "fn-unique": "Esclude gli elementi ripetuti",
+      "fn-reverse": "Inverte l'ordine",
+      "fn-contains": "Se un elenco o un testo contiene un valore",
+      "fn-range": "I numeri da 0 fino a un conteggio",
+      "fn-namespace": "Contiene valori che un ciclo può modificare",
+      "test-defined": "Se un valore esiste",
+      "test-none": "Se un valore è None",
+      "test-number": "Se un valore è un numero",
+      "test-string": "Se un valore è testo",
+      "test-in": "Se un valore è in un elenco o in un testo",
+      "test-match": "Se il testo inizia con una corrispondenza di un'espressione regolare",
+      "test-search": "Se il testo contiene una corrispondenza di un'espressione regolare",
+      "test-contains": "Se un elenco o un testo contiene un valore"
+    },
+    "sheet": {
+      "expand": "Espandi",
+      "expand-label": "Espandi il modello per {field}",
+      "insert": "Inserisci",
+      "in-template": "In questo modello",
+      "all-entities": "Tutte le entità",
+      "matches": "Entità corrispondenti",
+      "keys": "Tasti del modello",
+      "key-output": "Espressione",
+      "key-statement": "Istruzione",
+      "key-pipe": "Filtro",
+      "key-quote": "Apice",
+      "recipes": "Ricette",
+      "more": "Ricette e attributi",
+      "recipe-pick": "Scegli l'entità a cui serve",
+      "recipe-without": "Senza entità, da completare",
+      "fits": "Entità adatte",
+      "or": "Oppure",
+      "recipe-words": "Parole per acceso e spento, come Aperto e Chiuso",
+      "recipe-rounded-unit": "Uno stato arrotondato, con la sua unità",
+      "recipe-translated": "Il suo stato come lo mostra Home Assistant",
+      "recipe-fallback": "Parole per quando non è disponibile",
+      "recipe-time-since": "Tempo dall'ultimo cambio",
+      "recipe-time-of-day": "La sua ora del giorno",
+      "recipe-rounded": "Uno stato come numero, arrotondato",
+      "recipe-number": "Uno stato come numero",
+      "recipe-share": "Una percentuale come quota da 0 a 1",
+      "recipe-entity-time": "Il momento che contiene",
+      "recipe-last-changed": "Quando è cambiato l'ultima volta",
+      "recipe-in-minutes": "Tra 5 minuti",
+      "recipe-attribute-list": "Numeri da un attributo elenco",
+      "recipe-color-by-state": "Un colore per acceso e spento",
+      "recipe-color-by-number": "Un colore sopra un limite",
+      "recipe-icon-on-off": "Un'icona per acceso e spento",
+      "recipe-icon-by-level": "Un'icona in base al livello",
+      "recipe-is-on": "Se è acceso",
+      "recipe-above": "Se è sopra un limite",
+      "word-on": "Acceso",
+      "word-off": "Spento",
+      "word-open": "Aperto",
+      "word-closed": "Chiuso",
+      "word-detected": "Rilevato",
+      "word-clear": "Libero",
+      "word-home": "A casa",
+      "word-away": "Fuori casa",
+      "word-wet": "Bagnato",
+      "word-dry": "Asciutto",
+      "word-problem": "Problema",
+      "word-ok": "OK",
+      "word-unsafe": "Non sicuro",
+      "word-safe": "Sicuro",
+      "word-connected": "Connesso",
+      "word-disconnected": "Disconnesso",
+      "word-unlocked": "Sbloccato",
+      "word-locked": "Bloccato",
+      "word-low": "Basso",
+      "word-normal": "Normale",
+      "word-charging": "In carica",
+      "word-not-charging": "Non in carica",
+      "word-no-data": "Nessun dato",
+      "writes": "Inserisce"
+    },
+    "workspace": {
+      "search": "Cerca entità e ricette",
+      "no-matches": "Nessun risultato",
+      "list-keys": "↑ ↓ per spostarti, Invio per inserire, → per altro",
+      "inserted": "Inserito {name}",
+      "find": "Trova",
+      "find-count": "{current} di {total}",
+      "find-none": "Nessun risultato",
+      "find-previous": "Precedente",
+      "find-next": "Successivo",
+      "output": "Output",
+      "docs": "Docs",
+      "tab-hint": "Tab rientra, {keys} gli fa spostare il focus",
+      "position": "Riga {line}, colonna {column}",
+      "wrap": "A capo",
+      "key-left": "Sposta a sinistra",
+      "key-right": "Sposta a destra",
+      "key-undo": "Annulla",
+      "strip-open": "Anteprima e risultato",
+      "search-entity": "Cerca entità",
+      "step-keys": "↑ ↓ per spostarti, Invio per inserire, ← per tornare indietro",
+      "step-back": "Torna a tutto",
+      "hints": "Suggerimenti",
+      "hint-limit": "Aivi accetta {limit} caratteri qui; il resto viene tagliato.",
+      "hint-clipped": "Il widget {size} lo taglia a questa lunghezza.",
+      "hint-kind-number": "Questo campo accetta un numero e “{value}” non lo è, quindi viene mostrato il valore di riserva.",
+      "hint-kind-bool": "Questo campo accetta vero o falso e “{value}” non è né l'uno né l'altro, quindi viene mostrato il valore di riserva.",
+      "hint-kind-color": "“{value}” non è un colore che questo campo accetta, quindi viene mostrato il valore di riserva.",
+      "hint-kind-time": "Questo campo accetta una data e un'ora e “{value}” non lo è, quindi viene mostrato il valore di riserva.",
+      "hint-kind-other": "Questo campo non può usare “{value}”, quindi viene mostrato il valore di riserva.",
+      "hint-unavailable": "{name} ora è {state}, quindi il widget mostra “{state}”.",
+      "hint-none": "Mostra “None”: ciò che legge ora non ha un valore, spesso un attributo che l'entità non ha.",
+      "hint-decimals-one": "Mostra {count} decimale.",
+      "hint-decimals-many": "Mostra {count} di decimali.",
+      "hint-decimals-other": "Mostra {count} decimali.",
+      "hint-symbol": "“{value}” non è nell'elenco dei simboli Apple, quindi il dispositivo potrebbe non mostrare alcuna icona.",
+      "fix-round": "Arrotonda",
+      "fix-unit": "Togli l'unità",
+      "fix-is-state": "Confronta con “{state}”",
+      "fix-unavailable": "Mostra invece “{words}”",
+      "fix-symbol": "Usa “{name}”",
+      "card-changed": "Cambiato {when}",
+      "card-more-one": "{count} altro attributo",
+      "card-more-many": "altri {count} attributi",
+      "card-more-other": "altri {count} attributi"
+    },
+    "formatter": {
+      "time-since": "Tempo trascorso (timer dal vivo, conta in avanti)",
+      "time-until": "Tempo mancante (timer dal vivo, conta alla rovescia)"
+    },
+    "combobox": {
+      "placeholder": "Cerca entità…",
+      "no-matches": "Nessuna entità corrispondente",
+      "more": "{shown} di {total} mostrate. Scrivi per restringere l'elenco."
+    },
+    "checklist": {
+      "full": "Hai raggiunto il massimo di {max}. Rimuovine una per aggiungerne un'altra.",
+      "over": "Vengono inviate solo le prime {max}. Rimuovi le altre.",
+      "none-left": "Niente da aggiungere: ogni entità adatta è già in uso.",
+      "add": "Aggiungi un'entità…",
+      "add-more": "Aggiungine un'altra…",
+      "add-label": "Aggiungi un'entità",
+      "count": "{count} di {max}",
+      "order-label": "Righe selezionate, nell'ordine del widget",
+      "reorder": "Riordina {name}",
+      "reorder-hint": "Trascina per riordinare; Alt+Freccia sposta la riga attiva",
+      "moved": "{name} spostato in posizione {position} di {count}",
+      "move-up": "Sposta su {name}",
+      "move-down": "Sposta giù {name}",
+      "remove": "Rimuovi {name}",
+      "fix": "Da correggere",
+      "label-aria": "Etichetta per {name}",
+      "icon-aria": "Icona per {name}",
+      "color-aria": "Colore per {name}",
+      "budget": "Budget",
+      "budget-aria": "Budget per {name}",
+      "budget-placeholder": "Nessun budget",
+      "budget-invalid": "Usa un importo maggiore di 0, come 250 o 99,50.",
+      "charging": "Ricarica",
+      "charging-aria": "Sensore di ricarica per {name}",
+      "charging-auto": "Automatico",
+      "charging-off": "Nessun fulmine di ricarica",
+      "charging-off-aria": "Nessun fulmine di ricarica per {name}",
+      "charging-hint": "Un sensore binario, o un sensore che indica “charging”. Se lo lasci vuoto, al salvataggio viene inserito il sensore di ricarica del dispositivo stesso.",
+      "charging-unavailable": "Al momento questo sensore non si può leggere, quindi il fulmine di ricarica non viene mostrato.",
+      "today": "Oggi",
+      "today-aria": "Energia di oggi per {name}",
+      "today-hint": "Un contatore di energia: il valore di oggi si conta dalla mezzanotte.",
+      "unit-aria": "Unità per {name}",
+      "unit-placeholder": "Nessuna unità",
+      "max": "Indicatore fino a",
+      "max-aria": "Massimo dell'indicatore per {name}",
+      "max-placeholder": "Nessun indicatore",
+      "max-invalid": "Usa un numero maggiore di 0, come 100.",
+      "max-hint": "Riempie un indicatore fino a questo valore dove la lettura compare da sola, nella schermata di blocco.",
+      "max-words": "Ora indica {value}, che non è un numero, quindi appare come testo senza indicatore."
+    },
+    "bar": {
+      "mode-label": "Stile della barra",
+      "mode-solid": "Uniforme",
+      "mode-segmented": "A segmenti",
+      "mode-layered": "A livelli",
+      "mode-caption-solid": "Un unico colore di riempimento su tutta la barra",
+      "mode-caption-segmented": "Ogni fase è una capsula a sé, riempita in ordine man mano che il valore sale",
+      "mode-caption-layered": "Una barra continua, nello stile delle Attività Live",
+      "mode-announced": "Stile della barra: {mode}"
+    },
+    "segments": {
+      "bar-label": "Fasi",
+      "phase": "Fase {index}",
+      "segment-aria": "{name}: {pct}% della barra",
+      "boundary-aria": "Confine tra {left} e {right}",
+      "boundary-at": "{left} {leftPct}%, {right} {rightPct}%",
+      "add": "Aggiungi una fase",
+      "added": "{name} aggiunta, {count} di {max} fasi",
+      "removed": "{name} rimossa; {neighbor} ne ha preso lo spazio",
+      "removed-last": "{name} rimossa",
+      "split": "Dividi",
+      "split-aria": "Dividi {name}",
+      "split-too-thin": "{name} è troppo piccola per essere divisa",
+      "remove-aria": "Rimuovi {name}",
+      "size": "Dimensione",
+      "size-label": "Dimensione in percentuale",
+      "size-applied": "{name} impostata al {pct}%",
+      "label-placeholder": "Etichetta",
+      "label-aria": "Etichetta per {name}",
+      "fill-label": "Colore di riempimento",
+      "track": "Non ancora raggiunta",
+      "track-label": "Colore della parte non ancora raggiunta",
+      "track-style-label": "Motivo della parte non ancora raggiunta",
+      "gray-default": "Grigio (predefinito)",
+      "source": "Dimensione da",
+      "source-label": "Origine della dimensione per {name}",
+      "fallback": "Valore di riserva",
+      "fallback-label": "Dimensione percentuale di riserva per {name}",
+      "sourced-hint": "In tempo reale da {source}; se non si risolve vale il valore di riserva",
+      "fallback-in-use": "È in uso la dimensione di riserva ({pct}%).",
+      "result-share": "{pct}% della barra",
+      "template-empty": "Al momento questo modello non produce nulla; è in uso la dimensione di riserva ({pct}%).",
+      "source-fallback": "Al momento questa origine non dà una dimensione utilizzabile; è in uso la dimensione di riserva ({pct}%).",
+      "segment-live-aria": "{name}: {pct}% della barra, in tempo reale da {source}",
+      "boundary-locked": "Questo confine segue un'origine in tempo reale; modifica invece l'origine o il valore di riserva di quella fase."
+    },
+    "suggest": {
+      "open": "Suggerisci",
+      "title": "Suggerisci una configurazione",
+      "title-off": "Suggerimenti dell'IA",
+      "intro": "Di' con parole tue cosa deve mostrare e il modulo si compila. Oppure inizia da qui:",
+      "input-label": "Descrivilo",
+      "send": "Invia",
+      "stop": "Ferma",
+      "stopped": "Fermato: la risposta è stata scartata.",
+      "retry": "Riprova",
+      "problem-failed": "Non ha funzionato: {error}",
+      "footer": "Non viene salvato nulla finché non premi Salva.",
+      "options-label": "Risposte suggerite",
+      "model-label": "Modello IA",
+      "model-hint": "Le impostazioni di ogni modello (ad esempio il livello di ragionamento) si trovano con il modello stesso in Home Assistant.",
+      "enter-hint": "Invio per inviare, Maiusc+Invio per andare a capo",
+      "thinking": "Ragionamento…",
+      "still-working": "Ancora al lavoro…",
+      "placeholder-initial": "Cosa deve mostrare?",
+      "placeholder-refine": "Cosa deve cambiare?",
+      "no-mapping": "Il modello non ha restituito nulla di utilizzabile qui. Prova a nominare l'entità o a essere più preciso.",
+      "round-none": "Non è cambiato nulla.",
+      "done-quiet": "Fatto.",
+      "change-set": "ha impostato {field}",
+      "change-changed": "ha modificato {field}",
+      "change-unsourced": "{field} non segue più lo stato in tempo reale",
+      "change-cleared": "ha cancellato {field}",
+      "not-applied": "Non applicato: {list}",
+      "undo": "Annulla",
+      "undone": "Annullato: il modulo è tornato com'era.",
+      "undone-kept": "Annullato. Le modifiche fatte a mano nel frattempo sono state mantenute.",
+      "undone-count": "Annullati: {count}.",
+      "redo": "Ripeti",
+      "failed": "Suggerimento non riuscito: {error}",
+      "stale": "Il modulo è cambiato mentre arrivava la risposta, quindi non è stata applicata.",
+      "off-not-loaded": "Serve un fornitore di IA in Home Assistant. Nessuno fornisce ancora AI Task.",
+      "off-cta-not-loaded": "Aggiungine uno in Integrazioni",
+      "off-no-entity": "AI Task è configurato, ma nessun modello fornisce ancora la generazione di dati.",
+      "off-cta-no-entity": "Aggiungine uno in Suggerimenti dell'IA",
+      "off-what": "Descrivi un widget con parole tue e questo modulo si compila.",
+      "undo-label": "Annulla “{ask}”",
+      "revert": "Annulla questo e i successivi ({count})",
+      "revert-label": "Annulla “{ask}” e i successivi ({count})",
+      "hint-accent": "Rendi arancione il colore d'accento",
+      "hint-sensor": "Usa un altro sensore",
+      "hint-simpler": "Rendilo più semplice",
+      "hint-icon": "Scegli un'icona adatta",
+      "hint-phases": "Dividi la barra in fasi",
+      "hint-tile": "Dai al primo riquadro un'etichetta e un colore",
+      "hint-rows": "Metti per prima la riga più importante",
+      "starter-setup": "Configuralo tu",
+      "starter-bold": "Rendilo colorato",
+      "starter-calm": "Mantienilo minimale",
+      "starter-restyle": "Dagli un aspetto nuovo",
+      "starter-simpler": "Semplificalo",
+      "rejected": {
+        "no_entity": "{field}: non esiste l'entità {value}",
+        "no_attribute": "{field}: attributo inesistente ({value})",
+        "not_a_color": "{field}: {value} non è uno dei colori",
+        "not_a_symbol": "{field}: {value} non è un SF Symbol",
+        "not_an_option": "{field}: {value} non è un'opzione",
+        "bad_template": "{field}: il modello non funziona",
+        "bad_value": "{field}: {value} non si può usare",
+        "already_there": "{field}: {value} c'è già",
+        "list_full": "{field}: non c'è più spazio per {value}",
+        "no_value": "{field}: non mostra ancora nulla, quindi non c'è niente a cui dare uno stile"
+      },
+      "detail-added": "aggiunti: {count}",
+      "detail-removed": "rimossi: {count}",
+      "detail-reordered": "riordinati",
+      "detail-more": "altri {count}",
+      "detail-source": "da dove legge",
+      "detail-color": "colore",
+      "detail-format": "formato",
+      "detail-style": "stile"
+    },
+    "preview": {
+      "title": "Anteprima dal vivo",
+      "missing": "Per salvare, imposta: {fields}.",
+      "missing-count": "{count} da impostare",
+      "fix-count": "{count} da correggere",
+      "resolving": "Risoluzione…",
+      "payload-title": "Cosa verrà inviato",
+      "island-note": "Dynamic Island (approssimativa)",
+      "banner-note": "Banner della schermata di blocco (approssimativo)",
+      "done-at": "fine alle {time}",
+      "none-for-template": "Nessuna anteprima per {template}",
+      "press-hint": "Premi una parte qualsiasi dell'anteprima per passare alle sue impostazioni.",
+      "region-label": "{region}: vai alle impostazioni",
+      "skeleton-hint": "Ancora niente da mostrare. Premine una parte per passare alle sue impostazioni.",
+      "size-label": "Dimensione dell'anteprima",
+      "as": "Anteprima come",
+      "as-now": "Ora",
+      "size-small": "Piccolo",
+      "size-medium": "Medio",
+      "tile-off": "Spento",
+      "tile-on": "Acceso",
+      "tile-active": "Attivo",
+      "energy-source": "Solare",
+      "energy-grid": "Rete",
+      "energy-battery": "Batteria",
+      "energy-home": "Casa",
+      "budget-of": "di {amount}",
+      "energy-today": "Oggi {energy}",
+      "price-low": "Basso",
+      "price-medium": "Medio",
+      "price-high": "Alto",
+      "reported-now": "Proprio ora",
+      "in-a-moment": "Tra un attimo",
+      "waiting": "Non viene inviato niente finché il campo {field} legge “{reading}”.",
+      "waiting-none": "Non viene inviato niente finché il campo {field} non ha un valore.",
+      "waiting-any": "Non viene inviato niente finché uno dei campi {fields} non ha un valore.",
+      "waiting-hint": "Premi l'anteprima per passare al campo {field}."
+    },
+    "slot": {
+      "surface": {
+        "island": "Dynamic Island",
+        "banner": "Schermata di blocco"
+      }
+    },
+    "ramp": {
+      "mode-label": "Colore dell'anello",
+      "mode-solid": "Un colore",
+      "mode-ramp": "Gamma di colori",
+      "solid-hint": "Tutto l'anello è di questo colore.",
+      "solid-pick": "Scegli un colore",
+      "fallback-aria": "{field} senza lettura",
+      "fallback-hint": "L'intero anello è di questo colore finché la lettura non è un numero.",
+      "fallback-empty": "Finché la lettura non è un numero, l'anello mantiene la sua gamma predefinita.",
+      "solid-empty": "Finché non ne scegli uno, il quadrante mantiene la sua gamma di colori.",
+      "presets-label": "Gamme di colori pronte",
+      "preset": {
+        "builtin": "Integrata",
+        "cool-warm": "Da freddo a caldo",
+        "good-bad": "Da buono a cattivo",
+        "bad-good": "Da cattivo a buono"
+      },
+      "preset-applied": "{name} applicata",
+      "add": "Aggiungi un colore",
+      "one-stop": "Un solo colore riempie tutto l'anello. Aggiungine un altro per creare una gamma.",
+      "count": "{count} di {max}",
+      "full": "Fino a {max} colori",
+      "reverse": "Inverti",
+      "reversed": "Ordine dei colori invertito",
+      "at-value": "a {value}",
+      "pick-color": "Colore {position}: {color}",
+      "remove-stop": "Rimuovi il colore {position}, {color}",
+      "move-up": "Sposta su il colore {position}, {color}",
+      "move-down": "Sposta giù il colore {position}, {color}",
+      "added": "Colore {position} aggiunto, {count} in tutto",
+      "removed": "{color} rimosso, rimasti: {count}",
+      "moved": "{color} spostato in posizione {position} di {count}",
+      "picked": "Il colore {position} ora è {color}"
+    },
+    "enum": {
+      "color": {
+        "red": "Rosso",
+        "orange": "Arancione",
+        "yellow": "Giallo",
+        "green": "Verde",
+        "mint": "Menta",
+        "teal": "Verde acqua",
+        "cyan": "Ciano",
+        "blue": "Blu",
+        "indigo": "Indaco",
+        "purple": "Viola",
+        "pink": "Rosa",
+        "brown": "Marrone",
+        "gray": "Grigio",
+        "gray2": "Grigio 2",
+        "gray3": "Grigio 3",
+        "gray4": "Grigio 4",
+        "gray5": "Grigio 5",
+        "gray6": "Grigio 6"
+      },
+      "rendering-mode": {
+        "monochrome": "Monocromatico",
+        "hierarchical": "Gerarchico",
+        "palette": "Tavolozza",
+        "multicolor": "Multicolore"
+      },
+      "color-rendering": {
+        "flat": "Uniforme",
+        "gradient": "Sfumatura"
+      },
+      "track-fill": {
+        "solid": "Pieno",
+        "hatched": "Tratteggiato"
+      },
+      "primary_column": {
+        "left": "Sinistra",
+        "right": "Destra"
+      },
+      "display": {
+        "remaining": "Rimanente",
+        "spent": "Speso"
+      },
+      "scale": {
+        "cents": "Centesimi (× 100)"
+      },
+      "image_fit": {
+        "contain": "Scontorno",
+        "cover": "Foto"
+      }
+    },
+    "template": {
+      "status": {
+        "label": "Status",
+        "hint": "Un singolo stato a colpo d'occhio"
+      },
+      "progress": {
+        "label": "Progress",
+        "hint": "Qualcosa in corso fino al termine"
+      },
+      "gauge": {
+        "label": "Gauge",
+        "hint": "Una lettura all'interno di un intervallo"
+      },
+      "countdown": {
+        "label": "Countdown",
+        "hint": "Il tempo che manca a un momento"
+      },
+      "list": {
+        "label": "List",
+        "hint": "Più letture in un solo widget"
+      },
+      "battery": {
+        "label": "Battery",
+        "hint": "Livelli di carica dei dispositivi"
+      },
+      "switchboard": {
+        "label": "Switchboard",
+        "hint": "Pulsanti e interruttori da premere dalla schermata Home"
+      },
+      "monitor": {
+        "label": "Monitor",
+        "hint": "Due colonne di letture"
+      },
+      "generic": {
+        "label": "Generic",
+        "retired": "Un modello vecchio che Aivi non supporta più. Passalo a Progress o Monitor nell'app Aivi."
+      },
+      "budget": {
+        "label": "Budget",
+        "hint": "Spese rispetto a un budget, per categoria"
+      },
+      "trend": {
+        "label": "Trend",
+        "hint": "Una lettura e il suo storico recente"
+      },
+      "prices": {
+        "label": "Prices",
+        "hint": "L'andamento del prezzo dell'elettricità"
+      },
+      "energy": {
+        "label": "Energy",
+        "hint": "Solare, rete, batteria e casa a colpo d'occhio"
+      },
+      "showcase": {
+        "label": "Vetrina",
+        "hint": "Un'immagine della cosa, il suo stato e le sue letture"
+      },
+      "remote": {
+        "label": "Telecomando",
+        "hint": "Un'immagine dell'oggetto, una lettura e pulsanti da premere"
+      }
+    },
+    "field-label": {
+      "state": "Stato",
+      "value": "Valore",
+      "progress": "Avanzamento",
+      "target": "Ora di arrivo",
+      "rows": "Entità",
+      "devices": "Sensori della batteria",
+      "actions": "Riquadri",
+      "icon": "Icona",
+      "accent": "Colore d'accento",
+      "tap_url": "Apre al tocco",
+      "end_date": "Ora di fine",
+      "unit": "Unità",
+      "label": "Etichetta",
+      "subtitle": "Sottotitolo",
+      "bar_color": "Colore della barra",
+      "min_value": "Minimo",
+      "max_value": "Massimo",
+      "ring": "Colore dell'anello",
+      "expired_text": "Testo alla scadenza",
+      "segments": "Barra di avanzamento",
+      "header_left": "Intestazione",
+      "header_right": "Intestazione, destra",
+      "footer_left": "Nota in basso",
+      "footer_right": "Nota in basso, destra",
+      "compact_value": "Dynamic Island",
+      "right_value": "Valore colonna destra",
+      "right_header": "Intestazione colonna destra",
+      "right_footer": "Nota colonna destra",
+      "left_value": "Valore colonna sinistra",
+      "left_header": "Intestazione colonna sinistra",
+      "left_footer": "Nota colonna sinistra",
+      "primary_column": "Colonna principale",
+      "spent": "Speso",
+      "budget": "Budget",
+      "currency": "Valuta",
+      "categories": "Categorie",
+      "display": "Cifra principale",
+      "total_color": "Colore dell'anello",
+      "points": "Storico",
+      "color": "Colore della linea",
+      "entries": "Sensore del prezzo",
+      "scale": "Scala del prezzo",
+      "sources": "Produzione",
+      "grid_power": "Potenza di rete",
+      "battery_power": "Potenza della batteria",
+      "battery_level": "Carica della batteria",
+      "home_power": "Potenza della casa",
+      "grid_today": "Rete oggi",
+      "home_today": "Casa oggi",
+      "image": "Immagine",
+      "image_fit": "Stile dell'immagine",
+      "image_alt": "Descrizione dell'immagine",
+      "state_icon": "Icona dello stato",
+      "stats": "Letture",
+      "reported_at": "Ultima segnalazione",
+      "badge": "Badge",
+      "badge_alt": "Descrizione del badge",
+      "value_label": "Sotto il valore"
+    },
+    "field-hint": {
+      "state": "L'entità di cui il widget mostra lo stato",
+      "progress": "Un sensore che riporta un valore da 0 a 100",
+      "target": "Un orario verso cui fare il conto alla rovescia",
+      "rows": "Ogni entità selezionata diventa una riga",
+      "devices": "Ogni sensore selezionato diventa una riga",
+      "actions": "Ogni entità selezionata diventa un riquadro: luci e interruttori si accendono o spengono, scene e script si eseguono quando li premi",
+      "icon": "Un SF Symbol di Apple; inizia a scrivere per cercare per nome o parola chiave",
+      "accent": "Il colore di risalto del widget: il riquadro dell'icona e il testo che non ha un colore proprio",
+      "tap_url": "Dove porta un tocco sul widget: una plancia, un'app, una pagina web",
+      "end_date": "Fa il conto alla rovescia fino a quest'ora, al posto dello stato",
+      "min_value": "Estremo inferiore della scala del quadrante (predefinito 0)",
+      "max_value": "Estremo superiore della scala del quadrante (predefinito 1)",
+      "ring": "Come si colora il quadrante lungo la sua scala, dall'estremo basso a quello alto",
+      "expired_text": "Mostrato quando l'ora di arrivo è passata",
+      "compact_value": "L'unico valore mostrato accanto all'icona mentre la Dynamic Island è compatta",
+      "spent": "Quanto è stato speso finora",
+      "budget": "L'importo da spendere: un numero, o in tempo reale da un'entità",
+      "currency": "Un codice di tre lettere, come USD o EUR",
+      "categories": "Ogni sensore selezionato diventa una categoria; assegnale un budget nelle sue opzioni",
+      "display": "Rimanente scala dal budget, Speso conta in avanti",
+      "total_color": "L'anello attorno alla cifra principale",
+      "points": "Ricavato da ciò che Home Assistant ha registrato, quindi c'è già dal primo aggiornamento",
+      "entries": "Un sensore del prezzo (Nord Pool, ENTSO-e, Octopus Energy, Amber e simili): l'andamento viene letto dai suoi attributi. Un aggiornamento al giorno basta a tenere aggiornato il widget.",
+      "scale": "Centesimi mostra 0,25 EUR/kWh come 25 ct/kWh",
+      "color": "La linea e il riempimento sotto di essa",
+      "header_left": "La riga superiore del banner, a sinistra",
+      "header_right": "La riga superiore del banner, a destra",
+      "footer_left": "La riga inferiore del banner, a sinistra",
+      "footer_right": "La riga inferiore del banner, a destra",
+      "left_value": "La lettura della colonna sinistra, in grande",
+      "left_header": "La piccola riga sopra la lettura di sinistra",
+      "left_footer": "La piccola riga sotto la lettura di sinistra",
+      "right_value": "La lettura della colonna destra, in grande",
+      "right_header": "La piccola riga sopra la lettura di destra",
+      "right_footer": "La piccola riga sotto la lettura di destra",
+      "primary_column": "La colonna che la Dynamic Island mostra quando è compatta",
+      "image": "Un URL https pubblico che il dispositivo scarica da sé, come un'auto su sfondo trasparente",
+      "image_alt": "Letta da VoiceOver al posto dell'immagine",
+      "reported_at": "Il widget dice quanto tempo fa questa entità si è segnalata"
+    },
+    "field-hint-template": {
+      "state": "Ciò che il widget mostra, come lo produce il modello",
+      "progress": "Un numero da 0 a 100"
+    },
+    "switchboard": {
+      "subtitle": "Seconda riga",
+      "subtitle-aria": "Cosa mostra la seconda riga di {name}",
+      "subtitle-area": "Area",
+      "subtitle-state": "Stato, come 2700 K",
+      "subtitle-none": "Niente",
+      "subtitle-custom": "Testo personalizzato",
+      "subtitle-hint": "Il testo piccolo sotto il nome del riquadro.",
+      "subtitle-custom-aria": "Seconda riga personalizzata per {name}",
+      "press": "Quando premuto",
+      "press-toggle": "Accende o spegne {name}",
+      "press-on": "Accende {name}",
+      "press-open": "Apre o chiude {name}",
+      "press-lock": "Blocca o sblocca {name}",
+      "press-scene": "Attiva {name}",
+      "press-script": "Esegue {name}",
+      "press-button": "Preme {name}",
+      "color-hint": "Colora il riquadro mentre è acceso. Il predefinito è il colore d'accento del widget.",
+      "subtitle-placeholder": "Per esempio Piano di sopra",
+      "color-invalid": "Usa il nome di un colore della tavolozza o #RRGGBB.",
+      "gradient": "Sfumatura",
+      "gradient-aria": "Sfumatura per {name}",
+      "gradient-hint": "Una sfumatura colora il riquadro mentre è acceso, al posto del suo colore.",
+      "gradient-color": "Uno dei punti non è un colore: usa il nome di un colore della tavolozza o #RRGGBB.",
+      "gradient-count": "Una sfumatura richiede 2 o 3 colori.",
+      "image": "URL dell'immagine",
+      "image-aria": "URL dell'immagine per {name}",
+      "image-alt": "Descrizione dell'immagine",
+      "image-alt-aria": "Descrizione dell'immagine per {name}",
+      "image-alt-hint": "Letta da VoiceOver al posto dell'immagine.",
+      "picture": "Immagine",
+      "picture-custom": "Da un URL",
+      "picture-entity": "L'immagine dell'entità",
+      "image-hint": "Un URL https pubblico che il dispositivo scarica da solo. Tienila leggera: al massimo 256 KB, 1024 px per lato e 1 megapixel, in formato PNG, JPEG, HEIC, WebP o GIF. Il dispositivo la conserva per un giorno, quindi un nuovo URL mostra subito una nuova immagine.",
+      "image-https": "L'URL deve iniziare con https://.",
+      "image-long": "L'URL supera i 2048 caratteri.",
+      "image-space": "L'URL non può contenere spazi.",
+      "image-host": "L'URL deve avere un nome host dopo https://.",
+      "picture-use": "Usa l'immagine dell'entità",
+      "picture-warn": "Solo se quell'URL è pubblico e stabile: il dispositivo lo scarica senza le credenziali di Home Assistant, e un URL con un token che cambia smette di funzionare.",
+      "picture-local": "L'immagine di questa entità è un indirizzo di Home Assistant che il dispositivo non può raggiungere, quindi non si può usare.",
+      "too-big": "Troppo grande per Aivi: {bytes} byte su {limit}. Non viene inviato nulla finché non rientra: accorcia gli URL delle immagini o le seconde righe, oppure rimuovi dei riquadri.",
+      "fix-options": "Per salvare, correggi le opzioni segnate in rosso: {rows}.",
+      "words": "Parole di stato",
+      "words-changed": "modificate: {count}",
+      "words-hint": "Cosa dice il riquadro in ogni stato. Lascia vuota una parola per usare quella mostrata, oppure nascondila. Al massimo 24 caratteri.",
+      "word-aria": "Parola per lo stato {state} di {name}",
+      "word-hide": "Nascondi",
+      "word-hide-aria": "Nascondi la parola per lo stato {state} di {name}",
+      "word-hidden": "Nascosta",
+      "word-none": "Nessuna parola",
+      "word-on": "Acceso",
+      "word-off": "Spento",
+      "word-turning-on": "In accensione",
+      "word-turning-off": "In spegnimento",
+      "word-no-response": "Nessuna risposta",
+      "word-idle": "Inattivo",
+      "word-active": "Attivo",
+      "word-sent": "Inviato"
+    },
+    "field-hint-budget": {
+      "subtitle": "Mostrato con il totale, come “20 giorni rimasti”"
+    },
+    "field-hint-trend": {
+      "value": "La lettura attuale, in grande",
+      "unit": "Predefinita: l'unità del sensore stesso",
+      "min_value": "Un minimo fisso per il grafico (altrimenti si adatta ai dati)",
+      "max_value": "Un massimo fisso per il grafico (altrimenti si adatta ai dati)"
+    },
+    "field-hint-prices": {
+      "unit": "Predefinita: l'unità del sensore stesso"
+    },
+    "delivery": {
+      "stale-label": "Mostra come obsoleto dopo",
+      "stale-hint": "Quando il contenuto resta senza aggiornamenti per questo tempo, il widget lo attenua e mostra quando è stato aggiornato l'ultima volta.",
+      "stale-keep": "Come impostato nell'app Aivi",
+      "stale-never": "Mai",
+      "throttle-label": "Aggiorna al massimo ogni",
+      "throttle-hint": "iOS consente a un'Attività Live circa 240 aggiornamenti. Le modifiche intermedie vengono trattenute e l'ultima parte allo scadere del tempo; avvio e fine non vengono mai ritardati.",
+      "throttle-off": "A ogni modifica (nessun limite)"
+    },
+    "duration": {
+      "seconds-one": "{count} secondo",
+      "seconds-many": "{count} di secondi",
+      "seconds-other": "{count} secondi",
+      "minutes-one": "{count} minuto",
+      "minutes-many": "{count} di minuti",
+      "minutes-other": "{count} minuti",
+      "hours-one": "{count} ora",
+      "hours-many": "{count} di ore",
+      "hours-other": "{count} ore",
+      "days-one": "{count} giorno",
+      "days-many": "{count} di giorni",
+      "days-other": "{count} giorni"
+    },
+    "color-field": {
+      "pick": "{label}: {color}",
+      "picker-aria": "{label}, colore personalizzato",
+      "hex-aria": "{label}, codice esadecimale",
+      "invalid": "Usa un codice esadecimale come #FFD27A."
+    },
+    "gradient": {
+      "auto": "Automatica",
+      "none": "Nessuna",
+      "custom": "Personalizzata",
+      "auto-hint": "Segue il colore della luce stessa mentre è accesa.",
+      "none-hint": "Nessuna sfumatura: il riquadro usa il suo colore.",
+      "stop-aria": "Colore {n} della sfumatura",
+      "remove-aria": "Rimuovi il colore {n} della sfumatura",
+      "add": "Aggiungi un colore"
+    },
+    "section": {
+      "content": "Cosa mostra",
+      "look": "Aspetto",
+      "behavior": "Comportamento",
+      "runs": "Quando è attiva"
+    },
+    "fold": {
+      "set": "impostati: {count}"
+    },
+    "group": {
+      "progress": "Avanzamento",
+      "reading": "Lettura",
+      "range": "Intervallo",
+      "countdown": "Conto alla rovescia",
+      "total": "Totale",
+      "prices": "Prezzi",
+      "grid": "Rete",
+      "battery": "Batteria",
+      "home": "Casa",
+      "headline": "Intestazione",
+      "footnote": "Nota in basso",
+      "left-column": "Colonna sinistra",
+      "right-column": "Colonna destra"
+    },
+    "group-hint-gauge": {
+      "range": "I due estremi del quadrante. Se li lasci vuoti, va da 0 a 1."
+    },
+    "group-hint-trend": {
+      "range": "Un intervallo fisso per il grafico. Se lo lasci vuoto, si adatta ai dati."
+    },
+    "field-short": {
+      "min_value": "Minimo",
+      "max_value": "Massimo",
+      "left_value": "Valore",
+      "left_header": "Sopra",
+      "left_footer": "Sotto",
+      "right_value": "Valore",
+      "right_header": "Sopra",
+      "right_footer": "Sotto",
+      "header_left": "Sinistra",
+      "header_right": "Destra",
+      "footer_left": "Sinistra",
+      "footer_right": "Destra",
+      "grid_power": "Potenza",
+      "grid_today": "Oggi",
+      "battery_power": "Potenza",
+      "battery_level": "Carica",
+      "home_power": "Potenza",
+      "home_today": "Oggi",
+      "segments": "Barra",
+      "progress": "Valore"
+    },
+    "field-placeholder-gauge": {
+      "min_value": "0",
+      "max_value": "1",
+      "unit": "°C",
+      "label": "Soggiorno"
+    },
+    "field-placeholder-trend": {
+      "min_value": "Auto",
+      "max_value": "Auto",
+      "unit": "kWh"
+    },
+    "symbols": {
+      "placeholder": "Cerca simboli, come washer o lightbulb",
+      "categories": "Categorie di simboli",
+      "cat-all": "Tutti",
+      "cat-home": "Casa",
+      "cat-devices": "Dispositivi",
+      "cat-objectsandtools": "Oggetti",
+      "cat-weather": "Meteo",
+      "cat-nature": "Natura",
+      "cat-transportation": "Trasporti",
+      "cat-automotive": "Auto",
+      "cat-privacyandsecurity": "Sicurezza",
+      "cat-human": "Persone",
+      "cat-health": "Salute",
+      "cat-media": "Media",
+      "cat-communication": "Comunicazione",
+      "cat-commerce": "Denaro",
+      "cat-time": "Tempo",
+      "list": "Simboli corrispondenti",
+      "loading": "Caricamento dei nomi dei simboli Apple…",
+      "failed": "Impossibile caricare l'elenco dei simboli. Qualsiasi nome di simbolo funziona comunque se lo scrivi.",
+      "no-matches": "Nessun simbolo corrispondente. Qualsiasi nome funziona comunque se lo scrivi.",
+      "unknown": "Non è un nome dell'elenco dei simboli Apple. Viene mantenuto come l'hai scritto.",
+      "ios": "iOS {version}+",
+      "help": "L'anteprima mostra un'icona simile, o ✦ dove non ne ha una. Il tuo dispositivo disegna il simbolo originale di Apple."
+    },
+    "field-hint-status": {
+      "value": "Una lettura mostrata in grande; lo stato passa allora alla riga sotto"
+    },
+    "field-hint-gauge": {
+      "value": "La lettura indicata dal quadrante",
+      "unit": "Mostrata dopo la lettura, come °C o %",
+      "label": "La piccola riga sopra il quadrante; se vuota, il nome del widget"
+    },
+    "field-hint-countdown": {
+      "subtitle": "La piccola riga sotto il conto alla rovescia"
+    },
+    "field-hint-energy": {
+      "sources": "Sensori di potenza di ciò che produce energia: solare, eolico, un generatore",
+      "grid_power": "Positiva mentre preleva dalla rete, negativa mentre immette",
+      "grid_today": "Un contatore di energia; il valore di oggi si conta dalla mezzanotte",
+      "battery_power": "Positiva in carica, negativa in scarica",
+      "battery_level": "La carica della batteria, da 0 a 100",
+      "home_power": "Quanto consuma la casa in questo momento",
+      "home_today": "Un contatore di energia; il valore di oggi si conta dalla mezzanotte"
+    },
+    "field-placeholder": {
+      "tap_url": "https://…",
+      "image": "https://…/car.png",
+      "image_alt": "L'auto di lato"
+    },
+    "field-placeholder-countdown": {
+      "expired_text": "Fatto"
+    },
+    "field-placeholder-budget": {
+      "currency": "EUR"
+    },
+    "field-placeholder-prices": {
+      "unit": "ct/kWh"
+    },
+    "field-placeholder-monitor": {
+      "left_header": "Dentro",
+      "right_header": "Fuori",
+      "left_footer": "Umidità 46%",
+      "right_footer": "Percepita 9°"
+    },
+    "field-idle": {
+      "primary_column": "Si applica quando entrambe le colonne mostrano qualcosa: con una sola colonna non c'è nulla da scegliere."
+    },
+    "events": {
+      "title": "Eventi dai tuoi dispositivi",
+      "button": "Eventi: {state}",
+      "tooltip": "Eventi",
+      "state-ok": "connesso",
+      "state-warn": "non connesso al momento",
+      "state-bad": "disconnesso",
+      "state-idle": "non in ascolto",
+      "stream-connected": "Connesso",
+      "stream-reconnecting": "Riconnessione…",
+      "stream-paused": "In pausa",
+      "stream-stopped": "Disconnesso",
+      "stream-idle": "Non in ascolto",
+      "since": "In ascolto da: {time}",
+      "paused-why": "L'abbonamento Aivi non è attivo, quindi gli eventi dai tuoi dispositivi non arrivano.",
+      "idle-why": "Niente di ciò che è configurato qui riceve input, quindi non c'è nulla da ascoltare. È normale: l'ascolto parte da solo appena qualcosa lo richiede, come uno Switchboard o un Telecomando.",
+      "list-label": "Ultimi eventi",
+      "empty": "Ancora nulla. Premi un riquadro su uno dei tuoi dispositivi e apparirà qui non appena succede.",
+      "see-all": "Vedi tutti gli eventi"
+    },
+    "log": {
+      "title": "Registro",
+      "open": "Apri il registro",
+      "account-label": "Account",
+      "show-label": "Mostra",
+      "show-all": "Tutto",
+      "show-pushes": "Invii ad Aivi",
+      "show-presses": "Pressioni dai tuoi dispositivi",
+      "show-problems": "Solo problemi",
+      "for-label": "Per",
+      "for-any": "Qualsiasi",
+      "option-count": "{label} ({count})",
+      "showing-one": "{shown} di {count} voce",
+      "showing-other": "{shown} di {count} voci",
+      "show-everything": "Mostra tutto",
+      "list-label": "Il registro, dal più recente",
+      "empty": "Ancora niente. Gli invii ad Aivi e le pressioni dai tuoi dispositivi compaiono qui man mano.",
+      "no-matches": "Niente corrisponde a questi filtri",
+      "footer-memory": "In memoria: l'elenco riparte da zero quando Home Assistant si riavvia. Per conservarlo, attiva «Conserva il registro tra i riavvii» nelle opzioni dell'account.",
+      "footer-kept": "Conservato tra i riavvii: questo account scrive il suo registro su disco."
+    },
+    "conflict": {
+      "also-fed": "Anche un'automazione invia dati qui: {names}. I due si sovrascrivono a vicenda.",
+      "also-fed-several": "Lo alimentano anche delle automazioni: {names}. Loro e questo pannello si sovrascrivono a vicenda.",
+      "mark": "Anche un'automazione invia dati qui",
+      "fed": "Dati da un'automazione: {names}",
+      "turn-off": "Disattiva l'automazione",
+      "turn-off-all": "Disattivale",
+      "turn-off-named": "Disattiva {names}",
+      "turned-off": "Automazione disattivata. Ora i dati arrivano solo da questo pannello.",
+      "keep-shared": "{name} alimenta anche altri widget, quindi non viene disattivata da qui.",
+      "keep-initial_state": "{name} si riattiva da sola ogni volta che Home Assistant si avvia, quindi disattivala nelle sue impostazioni."
+    },
+    "field-hint-showcase": {
+      "image_fit": "Uno scontorno poggia sul widget; una foto ne riempie il lato",
+      "state": "Una parola per com'è, come Chiusa o In carica",
+      "state_icon": "Mostrata davanti alla parola dello stato",
+      "stats": "Ogni entità scelta diventa una lettura: Piccolo mostra la prima, Medio tre",
+      "badge": "Un piccolo marchio accanto all'ora della segnalazione, omesso sulle foto",
+      "badge_alt": "Letta da VoiceOver al posto del badge",
+      "icon": "Sostituisce l'immagine finché non ce n'è una"
+    },
+    "field-placeholder-showcase": {
+      "badge": "https://…/logo.png",
+      "badge_alt": "Il logo del marchio"
+    },
+    "group-showcase": {
+      "picture": "Immagine",
+      "state": "Stato",
+      "badge": "Badge"
+    },
+    "showcase": {
+      "too-big": "Troppo grande per Aivi: {bytes} di {limit} byte. Non viene inviato nulla finché non rientra: accorcia gli URL delle immagini o le etichette, oppure rimuovi delle letture."
+    },
+    "field-label-remote": {
+      "actions": "Pulsanti",
+      "value": "Lettura"
+    },
+    "field-hint-remote": {
+      "value": "La lettura grande, come la carica di un'auto; un numero mantiene l'unità della sua entità",
+      "actions": "Ogni entità scelta diventa un pulsante: Piccolo mostra i primi due, Medio fino a cinque",
+      "stats": "Fino a tre letture, mostrate dalla dimensione Grande in su",
+      "image_fit": "Un ritaglio sta accanto alla lettura; una foto sta in una cornice arrotondata",
+      "icon": "Sostituisce l'immagine finché non ce n'è una"
+    },
+    "group-remote": {
+      "picture": "Immagine",
+      "reading": "Lettura",
+      "bar": "Barra"
+    },
+    "remote": {
+      "too-big": "Troppo grande per Aivi: {bytes} di {limit} byte. Non viene inviato nulla finché non rientra: accorcia gli URL delle immagini o le seconde righe, oppure rimuovi pulsanti."
+    },
+    "field-hint-activity-remote": {
+      "value": "La lettura grande, come la batteria di un robot aspirapolvere; la sua unità è un campo a parte",
+      "actions": "Ogni entità selezionata diventa un pulsante: fino a tre, con l'etichetta finché sono al massimo due",
+      "stats": "Fino a due letture, nella schermata di blocco finché non c'è una barra",
+      "image": "Un URL https pubblico; il dispositivo la mostra appena l'app l'ha scaricata, e fino ad allora l'icona",
+      "state": "Una parola per com'è, come Pulizia o In carica",
+      "unit": "Subito dopo il valore, come % o km",
+      "value_label": "Una parola sotto il valore, come rimanente",
+      "progress": "Disegna una barra da un sensore che riporta 0–100; le letture le lasciano spazio",
+      "bar_color": "Il colore della barra; se non impostato, quello dello stato, altrimenti l'accento",
+      "compact_value": "Mostrato accanto all'icona mentre l'Isola è chiusa; se non impostato, il valore e la sua unità"
+    },
+    "field-placeholder-activity-remote": {
+      "unit": "%",
+      "value_label": "rimanente"
+    },
+    "every": {
+      "seconds-one": "ogni secondo",
+      "seconds-other": "ogni {count} secondi",
+      "minutes-one": "ogni minuto",
+      "minutes-other": "ogni {count} minuti",
+      "hours-one": "ogni ora",
+      "hours-other": "ogni {count} ore",
+      "days-one": "ogni giorno",
+      "days-other": "ogni {count} giorni",
+      "seconds-many": "ogni {count} secondi",
+      "minutes-many": "ogni {count} minuti",
+      "hours-many": "ogni {count} ore",
+      "days-many": "ogni {count} giorni"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "name": "Flusso di eventi",
+        "state_attributes": {
+          "reason": {
+            "name": "Motivo",
+            "state": {
+              "subscription_inactive": "Nessun abbonamento attivo",
+              "auth_failed": "Token rifiutato"
+            }
+          },
+          "last_error": {
+            "name": "Ultimo errore"
+          },
+          "connected_since": {
+            "name": "Connesso da"
+          },
+          "reconnects": {
+            "name": "Riconnessioni"
+          },
+          "last_event": {
+            "name": "Ultimo evento"
+          }
+        }
+      },
+      "problem": {
+        "name": "Stato",
+        "state_attributes": {
+          "problems": {
+            "name": "Problemi"
+          },
+          "subscription": {
+            "name": "Abbonamento",
+            "state": {
+              "expired": "Scaduto",
+              "none": "Nessun abbonamento"
+            }
+          },
+          "event_stream": {
+            "name": "Flusso di eventi",
+            "state": {
+              "auth_failed": "Token rifiutato"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "name": "Pressioni",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "Acceso",
+              "toggle_off": "Spento",
+              "pressed": "Premuto"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "name": "Ultimo invio"
+      },
+      "push_status": {
+        "name": "Stato dell'aggiornamento",
+        "state": {
+          "ok": "OK",
+          "retrying": "Nuovo tentativo",
+          "auth_failed": "Token rifiutato",
+          "not_found": "Non nell'app Aivi",
+          "rejected": "Contenuto rifiutato",
+          "too_large": "Contenuto troppo grande",
+          "template_error": "Errore nel modello di Home Assistant",
+          "template_mismatch": "Template diverso",
+          "no_subscription": "Nessun abbonamento attivo",
+          "quota_exceeded": "Limite di Attività Live raggiunto",
+          "error": "Errore",
+          "waiting": "In attesa di un valore"
+        },
+        "state_attributes": {
+          "last_error": {
+            "name": "Ultimo errore"
+          },
+          "waiting_for": {
+            "name": "In attesa di"
+          }
+        }
+      },
+      "subscription": {
+        "name": "Abbonamento",
+        "state": {
+          "active": "Attivo",
+          "expired": "Scaduto",
+          "none": "Nessun abbonamento"
+        },
+        "state_attributes": {
+          "expires_at": {
+            "name": "Scade il"
+          },
+          "renews": {
+            "name": "Si rinnova"
+          },
+          "expired_at": {
+            "name": "Scaduto il"
+          }
+        }
+      }
+    }
+  }
+}

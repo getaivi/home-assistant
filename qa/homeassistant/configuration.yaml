@@ -1,0 +1,146 @@
+# Throwaway Home Assistant for trying the Aivi integration.
+# Boots already onboarded (see .storage/) and auto-logs-in on the local
+# Docker network, so you land straight on a dashboard.
+
+default_config:
+
+# One-click login on the container network; this is a disposable QA box.
+homeassistant:
+  auth_providers:
+    - type: homeassistant
+    - type: trusted_networks
+      trusted_networks:
+        - 127.0.0.1/32
+        - 10.0.0.0/8
+        - 172.16.0.0/12
+        - 192.168.0.0/16
+      allow_bypass_login: true
+
+logger:
+  default: warning
+  logs:
+    custom_components.aivi: debug
+
+# Fake things to drive the demo widgets. Adjust them from the dashboard and
+# watch the pushes land at http://localhost:8099.
+input_number:
+  washer_progress:
+    name: Washer progress
+    min: 0
+    max: 100
+    step: 1
+    unit_of_measurement: "%"
+    icon: mdi:washing-machine
+  vacuum_battery:
+    name: Robot vacuum battery
+    min: 0
+    max: 100
+    step: 1
+    initial: 68
+    unit_of_measurement: "%"
+    icon: mdi:robot-vacuum
+  lock_battery:
+    name: Door lock battery
+    min: 0
+    max: 100
+    step: 1
+    initial: 45
+    unit_of_measurement: "%"
+    icon: mdi:lock
+  # Spending, solar and grid power for the budget and energy widgets.
+  spent:
+    name: Spent this month
+    min: 0
+    max: 5000
+    step: 0.01
+    initial: 519.3
+    mode: box
+    unit_of_measurement: USD
+  solar_power:
+    name: Solar power
+    min: 0
+    max: 10
+    step: 0.1
+    initial: 3.2
+    unit_of_measurement: kW
+  grid_power:
+    name: Grid power
+    min: -5000
+    max: 5000
+    step: 10
+    initial: -1400
+    unit_of_measurement: W
+
+input_text:
+  washer_state:
+    name: Washer state
+    initial: Washing
+
+input_boolean:
+  front_door:
+    name: Front door open
+  # Switchboard tiles: two toggles and, below, a scene to press.
+  porch_light:
+    name: Porch light
+    icon: mdi:lightbulb
+  fountain:
+    name: Garden fountain
+    icon: mdi:fountain
+
+scene:
+  - name: Movie night
+    entities:
+      input_boolean.porch_light: "off"
+      input_boolean.fountain: "off"
+
+# Sensors with the battery device class, so the integration's filtered picker
+# offers them for the "batteries" widget.
+template:
+  - sensor:
+      - name: Robot vacuum battery level
+        unique_id: qa_vacuum_battery
+        state: "{{ states('input_number.vacuum_battery') | int }}"
+        unit_of_measurement: "%"
+        device_class: battery
+      - name: Door lock battery level
+        unique_id: qa_lock_battery
+        state: "{{ states('input_number.lock_battery') | int }}"
+        unit_of_measurement: "%"
+        device_class: battery
+      # The energy widget's power sensors (device_class power) and a meter.
+      - name: Solar power now
+        unique_id: qa_solar_power
+        state: "{{ states('input_number.solar_power') }}"
+        unit_of_measurement: kW
+        device_class: power
+      - name: Grid power now
+        unique_id: qa_grid_power
+        state: "{{ states('input_number.grid_power') }}"
+        unit_of_measurement: W
+        device_class: power
+      - name: Spent this month
+        unique_id: qa_spent
+        state: "{{ states('input_number.spent') }}"
+        unit_of_measurement: USD
+        device_class: monetary
+      # A price sensor shaped like Nord Pool's: today and tomorrow, hourly,
+      # in raw_today / raw_tomorrow (the prices widget finds them).
+      - name: Electricity price
+        unique_id: qa_electricity_price
+        unit_of_measurement: EUR/kWh
+        state: "{{ (0.15 + 0.08 * sin(now().hour / 24 * 2 * pi)) | round(3) }}"
+        attributes:
+          raw_today: >-
+            {% set day = today_at() %}
+            {% set ns = namespace(items=[]) %}
+            {% for h in range(24) %}
+            {% set ns.items = ns.items + [{'start': (day + timedelta(hours=h)).isoformat(), 'end': (day + timedelta(hours=h + 1)).isoformat(), 'value': (0.15 + 0.08 * sin(h / 24 * 2 * pi)) | round(3)}] %}
+            {% endfor %}
+            {{ ns.items }}
+          raw_tomorrow: >-
+            {% set day = today_at() + timedelta(days=1) %}
+            {% set ns = namespace(items=[]) %}
+            {% for h in range(24) %}
+            {% set ns.items = ns.items + [{'start': (day + timedelta(hours=h)).isoformat(), 'end': (day + timedelta(hours=h + 1)).isoformat(), 'value': (0.13 + 0.06 * sin(h / 24 * 2 * pi)) | round(3)}] %}
+            {% endfor %}
+            {{ ns.items }}

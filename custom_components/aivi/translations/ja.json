@@ -1,0 +1,1563 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Aivi アカウントを接続",
+        "description": "Aivi アプリの Settings タブから API トークンを貼り付けてください。複数のアカウントを接続する場合は、アカウントに名前を付けてください。",
+        "data": {
+          "token": "API トークン",
+          "name": "アカウント名"
+        },
+        "sections": {
+          "advanced": {
+            "name": "詳細オプション",
+            "description": "任意。デフォルト以外の Aivi API に接続する場合にのみ、ベース URL を変更してください。",
+            "data": {
+              "base_url": "API ベース URL"
+            }
+          }
+        }
+      },
+      "reauth_confirm": {
+        "title": "Aivi に再接続",
+        "description": "Aivi が API トークンを拒否しました。Aivi アプリの Settings タブから新しいトークンを貼り付けてください。",
+        "data": {
+          "token": "API トークン"
+        }
+      },
+      "reconfigure": {
+        "title": "Aivi を再設定",
+        "description": "API トークンを更新します。ベース URL を変更するには、詳細オプションを開いてください。",
+        "data": {
+          "token": "API トークン"
+        },
+        "sections": {
+          "advanced": {
+            "name": "詳細オプション",
+            "description": "任意。デフォルト以外の Aivi API に接続する場合にのみ、ベース URL を変更してください。",
+            "data": {
+              "base_url": "API ベース URL"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aivi がその API トークンを拒否しました。確認して、もう一度お試しください。",
+      "cannot_connect": "Aivi に接続できませんでした。接続を確認して、もう一度お試しください。",
+      "no_subscription": "この Aivi アカウントには有効なサブスクリプションがありません。Aivi アプリで登録してから、もう一度お試しください。"
+    },
+    "abort": {
+      "reauth_successful": "Aivi に再接続しました。",
+      "reconfigure_successful": "Aivi の接続を更新しました。",
+      "already_configured": "この Aivi アカウントはすでに接続されています。"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Aivi のオプション",
+        "data": {
+          "keep_log": "再起動後もログを保持する"
+        },
+        "data_description": {
+          "keep_log": "Aivi への送信とデバイスからの操作のログはメモリ上にあり、Home Assistant の再起動でリセットされます。オンにすると、ときどきディスクにも書き込まれ、再起動後も残ります。消耗を避けたい SD カードではオフのままにしてください。"
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_rejected": {
+      "message": "Aivi が API トークンを拒否しました。ウィジェットとライブアクティビティの更新を続けるには、アカウントを再接続してください。"
+    },
+    "cannot_connect": {
+      "message": "Aivi に接続できませんでした：{error}"
+    }
+  },
+  "issues": {
+    "widget_missing": {
+      "title": "ウィジェット「{name}」が Aivi アプリにありません",
+      "description": "Aivi アプリに slug「{slug}」のウィジェットがないため、Home Assistant は「{name}」に何も配信できません。Aivi アプリの **Widgets** タブでまったく同じ slug のウィジェットを作り直すか、Aivi パネルで「{name}」への配信を停止してください。"
+    },
+    "content_rejected": {
+      "title": "Aivi が「{name}」のコンテンツを拒否しました",
+      "description": "Home Assistant が「{name}」（{slug}）に送信した内容は、無効として Aivi に拒否されました。Aivi パネルでデータ元を確認してください。Aivi がコンテンツを受け付けると、更新が再開されます。"
+    },
+    "content_too_large": {
+      "title": "「{name}」のコンテンツが Aivi のサイズ上限を超えています",
+      "description": "Home Assistant が「{name}」（{slug}）に送信する内容が Aivi の上限である 4 KiB を超えているため送信されず、デバイスには最後の更新が表示されたままになります。Aivi パネルで画像 URL や 2 行目を短くするか、タイルを削除してください。上限内に収まると、更新が再開されます。"
+    },
+    "unsupported_template": {
+      "title": "「{name}」はこのバージョンでは配信できないテンプレートを使用しています",
+      "description": "「{name}」は「{template}」テンプレートを使用していますが、このバージョンの Aivi 統合はこのテンプレートに対応していません。配信するには統合を更新するか、Aivi パネルで「{name}」への配信を停止してください。"
+    },
+    "activity_missing": {
+      "title": "ライブアクティビティ「{name}」が Aivi アプリにありません",
+      "description": "Aivi アプリに slug「{slug}」のライブアクティビティがないため、Home Assistant は「{name}」に何も配信できません。Aivi アプリの **Activities** タブでまったく同じ slug のライブアクティビティを作り直すか、Aivi パネルで「{name}」への配信を停止してください。"
+    },
+    "template_mismatch": {
+      "title": "「{name}」は Aivi アプリで別のテンプレートになっています",
+      "description": "その slug のウィジェットまたはライブアクティビティが、Aivi アプリでは「{template}」とは別のテンプレートになっているため、Aivi は「{name}」（{slug}）のコンテンツを拒否しました。配信を停止し、Aivi パネルでもう一度セットアップしてください。テンプレートが一致すると、更新が再開されます。"
+    },
+    "activity_quota": {
+      "title": "「{name}」：進行中のライブアクティビティが多すぎます",
+      "description": "このアカウントで進行中のライブアクティビティがすでに上限に達しているため、Aivi はライブアクティビティ「{name}」（{slug}）を開始しませんでした。ほかのライブアクティビティを終了してください。次の更新時に再試行されます。"
+    },
+    "subscription_inactive": {
+      "title": "Aivi のサブスクリプションが有効ではありません",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Aivi のサブスクリプションを確認",
+            "description": "Aivi アカウント「{account}」に有効なサブスクリプションがないため、ウィジェットとライブアクティビティは一時停止しています。\n\nAivi パネルでセットアップした内容はすべて保持されます。Aivi アプリでサブスクリプションを更新すると、1 時間以内に更新が再開されます。更新済みの場合は、**今すぐ確認** を選択してください。",
+            "submit": "今すぐ確認"
+          },
+          "still_inactive": {
+            "title": "まだ更新されていません",
+            "description": "「{account}」の有効なサブスクリプションはまだ確認できません。Aivi アプリでサブスクリプションを更新してから、**もう一度確認** を選択してください。1 時間ごとにも自動で確認されます。",
+            "submit": "もう一度確認"
+          },
+          "cannot_connect": {
+            "title": "Aivi に接続できません",
+            "description": "接続を確認してから、**再試行** を選択してください。",
+            "submit": "再試行"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi が API トークンを拒否しました。先にアカウントを再接続してください。",
+          "not_loaded": "Aivi アカウントが実行されていません。**設定 → デバイスとサービス** で再読込してから、もう一度お試しください。"
+        }
+      }
+    },
+    "subscription_expired": {
+      "title": "Aivi のサブスクリプションが有効ではありません",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Aivi のサブスクリプションを確認",
+            "description": "「{account}」の Aivi サブスクリプションは {expired} に終了したため、ウィジェットとライブアクティビティは一時停止しています。\n\nAivi パネルでセットアップした内容はすべて保持されます。Aivi アプリでサブスクリプションを更新すると、1 時間以内に更新が再開されます。更新済みの場合は、**今すぐ確認** を選択してください。",
+            "submit": "今すぐ確認"
+          },
+          "still_inactive": {
+            "title": "まだ更新されていません",
+            "description": "「{account}」の有効なサブスクリプションはまだ確認できません。Aivi アプリでサブスクリプションを更新してから、**もう一度確認** を選択してください。1 時間ごとにも自動で確認されます。",
+            "submit": "もう一度確認"
+          },
+          "cannot_connect": {
+            "title": "Aivi に接続できません",
+            "description": "接続を確認してから、**再試行** を選択してください。",
+            "submit": "再試行"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi が API トークンを拒否しました。先にアカウントを再接続してください。",
+          "not_loaded": "Aivi アカウントが実行されていません。**設定 → デバイスとサービス** で再読込してから、もう一度お試しください。"
+        }
+      }
+    },
+    "automation_conflict": {
+      "title": "「{name}」はオートメーションからも配信されています",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "「{name}」に配信しているオートメーションをオフにする",
+            "description": "「{name}」（{slug}）は Aivi パネルから配信されていますが、次のオートメーションからも配信されています：{automations}。両者が互いに上書きし合うため、デバイスの表示が交互に切り替わります。\n\nオフにしてもオートメーションは削除されません。**設定 → オートメーションとシーン** でいつでもオンに戻せます。",
+            "submit": "オフにする"
+          }
+        }
+      }
+    },
+    "automation_conflict_manual": {
+      "title": "「{name}」はオートメーションからも配信されています",
+      "description": "「{name}」（{slug}）は Aivi パネルから配信されていますが、次のオートメーションからも配信されています：{automations}。両者が互いに上書きし合うため、デバイスの表示が交互に切り替わります。このオートメーションはほかのウィジェットにも配信しているか、Home Assistant の起動時に自動でオンに戻るため、Aivi 統合ではオフにしません。**設定 → オートメーションとシーン** で変更するか、Aivi パネルで「{name}」への配信を停止してください。"
+    }
+  },
+  "config_panel": {
+    "common": {
+      "retry": "再試行",
+      "edit": "編集",
+      "back": "戻る",
+      "save": "保存",
+      "saving": "保存中…",
+      "required": "必須",
+      "none": "なし",
+      "default": "デフォルト",
+      "clear": "クリア",
+      "remove": "削除",
+      "move-up": "上へ移動",
+      "move-down": "下へ移動",
+      "done": "完了",
+      "close": "閉じる",
+      "color": "色",
+      "live-activity": "ライブアクティビティ",
+      "menu": "サイドバーを開く"
+    },
+    "error": {
+      "boot-title": "Aivi を読み込めませんでした"
+    },
+    "route": {
+      "widget-missing": "そのウィジェットは見つかりませんでした。代わりにウィジェットの一覧を表示しています。",
+      "activity-missing": "そのライブアクティビティは見つかりませんでした。代わりにウィジェットの一覧を表示しています。"
+    },
+    "onboarding": {
+      "title": "Aivi アカウントを接続",
+      "body": "ウィジェットは Aivi アプリで作成し、Home Assistant がライブデータを配信します。アカウントを接続すると、そのアカウントのウィジェットがすべてここに表示され、すぐにセットアップできます。",
+      "connect": "アカウントを接続",
+      "token-help": "トークンはどこにありますか？",
+      "first-bind-title": "最初のウィジェットが動き始めました。",
+      "first-bind-body": "{name} は、データ元のエンティティが変化するたびに更新されます。手動で更新する必要はありません。",
+      "first-bind-dismiss": "OK"
+    },
+    "hub": {
+      "widgets": "ウィジェット",
+      "live-activities": "ライブアクティビティ",
+      "accounts": "アカウント",
+      "account-connected": "接続済み",
+      "account-paused": "サブスクリプション停止中",
+      "account-unreachable": "接続できません",
+      "add-account": "アカウントを追加",
+      "manage-accounts": "設定で管理",
+      "docs": "ドキュメント",
+      "support": "サポート",
+      "version": "バージョン {version}",
+      "fed-dot": "Home Assistant から配信中",
+      "running-dot": "実行中",
+      "idle-dot": "停止中",
+      "waiting-dot": "値を待機中",
+      "empty-title": "ウィジェットもライブアクティビティもまだありません",
+      "empty-body": "作成は Aivi アプリで行います。ここでは、それを最新に保つデータを選びます。",
+      "empty-step-create": "iPhone または iPad の Aivi アプリで、ウィジェットかライブアクティビティを作成します。",
+      "empty-step-refresh": "ここで「更新」を押します。新しいものは自動では表示されません。",
+      "empty-step-feed": "「セットアップ」を押して、データを送るエンティティを選びます。",
+      "empty-cta": "Aivi アプリを開く",
+      "empty-widgets-note": "ウィジェットはまだありません。Aivi アプリで作成してから更新してください。",
+      "empty-activities-note": "ライブアクティビティはまだありません。Aivi アプリで作成してから更新してください。",
+      "offline": "Aivi に接続できません。セットアップ済みのウィジェットのみ表示しています。",
+      "subscription-inactive": "Aivi のサブスクリプションが有効ではありません。セットアップした内容はすべて保持され、サブスクリプションを更新すると再開されます。",
+      "check-again": "再確認",
+      "bind": "セットアップ",
+      "unbind": "配信を停止",
+      "unbind-confirm": "配信を停止しますか？",
+      "unbound-toast": "{name} への配信を停止しました",
+      "unbind-failed": "{name} への配信を停止できませんでした：{error}",
+      "fed-by": "データ元：{sources}",
+      "nothing-yet": "まだありません",
+      "template-count-other": "テンプレートのフィールド {count} 件",
+      "unsupported": "新しい Aivi 統合が必要です",
+      "widget-gone": "Aivi アプリにないため、何も表示されません。配信を停止するか、Aivi アプリで同じ slug で作り直してください。",
+      "runs-on": "実行条件：{entity}",
+      "activity-gone": "Aivi アプリにないため、何も表示されません。配信を停止するか、Aivi アプリで同じ slug で作り直してください。",
+      "search-placeholder": "ウィジェットとライブアクティビティを検索…",
+      "search-label": "ウィジェットとライブアクティビティを名前またはテンプレートで検索",
+      "refresh": "更新",
+      "refresh-same": "最新です。Aivi アプリに変更はありません。",
+      "refresh-changed": "Aivi アプリから更新しました。",
+      "refresh-failed": "Aivi に接続できませんでした。",
+      "filter-label": "状態で絞り込み",
+      "filter-all": "すべて",
+      "filter-bound": "配信中",
+      "filter-unbound": "未配信",
+      "filter-unsupported": "非対応",
+      "no-matches": "「{query}」に一致するものはありません",
+      "no-matches-filter": "このフィルターに一致するものはありません",
+      "clear-search": "フィルターをクリア",
+      "results-other": "{count} 件を表示中",
+      "subscription-inactive-some-other": "{names} の Aivi サブスクリプションが有効ではありません。更新されるまで、そのウィジェットとライブアクティビティは一時停止します。セットアップした内容はすべて保持されます。",
+      "paused-mark": "一時停止中",
+      "account-ended": "サブスクリプション終了：{date}"
+    },
+    "editor": {
+      "activity-chip": "ライブアクティビティ",
+      "widget-chip": "ウィジェット",
+      "slug-hint": "slug：Aivi アプリ、修復、オートメーションで使われる ID",
+      "unknown-template": "不明なテンプレート「{template}」",
+      "save-failed": "保存できませんでした：{error}",
+      "saved-toast": "{name} に Home Assistant からの配信を開始しました",
+      "active-label": "アクティブエンティティ",
+      "active-hint": "オンになるとライブアクティビティを開始し、オフになると終了します",
+      "template-error-blocks": "保存するには、{fields} のテンプレートエラーを修正してください。",
+      "fix-fields": "保存するには、赤く表示されたフィールドを修正してください。",
+      "one-of": "{fields} のいずれか",
+      "leave-title": "変更を破棄しますか？",
+      "leave-body": "{name} への変更は保存されません。",
+      "leave-keep": "編集を続ける",
+      "leave-discard": "破棄"
+    },
+    "presses": {
+      "count": "×{count}",
+      "type-toggle_on": "オン",
+      "type-toggle_off": "オフ",
+      "type-pressed": "押す",
+      "outcome-played": "処理済み",
+      "outcome-expired": "期限切れ",
+      "outcome-not_bound": "未処理",
+      "outcome-ignored": "無視",
+      "outcome-failed": "失敗"
+    },
+    "recent": {
+      "title": "ログ",
+      "hint": "これについて Home Assistant が最後に Aivi へ送った内容、デバイスから返ってきた操作、そしてそれぞれの結果です。",
+      "empty": "まだありません。Aivi への最初の送信や、デバイスでの操作がここに表示されます。"
+    },
+    "pushes": {
+      "to-aivi": "Aivi へ",
+      "from-devices": "デバイスから",
+      "outcome-delivered": "送信済み",
+      "outcome-unchanged": "変更なし",
+      "outcome-retrying": "再試行中",
+      "outcome-failed": "失敗",
+      "unchanged-why": "前回の送信と同じ内容のため、何も送信されませんでした。",
+      "took": "{ms} ms",
+      "content": "送信した内容",
+      "content-cut": "ここで切り詰められています。内容がログの保持上限より長いためです。",
+      "content-none": "何も解決できなかったため、送信するものがありませんでした。",
+      "outcome-waiting": "待機中",
+      "outcome-held": "保留",
+      "waiting": "送信なし：{field} の値は「{reading}」です。",
+      "waiting-none": "送信なし：{field} に値がありません。",
+      "waiting-any": "送信なし：{fields} のいずれにも値がありません。",
+      "held": "{time} まで保留：このライブアクティビティの更新は最短で{every}です。{section} の「{setting}」で変更できます。"
+    },
+    "source": {
+      "entity": "エンティティ",
+      "attribute": "属性",
+      "template": "テンプレート",
+      "bands": "値に応じて",
+      "literal": "固定値",
+      "fixed": "固定値"
+    },
+    "bands": {
+      "follows": "参照先",
+      "follows-aria": "{field}が参照する値",
+      "follows-placeholder": "センサーを選択",
+      "list": "値に応じた{field}",
+      "below": "{limit} 未満",
+      "between": "{from} 以上 {limit} 未満",
+      "above": "{from} 以上",
+      "limit-aria": "「{range}」の上限",
+      "color-aria": "「{range}」の色",
+      "remove": "範囲「{range}」を削除",
+      "add": "範囲を追加",
+      "full": "範囲は {max} 個まで",
+      "as-template": "テンプレートとして書く",
+      "now": "現在 {reading}、なので{color}",
+      "now-none": "{name} には現在値がないため、固定の色が表示されます",
+      "order": "前の上限より大きく、次の上限より小さい数を入力してください。",
+      "lock-hint": "ロック画面、色合いを付けたホーム画面、画面が暗くなったときは色が表示されません。値もウィジェットに表示するか、アイコンも一緒に変えてください。"
+    },
+    "field": {
+      "also-on": "{surface} にも表示",
+      "source-label": "{field} のソース",
+      "template-aria": "{field} のテンプレート",
+      "pick-entity-first": "先にエンティティを選び、次にその属性を選んでください",
+      "entity-missing": "このエンティティは現在 Home Assistant で利用できません。",
+      "choose-attribute": "属性を選択…",
+      "no-attributes": "このエンティティには選択できる属性がありません。",
+      "style-title": "文字色と書式",
+      "format": "書式",
+      "format-as-is": "そのまま",
+      "source-unusable": "「{value}」を読み取りましたが、ここでは使用できません。下の代替値が適用されます。",
+      "source-unavailable": "現在読み取れる値がありません。下の代替値が適用されます。",
+      "fallback": "代替値",
+      "fallback-hint": "上のソースを読み取れないときに使用されます",
+      "source-of": "{field} のソース",
+      "template-error": "テンプレートエラー：",
+      "error-details": "詳細",
+      "template-empty": "このテンプレートは現在何も出力しないため、このフィールドは未設定として扱われます。",
+      "result": "結果",
+      "kind-text": "テキスト",
+      "kind-number": "数値",
+      "kind-bool": "真偽値",
+      "kind-nothing": "なし",
+      "kind-list-other": "{count} 個の項目のリスト",
+      "kind-numbers-other": "{count} 個の数値のリスト",
+      "kind-range": "{min}～{max}",
+      "updates-on": "更新のきっかけ",
+      "updates-domain": "任意の {domain} エンティティ",
+      "updates-all": "すべての状態変化",
+      "updates-time": "毎分の開始時",
+      "updates-more-other": "ほか {count} 件",
+      "updates-limit-other": "最大 {count} 秒に 1 回",
+      "updates-never": "読み取る値はどれも変化しないため、自動で更新されることはありません。",
+      "unknown-entity": "Home Assistant に {id} はありません。",
+      "did-you-mean": "もしかして：",
+      "use-entity": "{id} を使用",
+      "badge-error": "テンプレートにエラーがあります",
+      "error-at-line": "{line} 行目：",
+      "error-at": "{line} 行目、{column} 列目：",
+      "error-unclosed": "閉じられていない部分があります。{output} と {statement} がすべて完結しているか確認してください。",
+      "error-unclosed_block": "{tag} ブロックが閉じられていません。終わる位置に {end} を追加してください。",
+      "error-unexpected_end": "開いたものがすべて閉じられる前にテンプレートが終わっています。",
+      "error-stray_end": "{tag} は、開かれていないブロックを閉じようとしています。",
+      "error-unknown_tag": "「{tag}」はテンプレートで使える文ではありません。綴りを確認してください。",
+      "error-unknown_filter": "「{name}」という名前のフィルターはありません。",
+      "error-unknown_test": "「{name}」という名前のテストはありません。",
+      "error-bad_char": "文字「{char}」はここでは使えません。",
+      "error-missing": "ここに「{token}」が足りません。",
+      "error-incomplete": "式が途中で終わっています。末尾に何かが足りません。",
+      "error-extra": "「{token}」はここには置けません。その前に演算子か | が抜けていませんか？",
+      "error-unexpected": "ここで「{token}」は想定されていません。",
+      "error-undefined": "ここには「{name}」という名前のものはありません。綴りを確認してください。",
+      "error-no_attribute": "「{value}」には属性「{name}」がありません。",
+      "error-none_attribute": "存在しないものから「{name}」を読み取っています。多くの場合、エンティティ ID の入力ミスが原因です。",
+      "error-no_default": "{function} が数値ではない「{value}」を受け取りましたが、デフォルト値がありません。{example} のようにデフォルト値を指定してください。",
+      "error-type": "テキストと数値が混在しています。{example} のように、先にテキストを数値に変換してください。",
+      "error-division_by_zero": "ゼロで割っています。",
+      "number-placeholder": "例：100",
+      "icon-placeholder": "例：washer.fill",
+      "symbol-styling": "シンボルの装飾",
+      "rendering": "表示モード",
+      "secondary": "2 番目の色",
+      "tertiary": "3 番目の色",
+      "color-style": "色のスタイル",
+      "suggestions": "候補",
+      "device-chip": "デバイス：{name}",
+      "history-chip": "履歴：{name}",
+      "dashboard-chip": "ダッシュボード",
+      "url-invalid": "スキームを含む完全な URL を入力してください（Web ページなら https://、Home Assistant のビューなら homeassistant://）。",
+      "url-long": "URL が 256 文字を超えています。",
+      "invert": "符号を反転",
+      "icon-color": "アイコンの色",
+      "points-source": "履歴のソース",
+      "points-history": "履歴",
+      "points-list": "リスト",
+      "points-template": "テンプレート",
+      "points-window": "期間",
+      "points-entity": "履歴の対象",
+      "points-same": "{field} と同じ",
+      "points-list-hint": "数値のリスト（古い順）を持つ属性",
+      "points-template-hint": "数値のリスト（古い順）を出力する Home Assistant テンプレート。例：天気予報を気温のリストに変換したもの",
+      "points-no-history": "履歴をグラフにするには、{field} のソースをエンティティにするか、ここでエンティティを選んでください。",
+      "source-waiting": "現在の値は「{value}」のため、値が入るまで何も送信されません。",
+      "source-waiting-none": "現在読み取れる値がないため、値が入るまで何も送信されません。",
+      "source-left-out": "現在読み取れる値がないため、この項目は省略されます。",
+      "source-unusable-left-out": "「{value}」を読み取りましたが、ここでは使用できないため、この項目は省略されます。",
+      "badge-waiting": "現在読み取れる値がありません",
+      "name": "「{field}」",
+      "name-grouped": "「{group}：{field}」",
+      "name-case": "as-is"
+    },
+    "code": {
+      "completions": "候補",
+      "fn-states": "エンティティの状態（テキスト）",
+      "fn-state_attr": "エンティティの属性のひとつ",
+      "fn-is_state": "エンティティが指定した状態かどうか",
+      "fn-is_state_attr": "エンティティの属性が指定した値かどうか",
+      "fn-has_value": "エンティティに状態があるかどうか（不明や利用不可でない）",
+      "fn-expand": "グループやリストのメンバーのエンティティ",
+      "fn-area_name": "エンティティがあるエリアの名前",
+      "fn-area_entities": "エリア内のすべてのエンティティ",
+      "fn-device_attr": "エンティティのデバイスの情報（モデルなど）",
+      "fn-now": "現在の日時",
+      "fn-today_at": "今日の指定した時刻（例: today_at('18:30')）",
+      "fn-as_timestamp": "日時を1970年からの秒数で",
+      "fn-relative_time": "どれくらい前か（例: 5分）",
+      "fn-timedelta": "時刻に足したり引いたりする時間の長さ",
+      "fn-timestamp_custom": "タイムスタンプを書式化（例: timestamp_custom('%H:%M')）",
+      "fn-iif": "条件が成り立てばひとつの値、そうでなければ別の値",
+      "fn-float": "小数のある数値。テキストのときの代わりの値つき",
+      "fn-int": "整数。テキストのときの代わりの値つき",
+      "fn-is_number": "値が数値かどうか",
+      "fn-round": "数値を指定した小数の桁数に丸める",
+      "fn-default": "値がないときに使う値",
+      "fn-min": "複数の値のうち最小のもの",
+      "fn-max": "複数の値のうち最大のもの",
+      "fn-selectattr": "属性がテストに合う項目だけを残す",
+      "fn-map": "各項目の属性をひとつ取り出す、または各項目にフィルターを適用する",
+      "fn-list": "結果をリストにする",
+      "fn-count": "項目の数",
+      "fn-sum": "すべての数値を合計する",
+      "fn-join": "項目を区切り文字でつないでテキストにする",
+      "fn-replace": "テキストを別のテキストに置き換える",
+      "fn-state_translated": "エンティティの状態（使用言語で）",
+      "fn-device_id": "エンティティのデバイスの ID",
+      "fn-device_entities": "デバイスのすべてのエンティティ",
+      "fn-area_id": "エリアの ID（名前またはエリア内のエンティティから）",
+      "fn-area_devices": "エリア内のすべてのデバイス",
+      "fn-areas": "すべてのエリア",
+      "fn-floor_name": "フロアの名前",
+      "fn-label_entities": "ラベルが付いたすべてのエンティティ",
+      "fn-integration_entities": "統合のすべてのエンティティ（例: 'hue'）",
+      "fn-utcnow": "現在の日時（UTC）",
+      "fn-as_datetime": "テキストやタイムスタンプを日時に",
+      "fn-as_local": "日時をローカルのタイムゾーンで",
+      "fn-strptime": "指定した書式のテキストから日時を読み取る",
+      "fn-time_since": "どれくらい前か（言葉で）",
+      "fn-time_until": "あとどれくらいか（言葉で）",
+      "fn-as_timedelta": "'00:10:00' のようなテキストを時間の長さに",
+      "fn-timestamp_local": "タイムスタンプをローカルの日時に",
+      "fn-timestamp_utc": "タイムスタンプを UTC の日時に",
+      "fn-bool": "on、yes、1 などのテキストから true か false",
+      "fn-abs": "符号を除いた数値",
+      "fn-average": "複数の数値の平均",
+      "fn-median": "複数の数値の中央値",
+      "fn-string": "値をテキストにする",
+      "fn-format": "テキストの書式を埋める（例: '%.1f' | format(x)）",
+      "fn-lower": "テキストを小文字にする",
+      "fn-upper": "テキストを大文字にする",
+      "fn-title": "各単語の先頭を大文字にする",
+      "fn-capitalize": "最初の文字を大文字にする",
+      "fn-trim": "テキストの前後の空白を取り除く",
+      "fn-truncate": "テキストを指定の長さに短くする",
+      "fn-slugify": "テキストを小文字とアンダースコアの ID にする",
+      "fn-regex_replace": "正規表現に一致した部分を置き換える",
+      "fn-regex_match": "テキストが正規表現の一致で始まるかどうか",
+      "fn-regex_search": "テキストに正規表現の一致が含まれるかどうか",
+      "fn-from_json": "JSON テキストを値として読み取る",
+      "fn-rejectattr": "属性がテストに合う項目を除く",
+      "fn-select": "テストに合う項目だけを残す",
+      "fn-reject": "テストに合う項目を除く",
+      "fn-length": "項目や文字の数",
+      "fn-first": "最初の項目",
+      "fn-last": "最後の項目",
+      "fn-sort": "項目を並べ替える",
+      "fn-unique": "重複した項目を除く",
+      "fn-reverse": "順序を逆にする",
+      "fn-contains": "リストやテキストに値が含まれるかどうか",
+      "fn-range": "0 から指定した数までの数値",
+      "fn-namespace": "ループの中で変更できる値を保持する",
+      "test-defined": "値が存在するかどうか",
+      "test-none": "値が None かどうか",
+      "test-number": "値が数値かどうか",
+      "test-string": "値がテキストかどうか",
+      "test-in": "値がリストやテキストに含まれるかどうか",
+      "test-match": "テキストが正規表現の一致で始まるかどうか",
+      "test-search": "テキストに正規表現の一致が含まれるかどうか",
+      "test-contains": "リストやテキストに値が含まれるかどうか"
+    },
+    "sheet": {
+      "expand": "拡大",
+      "expand-label": "{field} のテンプレートを拡大",
+      "insert": "挿入",
+      "in-template": "このテンプレート内",
+      "all-entities": "すべてのエンティティ",
+      "matches": "一致するエンティティ",
+      "keys": "テンプレート用キー",
+      "key-output": "式",
+      "key-statement": "文",
+      "key-pipe": "フィルター",
+      "key-quote": "引用符",
+      "recipes": "レシピ",
+      "more": "レシピと属性",
+      "recipe-pick": "対象のエンティティを選択",
+      "recipe-without": "エンティティなしで、あとから入力",
+      "fits": "使えるエンティティ",
+      "or": "または",
+      "recipe-words": "オンとオフの表示語（例: 開・閉）",
+      "recipe-rounded-unit": "丸めた状態と単位",
+      "recipe-translated": "Home Assistant に表示される状態",
+      "recipe-fallback": "利用不可のときの表示語",
+      "recipe-time-since": "変化してからの時間",
+      "recipe-time-of-day": "その時刻",
+      "recipe-rounded": "状態を丸めた数値で",
+      "recipe-number": "状態を数値で",
+      "recipe-share": "パーセントを 0〜1 の割合で",
+      "recipe-entity-time": "保持している日時",
+      "recipe-last-changed": "最後に変化した日時",
+      "recipe-in-minutes": "5 分後",
+      "recipe-attribute-list": "リスト属性の数値",
+      "recipe-color-by-state": "オンとオフの色",
+      "recipe-color-by-number": "しきい値を超えたときの色",
+      "recipe-icon-on-off": "オンとオフで変わるアイコン",
+      "recipe-icon-by-level": "レベルで変わるアイコン",
+      "recipe-is-on": "オンかどうか",
+      "recipe-above": "しきい値を超えているかどうか",
+      "word-on": "オン",
+      "word-off": "オフ",
+      "word-open": "開",
+      "word-closed": "閉",
+      "word-detected": "検知",
+      "word-clear": "なし",
+      "word-home": "在宅",
+      "word-away": "外出",
+      "word-wet": "濡れ",
+      "word-dry": "乾燥",
+      "word-problem": "問題あり",
+      "word-ok": "OK",
+      "word-unsafe": "危険",
+      "word-safe": "安全",
+      "word-connected": "接続",
+      "word-disconnected": "切断",
+      "word-unlocked": "解錠",
+      "word-locked": "施錠",
+      "word-low": "低下",
+      "word-normal": "正常",
+      "word-charging": "充電中",
+      "word-not-charging": "充電していません",
+      "word-no-data": "データなし",
+      "writes": "挿入する内容"
+    },
+    "workspace": {
+      "search": "エンティティとレシピを検索",
+      "no-matches": "該当なし",
+      "list-keys": "↑ ↓ で移動、Enter で挿入、→ でその他",
+      "inserted": "{name} を挿入しました",
+      "find": "検索",
+      "find-count": "{current} / {total}",
+      "find-none": "一致なし",
+      "find-previous": "前へ",
+      "find-next": "次へ",
+      "output": "出力",
+      "docs": "ドキュメント",
+      "tab-hint": "Tab でインデント、{keys} で Tab がフォーカス移動に",
+      "position": "{line} 行、{column} 列",
+      "wrap": "折り返し",
+      "key-left": "左へ移動",
+      "key-right": "右へ移動",
+      "key-undo": "元に戻す",
+      "strip-open": "プレビューと結果",
+      "search-entity": "エンティティを検索",
+      "step-keys": "↑ ↓ で移動、Enter で挿入、← で戻る",
+      "step-back": "すべてに戻る",
+      "hints": "ヒント",
+      "hint-limit": "ここで Aivi が受け取るのは {limit} 文字までです。残りは切り捨てられます。",
+      "hint-clipped": "{size} ウィジェットではこの長さで切れます。",
+      "hint-kind-number": "このフィールドは数値を受け取りますが、「{value}」は数値ではないため代替値が表示されます。",
+      "hint-kind-bool": "このフィールドは true か false を受け取りますが、「{value}」はどちらでもないため代替値が表示されます。",
+      "hint-kind-color": "「{value}」はこのフィールドで使える色ではないため、代替値が表示されます。",
+      "hint-kind-time": "このフィールドは日時を受け取りますが、「{value}」は日時ではないため代替値が表示されます。",
+      "hint-kind-other": "このフィールドでは「{value}」を使えないため、代替値が表示されます。",
+      "hint-unavailable": "{name} は現在 {state} のため、ウィジェットには「{state}」と表示されます。",
+      "hint-none": "「None」と表示されています。読み取り先に今は値がありません。多くの場合、エンティティにない属性が原因です。",
+      "hint-decimals-other": "小数点以下 {count} 桁で表示されます。",
+      "hint-symbol": "「{value}」は Apple のシンボル一覧にないため、デバイスにアイコンが表示されない場合があります。",
+      "fix-round": "丸める",
+      "fix-unit": "単位を外す",
+      "fix-is-state": "「{state}」と比較",
+      "fix-unavailable": "代わりに「{words}」を表示",
+      "fix-symbol": "「{name}」を使う",
+      "card-changed": "{when}に変化",
+      "card-more-other": "ほか {count} 件の属性"
+    },
+    "formatter": {
+      "time-since": "経過時間（ライブタイマー、カウントアップ）",
+      "time-until": "残り時間（ライブタイマー、カウントダウン）"
+    },
+    "combobox": {
+      "placeholder": "エンティティを検索…",
+      "no-matches": "一致するエンティティはありません",
+      "more": "{total} 件中 {shown} 件を表示しています。入力して絞り込んでください。"
+    },
+    "checklist": {
+      "full": "上限の {max} 件に達しています。追加するには 1 件削除してください。",
+      "over": "送信されるのは最初の {max} 件のみです。残りを削除してください。",
+      "none-left": "追加できるものはありません。該当するエンティティはすべて使用中です。",
+      "add": "エンティティを追加…",
+      "add-more": "さらに追加…",
+      "add-label": "エンティティを追加",
+      "count": "{count} / {max}",
+      "order-label": "選択した行（ウィジェットでの順序）",
+      "reorder": "{name} を並べ替え",
+      "reorder-hint": "ドラッグで並べ替えます。Alt+矢印キーでフォーカス中の行を移動します",
+      "moved": "{name} を {count} 件中 {position} 番目に移動しました",
+      "move-up": "{name} を上へ移動",
+      "move-down": "{name} を下へ移動",
+      "remove": "{name} を削除",
+      "fix": "要修正",
+      "label-aria": "{name} のラベル",
+      "icon-aria": "{name} のアイコン",
+      "color-aria": "{name} の色",
+      "budget": "予算",
+      "budget-aria": "{name} の予算",
+      "budget-placeholder": "予算なし",
+      "budget-invalid": "250 や 99.50 のように、0 より大きい金額を入力してください。",
+      "charging": "充電",
+      "charging-aria": "{name} の充電センサー",
+      "charging-auto": "自動",
+      "charging-off": "充電マークなし",
+      "charging-off-aria": "{name} の充電マークなし",
+      "charging-hint": "バイナリセンサー、または「charging」と表示するセンサー。空欄のままにすると、保存時にデバイス自身の充電センサーが設定されます。",
+      "charging-unavailable": "このセンサーを現在読み取れないため、充電マークは表示されません。",
+      "today": "今日",
+      "today-aria": "{name} の今日のエネルギー",
+      "today-hint": "エネルギーメーター。今日の値は午前 0 時から集計されます。",
+      "unit-aria": "{name} の単位",
+      "unit-placeholder": "単位なし",
+      "max": "ゲージの上限",
+      "max-aria": "{name} のゲージの上限",
+      "max-placeholder": "ゲージなし",
+      "max-invalid": "0 より大きい数値を入力してください（例: 100）。",
+      "max-hint": "ロック画面など測定値が単独で表示される場所で、この値までゲージを満たします。",
+      "max-words": "現在の値は {value} で数値ではないため、ゲージなしのテキストで表示されます。"
+    },
+    "bar": {
+      "mode-label": "バーのスタイル",
+      "mode-solid": "単色",
+      "mode-segmented": "分割",
+      "mode-layered": "重ね",
+      "mode-caption-solid": "バー全体を 1 色で塗ります",
+      "mode-caption-segmented": "フェーズごとに独立したカプセルになり、値が上がるにつれて順に塗られます",
+      "mode-caption-layered": "1 本の連続したバー。ライブアクティビティと同じ見た目です",
+      "mode-announced": "バーのスタイル：{mode}"
+    },
+    "segments": {
+      "bar-label": "フェーズ",
+      "phase": "フェーズ {index}",
+      "segment-aria": "{name}：バーの {pct}%",
+      "boundary-aria": "{left} と {right} の境界",
+      "boundary-at": "{left} {leftPct}%、{right} {rightPct}%",
+      "add": "フェーズを追加",
+      "added": "{name} を追加しました（{count} / {max} フェーズ）",
+      "removed": "{name} を削除しました。{neighbor} がその分を引き継ぎました",
+      "removed-last": "{name} を削除しました",
+      "split": "分割",
+      "split-aria": "{name} を分割",
+      "split-too-thin": "{name} は小さすぎて分割できません",
+      "remove-aria": "{name} を削除",
+      "size": "サイズ",
+      "size-label": "サイズ（%）",
+      "size-applied": "{name} を {pct}% に設定しました",
+      "label-placeholder": "ラベル",
+      "label-aria": "{name} のラベル",
+      "fill-label": "塗りの色",
+      "track": "未到達部分",
+      "track-label": "未到達部分の色",
+      "track-style-label": "未到達部分の模様",
+      "gray-default": "グレー（デフォルト）",
+      "source": "サイズの取得元",
+      "source-label": "{name} のサイズの取得元",
+      "fallback": "代替値",
+      "fallback-label": "{name} の代替サイズ（%）",
+      "sourced-hint": "{source} からライブで取得します。取得できないときは代替値が適用されます",
+      "fallback-in-use": "代替サイズ（{pct}%）を使用しています。",
+      "result-share": "バーの {pct}%",
+      "template-empty": "このテンプレートは現在何も出力しないため、代替サイズ（{pct}%）を使用しています。",
+      "source-fallback": "このソースからは現在使用できるサイズが得られないため、代替サイズ（{pct}%）を使用しています。",
+      "segment-live-aria": "{name}：バーの {pct}%、{source} からライブで取得",
+      "boundary-locked": "この境界はライブのソースに連動しています。代わりに、そのフェーズのソースまたは代替値を編集してください。"
+    },
+    "suggest": {
+      "open": "提案",
+      "title": "セットアップを提案",
+      "title-off": "AIの提案",
+      "intro": "表示したい内容を自由な言葉で入力すると、フォームが入力されます。次の例から始めることもできます：",
+      "input-label": "内容を説明",
+      "send": "送信",
+      "stop": "停止",
+      "stopped": "停止しました。回答は破棄されました。",
+      "retry": "再試行",
+      "problem-failed": "うまくいきませんでした：{error}",
+      "footer": "保存を押すまで、何も保存されません。",
+      "options-label": "返信の候補",
+      "model-label": "モデル",
+      "model-hint": "各モデルの設定（推論の度合いなど）は、Home Assistant でモデルごとに管理されます。",
+      "enter-hint": "Enter で送信、Shift+Enter で改行",
+      "thinking": "考え中…",
+      "still-working": "まだ処理中です…",
+      "placeholder-initial": "何を表示しますか？",
+      "placeholder-refine": "何を変更しますか？",
+      "no-mapping": "モデルからここで使える回答が返ってきませんでした。エンティティ名を挙げるか、もっと具体的に書いてみてください。",
+      "round-none": "変更はありません。",
+      "done-quiet": "完了しました。",
+      "change-set": "{field} を設定",
+      "change-changed": "{field} を変更",
+      "change-unsourced": "{field} はライブの状態に連動しなくなりました",
+      "change-cleared": "{field} をクリア",
+      "not-applied": "適用されなかった項目：{list}",
+      "undo": "元に戻す",
+      "undone": "元に戻しました。フォームは以前の状態です。",
+      "undone-kept": "元に戻しました。その後に手動で変更した内容は保持されています。",
+      "undone-count": "{count} 件を元に戻しました。",
+      "redo": "やり直す",
+      "failed": "提案に失敗しました：{error}",
+      "stale": "回答を待つ間にフォームが変更されたため、適用されませんでした。",
+      "off-not-loaded": "Home Assistant に AI プロバイダーが必要です。AI Task を提供している統合はまだありません。",
+      "off-cta-not-loaded": "統合で追加",
+      "off-no-entity": "AI Task はセットアップ済みですが、データ生成を提供するモデルがまだありません。",
+      "off-cta-no-entity": "「AIの提案」で追加",
+      "off-what": "ウィジェットを自由な言葉で説明すると、このフォームが入力されます。",
+      "undo-label": "「{ask}」を元に戻す",
+      "revert": "これと以降の {count} 件を元に戻す",
+      "revert-label": "「{ask}」と以降の {count} 件を元に戻す",
+      "hint-accent": "アクセントをオレンジに",
+      "hint-sensor": "別のセンサーを使う",
+      "hint-simpler": "もっとシンプルに",
+      "hint-icon": "合うアイコンを選ぶ",
+      "hint-phases": "バーをフェーズに分割",
+      "hint-tile": "最初のタイルにラベルと色を付ける",
+      "hint-rows": "最も重要な行を先頭に",
+      "starter-setup": "おまかせでセットアップ",
+      "starter-bold": "カラフルに",
+      "starter-calm": "ミニマルに",
+      "starter-restyle": "見た目を一新",
+      "starter-simpler": "シンプルに",
+      "rejected": {
+        "no_entity": "{field}：エンティティ {value} は存在しません",
+        "no_attribute": "{field}：該当する属性がありません（{value}）",
+        "not_a_color": "{field}：{value} は使用できる色ではありません",
+        "not_a_symbol": "{field}：{value} は SF Symbols のシンボルではありません",
+        "not_an_option": "{field}：{value} は選択肢にありません",
+        "bad_template": "{field}：テンプレートが機能しません",
+        "bad_value": "{field}：{value} は使用できません",
+        "already_there": "{field}：{value} はすでにあります",
+        "list_full": "{field}：{value} を追加する余地がありません",
+        "no_value": "{field}：まだ何も表示していないため、スタイルを設定できません"
+      },
+      "detail-added": "{count} 件追加",
+      "detail-removed": "{count} 件削除",
+      "detail-reordered": "並べ替え",
+      "detail-more": "ほか {count} 件",
+      "detail-source": "取得元",
+      "detail-color": "色",
+      "detail-format": "書式",
+      "detail-style": "スタイル"
+    },
+    "preview": {
+      "title": "ライブプレビュー",
+      "missing": "保存するには、{fields} を設定してください。",
+      "missing-count": "未設定 {count} 件",
+      "fix-count": "要修正 {count} 件",
+      "resolving": "取得中…",
+      "payload-title": "送信される内容",
+      "island-note": "Dynamic Island（目安）",
+      "banner-note": "ロック画面のバナー（目安）",
+      "done-at": "{time} に完了",
+      "none-for-template": "{template} のプレビューはありません",
+      "press-hint": "プレビューのいずれかの部分を押すと、その設定に移動します。",
+      "region-label": "{region}：設定に移動",
+      "skeleton-hint": "まだ表示する内容がありません。部分を押すと、その設定に移動します。",
+      "size-label": "プレビューのサイズ",
+      "as": "プレビュー",
+      "as-now": "現在",
+      "size-small": "小",
+      "size-medium": "中",
+      "tile-off": "オフ",
+      "tile-on": "オン",
+      "tile-active": "アクティブ",
+      "energy-source": "太陽光",
+      "energy-grid": "電力網",
+      "energy-battery": "バッテリー",
+      "energy-home": "家庭",
+      "budget-of": "/ {amount}",
+      "energy-today": "今日 {energy}",
+      "price-low": "安い",
+      "price-medium": "普通",
+      "price-high": "高い",
+      "reported-now": "たった今",
+      "in-a-moment": "まもなく",
+      "waiting": "{field} の値が「{reading}」の間は何も送信されません。",
+      "waiting-none": "{field} に値がない間は何も送信されません。",
+      "waiting-any": "{fields} のいずれかに値が入るまで何も送信されません。",
+      "waiting-hint": "プレビューを押すと、{field} に移動します。"
+    },
+    "slot": {
+      "surface": {
+        "island": "Dynamic Island",
+        "banner": "ロック画面"
+      }
+    },
+    "ramp": {
+      "mode-label": "リングの色",
+      "mode-solid": "単色",
+      "mode-ramp": "色の範囲",
+      "solid-hint": "リング全体がこの色になります。",
+      "solid-pick": "色を選択",
+      "fallback-aria": "値がないときの{field}",
+      "fallback-hint": "値が数値でない間は、リング全体がこの色になります。",
+      "fallback-empty": "値が数値でない間は、リングは組み込みの配色のままです。",
+      "solid-empty": "色を選ぶまでは、ダイヤルは色の範囲のままです。",
+      "presets-label": "プリセットの色の範囲",
+      "preset": {
+        "builtin": "組み込み",
+        "cool-warm": "寒色から暖色",
+        "good-bad": "良好から不良",
+        "bad-good": "不良から良好"
+      },
+      "preset-applied": "{name} を適用しました",
+      "add": "色を追加",
+      "one-stop": "1 色でリング全体を塗ります。もう 1 色追加すると範囲になります。",
+      "count": "{count} / {max}",
+      "full": "最大 {max} 色",
+      "reverse": "反転",
+      "reversed": "色の順序を反転しました",
+      "at-value": "{value} の位置",
+      "pick-color": "色 {position}：{color}",
+      "remove-stop": "色 {position}（{color}）を削除",
+      "move-up": "色 {position}（{color}）を上へ移動",
+      "move-down": "色 {position}（{color}）を下へ移動",
+      "added": "色 {position} を追加しました（合計 {count} 色）",
+      "removed": "{color} を削除しました（残り {count} 色）",
+      "moved": "{color} を {count} 色中 {position} 番目に移動しました",
+      "picked": "色 {position} を {color} にしました"
+    },
+    "enum": {
+      "color": {
+        "red": "レッド",
+        "orange": "オレンジ",
+        "yellow": "イエロー",
+        "green": "グリーン",
+        "mint": "ミント",
+        "teal": "ティール",
+        "cyan": "シアン",
+        "blue": "ブルー",
+        "indigo": "インディゴ",
+        "purple": "パープル",
+        "pink": "ピンク",
+        "brown": "ブラウン",
+        "gray": "グレー",
+        "gray2": "グレー 2",
+        "gray3": "グレー 3",
+        "gray4": "グレー 4",
+        "gray5": "グレー 5",
+        "gray6": "グレー 6"
+      },
+      "rendering-mode": {
+        "monochrome": "モノクロ",
+        "hierarchical": "階層",
+        "palette": "パレット",
+        "multicolor": "マルチカラー"
+      },
+      "color-rendering": {
+        "flat": "単色",
+        "gradient": "グラデーション"
+      },
+      "track-fill": {
+        "solid": "塗りつぶし",
+        "hatched": "斜線"
+      },
+      "primary_column": {
+        "left": "左",
+        "right": "右"
+      },
+      "display": {
+        "remaining": "残り",
+        "spent": "支出"
+      },
+      "scale": {
+        "cents": "セント（× 100）"
+      },
+      "image_fit": {
+        "contain": "切り抜き",
+        "cover": "写真"
+      }
+    },
+    "template": {
+      "status": {
+        "label": "Status",
+        "hint": "1 つの状態をひと目で"
+      },
+      "progress": {
+        "label": "Progress",
+        "hint": "完了に向けて進む処理"
+      },
+      "gauge": {
+        "label": "Gauge",
+        "hint": "範囲内の測定値"
+      },
+      "countdown": {
+        "label": "Countdown",
+        "hint": "ある時点までの残り時間"
+      },
+      "list": {
+        "label": "List",
+        "hint": "1 つのウィジェットに複数の測定値"
+      },
+      "battery": {
+        "label": "Battery",
+        "hint": "デバイスごとの充電レベル"
+      },
+      "switchboard": {
+        "label": "Switchboard",
+        "hint": "ホーム画面から押せるボタンとスイッチ"
+      },
+      "monitor": {
+        "label": "Monitor",
+        "hint": "2 列の測定値"
+      },
+      "generic": {
+        "label": "Generic",
+        "retired": "Aivi がサポートを終了した古いテンプレートです。Aivi アプリで Progress または Monitor に切り替えてください。"
+      },
+      "budget": {
+        "label": "Budget",
+        "hint": "カテゴリ別の、予算に対する支出"
+      },
+      "trend": {
+        "label": "Trend",
+        "hint": "測定値と最近の推移"
+      },
+      "prices": {
+        "label": "Prices",
+        "hint": "電気料金のタイムライン"
+      },
+      "energy": {
+        "label": "Energy",
+        "hint": "太陽光、電力網、バッテリー、家庭をひと目で"
+      },
+      "showcase": {
+        "label": "ショーケース",
+        "hint": "対象の写真、その状態と測定値"
+      },
+      "remote": {
+        "label": "リモコン",
+        "hint": "対象の画像、読み取り値、押せるボタン"
+      }
+    },
+    "field-label": {
+      "state": "状態",
+      "value": "値",
+      "progress": "進捗",
+      "target": "目標時刻",
+      "rows": "エンティティ",
+      "devices": "バッテリーセンサー",
+      "actions": "タイル",
+      "icon": "アイコン",
+      "accent": "アクセントカラー",
+      "tap_url": "タップで開く",
+      "end_date": "終了時刻",
+      "unit": "単位",
+      "label": "ラベル",
+      "subtitle": "サブタイトル",
+      "bar_color": "バーの色",
+      "min_value": "最小",
+      "max_value": "最大",
+      "ring": "リングの色",
+      "expired_text": "終了後のテキスト",
+      "segments": "進捗バー",
+      "header_left": "見出し",
+      "header_right": "見出し（右）",
+      "footer_left": "脚注",
+      "footer_right": "脚注（右）",
+      "compact_value": "Dynamic Island",
+      "right_value": "右列の値",
+      "right_header": "右列のヘッダー",
+      "right_footer": "右列のフッター",
+      "left_value": "左列の値",
+      "left_header": "左列のヘッダー",
+      "left_footer": "左列のフッター",
+      "primary_column": "メインの列",
+      "spent": "支出",
+      "budget": "予算",
+      "currency": "通貨",
+      "categories": "カテゴリ",
+      "display": "見出しの数値",
+      "total_color": "リングの色",
+      "points": "履歴",
+      "color": "線の色",
+      "entries": "料金センサー",
+      "scale": "料金の単位",
+      "sources": "発電",
+      "grid_power": "電力網の電力",
+      "battery_power": "バッテリーの電力",
+      "battery_level": "バッテリー残量",
+      "home_power": "家庭の電力",
+      "grid_today": "電力網（今日）",
+      "home_today": "家庭（今日）",
+      "image": "写真",
+      "image_fit": "写真のスタイル",
+      "image_alt": "写真の説明",
+      "state_icon": "状態のアイコン",
+      "stats": "測定値",
+      "reported_at": "最終報告",
+      "badge": "バッジ",
+      "badge_alt": "バッジの説明",
+      "value_label": "値の下"
+    },
+    "field-hint": {
+      "state": "ウィジェットに状態を表示するエンティティ",
+      "progress": "0〜100 を報告するセンサー",
+      "target": "カウントダウンの目標となるタイムスタンプ",
+      "rows": "選択した各エンティティが 1 行になります",
+      "devices": "選択した各センサーが 1 行になります",
+      "actions": "選択した各エンティティがタイルになります。押すと、ライトとスイッチは切り替わり、シーンとスクリプトは実行されます",
+      "icon": "Apple の SF Symbols のシンボル。入力すると名前やキーワードで検索できます",
+      "accent": "ウィジェットの強調色。アイコンの背景と、独自の色を持たないテキストに使われます",
+      "tap_url": "ウィジェットをタップしたときの移動先：ダッシュボード、アプリ、Web ページ",
+      "end_date": "状態の代わりに、この時刻までカウントダウンします",
+      "min_value": "ダイヤルの範囲の下限（デフォルトは 0）",
+      "max_value": "ダイヤルの範囲の上限（デフォルトは 1）",
+      "ring": "ダイヤルの範囲全体の色付け（下限から上限まで）",
+      "expired_text": "目標時刻を過ぎると表示されます",
+      "compact_value": "Dynamic Island が縮小しているときに、アイコンの横に表示する 1 つの値",
+      "spent": "これまでに使った金額",
+      "budget": "使える金額。数値、またはエンティティからライブで取得",
+      "currency": "USD や EUR のような 3 文字のコード",
+      "categories": "選択した各センサーがカテゴリになります。予算は各カテゴリのオプションで設定します",
+      "display": "「残り」は予算からカウントダウン、「支出」はカウントアップします",
+      "total_color": "見出しの数値を囲むリング",
+      "points": "Home Assistant の記録から描画するため、最初の更新から表示されます",
+      "entries": "料金センサー（Nord Pool、ENTSO-e、Octopus Energy、Amber など）。タイムラインは属性から読み取ります。1 日 1 回の更新でウィジェットを最新に保てます。",
+      "scale": "セントにすると、0.25 EUR/kWh を 25 ct/kWh と表示します",
+      "color": "線とその下の塗り",
+      "header_left": "バナーの上段（左）",
+      "header_right": "バナーの上段（右）",
+      "footer_left": "バナーの下段（左）",
+      "footer_right": "バナーの下段（右）",
+      "left_value": "左列の測定値（大きく表示）",
+      "left_header": "左の測定値の上の小さな行",
+      "left_footer": "左の測定値の下の小さな行",
+      "right_value": "右列の測定値（大きく表示）",
+      "right_header": "右の測定値の上の小さな行",
+      "right_footer": "右の測定値の下の小さな行",
+      "primary_column": "Dynamic Island が縮小しているときに表示する列",
+      "image": "デバイスが自分でダウンロードする公開 https URL。透明な背景の車など",
+      "image_alt": "写真の代わりに VoiceOver が読み上げます",
+      "reported_at": "このエンティティが最後に報告してからの経過時間をウィジェットが表示します"
+    },
+    "field-hint-template": {
+      "state": "ウィジェットに表示する内容（テンプレートの結果）",
+      "progress": "0〜100 の数値"
+    },
+    "switchboard": {
+      "subtitle": "2 行目",
+      "subtitle-aria": "{name} の 2 行目に表示する内容",
+      "subtitle-area": "エリア",
+      "subtitle-state": "状態（例：2700 K）",
+      "subtitle-none": "なし",
+      "subtitle-custom": "カスタムテキスト",
+      "subtitle-hint": "タイル名の下に表示される小さなテキストです。",
+      "subtitle-custom-aria": "{name} のカスタムの 2 行目",
+      "press": "押したとき",
+      "press-toggle": "{name} をオン/オフ",
+      "press-on": "{name} をオン",
+      "press-open": "{name} を開閉",
+      "press-lock": "{name} を施錠/解錠",
+      "press-scene": "{name} を有効化",
+      "press-script": "{name} を実行",
+      "press-button": "{name} を押す",
+      "color-hint": "オンの間、タイルをこの色で塗ります。デフォルトはウィジェットのアクセントカラーです。",
+      "subtitle-placeholder": "例：2 階",
+      "color-invalid": "パレットの色名か #RRGGBB を入力してください。",
+      "gradient": "グラデーション",
+      "gradient-aria": "{name} のグラデーション",
+      "gradient-hint": "オンの間、色の代わりにグラデーションでタイルを塗ります。",
+      "gradient-color": "色ではない指定があります。パレットの色名か #RRGGBB を使ってください。",
+      "gradient-count": "グラデーションには 2〜3 色が必要です。",
+      "image": "画像 URL",
+      "image-aria": "{name} の画像 URL",
+      "image-alt": "画像の説明",
+      "image-alt-aria": "{name} の画像の説明",
+      "image-alt-hint": "画像の代わりに VoiceOver で読み上げられます。",
+      "picture": "画像",
+      "picture-custom": "URL から",
+      "picture-entity": "エンティティの画像",
+      "image-hint": "デバイスが直接ダウンロードする、公開された https の URL です。サイズは小さくしてください：最大 256 KB、1 辺 1024 px、1 メガピクセルまでの PNG、JPEG、HEIC、WebP、GIF。デバイスは画像を 1 日保持するため、URL を変えるとすぐに新しい画像が表示されます。",
+      "image-https": "URL は https:// で始まる必要があります。",
+      "image-long": "URL が 2048 文字を超えています。",
+      "image-space": "URL にスペースは使えません。",
+      "image-host": "https:// の後にホスト名が必要です。",
+      "picture-use": "エンティティの画像を使用",
+      "picture-warn": "その URL が公開されていて変わらない場合に限ります。デバイスは Home Assistant の認証情報なしで取得するため、トークンが変わる URL は使えなくなります。",
+      "picture-local": "このエンティティの画像はデバイスから取得できない Home Assistant のアドレスのため、使用できません。",
+      "too-big": "Aivi には大きすぎます：{bytes} / {limit} バイト。収まるまで何も送信されません。画像 URL や 2 行目を短くするか、タイルを削除してください。",
+      "fix-options": "保存するには、赤く表示されたオプションを修正してください：{rows}。",
+      "words": "状態の表示語",
+      "words-changed": "{count} 件変更",
+      "words-hint": "各状態でタイルに表示する言葉です。空欄にすると表示中の言葉を使います。非表示にもできます。最大 24 文字。",
+      "word-aria": "{name} の「{state}」の表示語",
+      "word-hide": "非表示",
+      "word-hide-aria": "{name} の「{state}」の表示語を非表示",
+      "word-hidden": "非表示",
+      "word-none": "表示語なし",
+      "word-on": "オン",
+      "word-off": "オフ",
+      "word-turning-on": "オンにしています",
+      "word-turning-off": "オフにしています",
+      "word-no-response": "応答なし",
+      "word-idle": "待機中",
+      "word-active": "アクティブ",
+      "word-sent": "送信済み"
+    },
+    "field-hint-budget": {
+      "subtitle": "合計と一緒に表示されます（例：「残り 20 日」）"
+    },
+    "field-hint-trend": {
+      "value": "現在の測定値（大きく表示）",
+      "unit": "デフォルトはセンサー自身の単位",
+      "min_value": "グラフの固定の下限（未設定ならデータに合わせます）",
+      "max_value": "グラフの固定の上限（未設定ならデータに合わせます）"
+    },
+    "field-hint-prices": {
+      "unit": "デフォルトはセンサー自身の単位"
+    },
+    "delivery": {
+      "stale-label": "古いと表示するまで",
+      "stale-hint": "更新がないままこの時間が経つと、ウィジェットは内容を薄く表示し、最終更新時刻を表示します。",
+      "stale-keep": "Aivi アプリの設定どおり",
+      "stale-never": "しない",
+      "throttle-label": "更新の最短間隔",
+      "throttle-hint": "iOS では、1 つのライブアクティビティにつき約 240 回の更新が許可されています。その間の変更は保留され、時間になると最新の内容が送信されます。開始と終了が遅れることはありません。",
+      "throttle-off": "変更のたびに（制限なし）"
+    },
+    "duration": {
+      "seconds-other": "{count} 秒",
+      "minutes-other": "{count} 分",
+      "hours-other": "{count} 時間",
+      "days-other": "{count} 日"
+    },
+    "color-field": {
+      "pick": "{label}：{color}",
+      "picker-aria": "{label}、カスタムカラー",
+      "hex-aria": "{label}、16 進コード",
+      "invalid": "#FFD27A のような 16 進コードを入力してください。"
+    },
+    "gradient": {
+      "auto": "自動",
+      "none": "なし",
+      "custom": "カスタム",
+      "auto-hint": "オンの間、ライト自身の色に合わせます。",
+      "none-hint": "グラデーションなし。タイルは設定した色を使います。",
+      "stop-aria": "グラデーションの色 {n}",
+      "remove-aria": "グラデーションの色 {n} を削除",
+      "add": "色を追加"
+    },
+    "section": {
+      "content": "表示内容",
+      "look": "外観",
+      "behavior": "動作",
+      "runs": "実行条件"
+    },
+    "fold": {
+      "set": "{count} 件設定済み"
+    },
+    "group": {
+      "progress": "進捗",
+      "reading": "測定値",
+      "range": "範囲",
+      "countdown": "カウントダウン",
+      "total": "合計",
+      "prices": "料金",
+      "grid": "電力網",
+      "battery": "バッテリー",
+      "home": "家庭",
+      "headline": "見出し",
+      "footnote": "脚注",
+      "left-column": "左列",
+      "right-column": "右列"
+    },
+    "group-hint-gauge": {
+      "range": "ダイヤルの両端。空欄の場合は 0〜1 になります。"
+    },
+    "group-hint-trend": {
+      "range": "グラフの固定範囲。空欄の場合はデータに合わせます。"
+    },
+    "field-short": {
+      "min_value": "最小",
+      "max_value": "最大",
+      "left_value": "値",
+      "left_header": "ヘッダー",
+      "left_footer": "フッター",
+      "right_value": "値",
+      "right_header": "ヘッダー",
+      "right_footer": "フッター",
+      "header_left": "左",
+      "header_right": "右",
+      "footer_left": "左",
+      "footer_right": "右",
+      "grid_power": "電力",
+      "grid_today": "今日",
+      "battery_power": "電力",
+      "battery_level": "残量",
+      "home_power": "電力",
+      "home_today": "今日",
+      "segments": "バー",
+      "progress": "値"
+    },
+    "field-placeholder-gauge": {
+      "min_value": "0",
+      "max_value": "1",
+      "unit": "°C",
+      "label": "リビング"
+    },
+    "field-placeholder-trend": {
+      "min_value": "自動",
+      "max_value": "自動",
+      "unit": "kWh"
+    },
+    "symbols": {
+      "placeholder": "シンボルを検索（例：washer、lightbulb）",
+      "categories": "シンボルのカテゴリ",
+      "cat-all": "すべて",
+      "cat-home": "ホーム",
+      "cat-devices": "デバイス",
+      "cat-objectsandtools": "オブジェクト",
+      "cat-weather": "天気",
+      "cat-nature": "自然",
+      "cat-transportation": "交通",
+      "cat-automotive": "車",
+      "cat-privacyandsecurity": "セキュリティ",
+      "cat-human": "人",
+      "cat-health": "健康",
+      "cat-media": "メディア",
+      "cat-communication": "コミュニケーション",
+      "cat-commerce": "お金",
+      "cat-time": "時間",
+      "list": "一致するシンボル",
+      "loading": "Apple のシンボル名を読み込み中…",
+      "failed": "シンボルの一覧を読み込めませんでした。シンボル名を直接入力すれば使用できます。",
+      "no-matches": "一致するシンボルはありません。名前を直接入力すれば使用できます。",
+      "unknown": "Apple のシンボル一覧にない名前です。入力したとおりに保持されます。",
+      "ios": "iOS {version}+",
+      "help": "プレビューには似たアイコンが表示され、ない場合は ✦ が表示されます。デバイスでは Apple 純正のシンボルが表示されます。"
+    },
+    "field-hint-status": {
+      "value": "大きく表示する測定値。状態はその下の行に移ります"
+    },
+    "field-hint-gauge": {
+      "value": "ダイヤルが指す測定値",
+      "unit": "測定値の後に表示（例：°C、%）",
+      "label": "ダイヤルの上の小さな行。空欄の場合はウィジェット名"
+    },
+    "field-hint-countdown": {
+      "subtitle": "カウントダウンの下の小さな行"
+    },
+    "field-hint-energy": {
+      "sources": "発電するものの電力センサー：太陽光、風力、発電機",
+      "grid_power": "電力網から受電中は正、売電中は負",
+      "grid_today": "エネルギーメーター。今日の値は午前 0 時から集計されます",
+      "battery_power": "充電中は正、放電中は負",
+      "battery_level": "バッテリー残量（0〜100）",
+      "home_power": "家庭で現在使用している電力",
+      "home_today": "エネルギーメーター。今日の値は午前 0 時から集計されます"
+    },
+    "field-placeholder": {
+      "tap_url": "https://…",
+      "image": "https://…/car.png",
+      "image_alt": "横から見た車"
+    },
+    "field-placeholder-countdown": {
+      "expired_text": "完了"
+    },
+    "field-placeholder-budget": {
+      "currency": "JPY"
+    },
+    "field-placeholder-prices": {
+      "unit": "ct/kWh"
+    },
+    "field-placeholder-monitor": {
+      "left_header": "室内",
+      "right_header": "屋外",
+      "left_footer": "湿度 46%",
+      "right_footer": "体感 9°"
+    },
+    "field-idle": {
+      "primary_column": "両方の列に何かが表示されると適用されます。列が 1 つだけなら選ぶ必要はありません。"
+    },
+    "events": {
+      "title": "デバイスからのイベント",
+      "button": "イベント：{state}",
+      "tooltip": "イベント",
+      "state-ok": "接続済み",
+      "state-warn": "現在接続されていません",
+      "state-bad": "切断済み",
+      "state-idle": "待ち受けていません",
+      "stream-connected": "接続済み",
+      "stream-reconnecting": "再接続中…",
+      "stream-paused": "一時停止中",
+      "stream-stopped": "切断済み",
+      "stream-idle": "待ち受けなし",
+      "since": "{time} から待ち受け中",
+      "paused-why": "Aivi のサブスクリプションが有効ではないため、デバイスからのイベントは届きません。",
+      "idle-why": "ここでセットアップしたものに入力を受け付けるものがないため、待ち受ける対象がありません。これは想定どおりです。Switchboard やリモコンのように入力を受け付けるものができると、自動的に待ち受けを開始します。",
+      "list-label": "最新のイベント",
+      "empty": "まだありません。デバイスでタイルを押すと、その場でここに表示されます。",
+      "see-all": "すべてのイベントを見る"
+    },
+    "log": {
+      "title": "ログ",
+      "open": "ログを開く",
+      "account-label": "アカウント",
+      "show-label": "表示",
+      "show-all": "すべて",
+      "show-pushes": "Aivi への送信",
+      "show-presses": "デバイスからの操作",
+      "show-problems": "問題のみ",
+      "for-label": "対象",
+      "for-any": "すべて",
+      "option-count": "{label}（{count}）",
+      "showing-other": "{count} 件中 {shown} 件",
+      "show-everything": "すべて表示",
+      "list-label": "ログ（新しい順）",
+      "empty": "まだありません。Aivi への送信とデバイスからの操作が、発生したそばからここに表示されます。",
+      "no-matches": "このフィルターに一致するものはありません",
+      "footer-memory": "メモリ上に保持: Home Assistant の再起動でリストはリセットされます。残すには、アカウントのオプションで「再起動後もログを保持する」をオンにしてください。",
+      "footer-kept": "再起動後も保持: このアカウントはログをディスクに書き込みます。"
+    },
+    "conflict": {
+      "also-fed": "オートメーションからも配信されています：{names}。両者が互いに上書きし合います。",
+      "also-fed-several": "オートメーションもこれを更新しています: {names}。それらとこのパネルが互いに上書きし合います。",
+      "mark": "オートメーションからも配信",
+      "fed": "オートメーションから配信：{names}",
+      "turn-off": "オートメーションをオフにする",
+      "turn-off-all": "すべてオフにする",
+      "turn-off-named": "{names} をオフにする",
+      "turned-off": "オートメーションをオフにしました。現在はこのパネルからのみ配信しています。",
+      "keep-shared": "{name} はほかのウィジェットにも配信しているため、ここからはオフにしません。",
+      "keep-initial_state": "{name} は Home Assistant の起動時に自動でオンに戻るため、オートメーション自体の設定でオフにしてください。"
+    },
+    "field-hint-showcase": {
+      "image_fit": "切り抜きはウィジェットの上に立ち、写真はその側面を埋めます",
+      "state": "状態を表す言葉。施錠済み、充電中など",
+      "state_icon": "状態の言葉の前に表示されます",
+      "stats": "選んだエンティティがそれぞれ測定値になります。小は最初の1つ、中は3つを表示します",
+      "badge": "報告時刻の横に表示される小さなブランドマーク。写真では省かれます",
+      "badge_alt": "バッジの代わりに VoiceOver が読み上げます",
+      "icon": "写真がない間、写真の代わりに表示されます"
+    },
+    "field-placeholder-showcase": {
+      "badge": "https://…/logo.png",
+      "badge_alt": "ブランドのロゴ"
+    },
+    "group-showcase": {
+      "picture": "写真",
+      "state": "状態",
+      "badge": "バッジ"
+    },
+    "showcase": {
+      "too-big": "Aivi には大きすぎます: {limit} バイト中 {bytes} バイト。収まるまで何も送信されません。写真の URL やラベルを短くするか、測定値を減らしてください。"
+    },
+    "field-label-remote": {
+      "actions": "ボタン",
+      "value": "読み取り値"
+    },
+    "field-hint-remote": {
+      "value": "車の充電量のような大きな読み取り値。数値はエンティティの単位を保ちます",
+      "actions": "選んだエンティティがそれぞれボタンになります。小は最初の2つ、中は最大5つを表示",
+      "stats": "最大3つの読み取り値。大サイズ以上で表示",
+      "image_fit": "切り抜きは読み取り値の横に立ち、写真は角丸の枠に収まります",
+      "icon": "画像がない間、画像の代わりに表示されます"
+    },
+    "group-remote": {
+      "picture": "画像",
+      "reading": "測定値",
+      "bar": "バー"
+    },
+    "remote": {
+      "too-big": "Aivi には大きすぎます: {bytes} / {limit} バイト。収まるまで何も送信されません。画像の URL や 2 行目を短くするか、ボタンを減らしてください。"
+    },
+    "field-hint-activity-remote": {
+      "value": "大きく表示する測定値。ロボット掃除機のバッテリーなど。単位は別の項目です",
+      "actions": "選択した各エンティティがボタンになります。最大3つで、2つ以下の間はラベルも表示されます",
+      "stats": "最大2つの測定値。バーがない間、ロック画面に表示されます",
+      "image": "公開されている https の URL。アプリが取得するとデバイスに表示され、それまではアイコンが表示されます",
+      "state": "今の状態を表す言葉。清掃中、充電中など",
+      "unit": "値のすぐ後ろに表示。% や km など",
+      "value_label": "値の下に表示する言葉。残りなど",
+      "progress": "0〜100 を報告するセンサーからバーを表示します。測定値はバーに場所を譲ります",
+      "bar_color": "バーの色。未設定なら状態の色、それもなければアクセントカラー",
+      "compact_value": "Island が縮小している間、アイコンの横に表示。未設定なら値と単位"
+    },
+    "field-placeholder-activity-remote": {
+      "unit": "%",
+      "value_label": "残り"
+    },
+    "every": {
+      "seconds-other": "{count} 秒ごと",
+      "minutes-other": "{count} 分ごと",
+      "hours-other": "{count} 時間ごと",
+      "days-other": "{count} 日ごと"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "name": "イベントストリーム",
+        "state_attributes": {
+          "reason": {
+            "name": "理由",
+            "state": {
+              "subscription_inactive": "有効なサブスクリプションなし",
+              "auth_failed": "トークン拒否"
+            }
+          },
+          "last_error": {
+            "name": "最後のエラー"
+          },
+          "connected_since": {
+            "name": "接続開始時刻"
+          },
+          "reconnects": {
+            "name": "再接続回数"
+          },
+          "last_event": {
+            "name": "最後のイベント"
+          }
+        }
+      },
+      "problem": {
+        "name": "稼働状況",
+        "state_attributes": {
+          "problems": {
+            "name": "問題の一覧"
+          },
+          "subscription": {
+            "name": "サブスクリプション",
+            "state": {
+              "expired": "期限切れ",
+              "none": "サブスクリプションなし"
+            }
+          },
+          "event_stream": {
+            "name": "イベントストリーム",
+            "state": {
+              "auth_failed": "トークン拒否"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "name": "操作",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "オンにされた",
+              "toggle_off": "オフにされた",
+              "pressed": "押された"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "name": "最終送信"
+      },
+      "push_status": {
+        "name": "更新ステータス",
+        "state": {
+          "ok": "OK",
+          "retrying": "再試行中",
+          "auth_failed": "トークン拒否",
+          "not_found": "Aivi アプリにありません",
+          "rejected": "コンテンツ拒否",
+          "too_large": "コンテンツが大きすぎます",
+          "template_error": "Home Assistant テンプレートのエラー",
+          "template_mismatch": "テンプレートの不一致",
+          "no_subscription": "有効なサブスクリプションなし",
+          "quota_exceeded": "ライブアクティビティの上限に到達",
+          "error": "エラー",
+          "waiting": "値を待機中"
+        },
+        "state_attributes": {
+          "last_error": {
+            "name": "最後のエラー"
+          },
+          "waiting_for": {
+            "name": "待機中のフィールド"
+          }
+        }
+      },
+      "subscription": {
+        "name": "サブスクリプション",
+        "state": {
+          "active": "有効",
+          "expired": "期限切れ",
+          "none": "サブスクリプションなし"
+        },
+        "state_attributes": {
+          "expires_at": {
+            "name": "終了予定日時"
+          },
+          "renews": {
+            "name": "自動更新"
+          },
+          "expired_at": {
+            "name": "終了日時"
+          }
+        }
+      }
+    }
+  }
+}

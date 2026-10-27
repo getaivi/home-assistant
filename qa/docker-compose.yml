@@ -1,0 +1,81 @@
+# Quick-start Home Assistant + a mock Aivi API for trying the integration.
+#
+#   npm run build   # from the repo root: the panel bundle is generated,
+#                   # not committed, and custom_components/ is mounted as-is
+#   docker compose up --build
+#
+# Home Assistant boots already onboarded and auto-logs-in (throwaway box),
+# with the Aivi integration mounted and demo entities ready. The mock Aivi
+# API validates every request against contract/aivi-openapi.json and shows
+# every push at http://localhost:8099.
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    # Seed the pre-onboarded auth, then hand off to Home Assistant's normal
+    # init. Self-healing: if the seeded Dev owner is missing from
+    # .storage/auth (a fresh directory, or a half-onboarded state), the
+    # whole seed is copied with overwrite: this is a throwaway box, and the
+    # seed is authoritative until it has booted coherently once. When the
+    # Dev owner is present, only missing files are filled in, so refresh
+    # tokens issued at runtime survive restarts.
+    entrypoint:
+      - /bin/bash
+      - -c
+      - >-
+        mkdir -p /config/.storage;
+        if ! grep -q ddacad9cd1644b009580f699c433d268 /config/.storage/auth 2>/dev/null; then
+        cp -rf /seed/.storage/. /config/.storage/;
+        else
+        for f in /seed/.storage/*; do dst="/config/.storage/$$(basename "$$f")"; [ -e "$$dst" ] || cp -r "$$f" "$$dst"; done;
+        fi;
+        exec /init
+    environment:
+      # Point the integration's default API base at the mock, so you never
+      # need Advanced Mode to try it. Any token is accepted.
+      AIVI_BASE_URL: "http://mock-aivi:8080"
+    ports:
+      - "8123:8123"
+    volumes:
+      # `make e2e` points this at a config of its own, so its reset never
+      # touches the state of a `make qa` stack.
+      - ${AIVI_QA_CONFIG:-./homeassistant}:/config
+      - ../custom_components/aivi:/config/custom_components/aivi
+      - ./seed:/seed:ro
+    depends_on:
+      - mock-aivi
+    restart: unless-stopped
+
+  # With OPENROUTER_API_KEY set (`OPENROUTER_API_KEY=... make qa`), gives
+  # Home Assistant a working AI Task model through its own OpenRouter
+  # integration, so the panel's Suggest runs against a real model. Runs
+  # once after Home Assistant is up; see llm-seed/seed.py.
+  llm-seed:
+    image: ghcr.io/home-assistant/home-assistant:stable
+    profiles: ["llm"]
+    entrypoint: ["python3", "/seed/seed.py"]
+    environment:
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      # Any OpenRouter model with structured outputs that is not hosted by
+      # OpenAI (see seed.py for why); this one is cheap.
+      OPENROUTER_MODEL: ${OPENROUTER_MODEL:-google/gemini-2.5-flash}
+    volumes:
+      - ./llm-seed:/seed:ro
+    depends_on:
+      - homeassistant
+    restart: "no"
+
+  mock-aivi:
+    build:
+      context: ..
+      dockerfile: qa/mock-aivi/Dockerfile
+    volumes:
+      # The OpenAPI document the mock validates every request against.
+      - ../contract:/srv/contract:ro
+    environment:
+      # AIVI_MOCK_EMPTY=1 (on the host) serves an empty account (zero
+      # widgets) for driving the panel's first-run states. Default off,
+      # so the demo widgets keep seeding the e2e journeys.
+      AIVI_MOCK_EMPTY: ${AIVI_MOCK_EMPTY:-0}
+    ports:
+      - "8099:8080"
+    restart: unless-stopped

@@ -1,0 +1,61 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": { "enabled": true, "clientKind": "git", "useIgnoreFile": true },
+  "files": {
+    "includes": [
+      "frontend/**",
+      "tests/e2e/**",
+      // Markdown is written by hand, not formatted.
+      "!**/*.md",
+      // Generated: make catalog, make meta, make brand and make fixtures write these.
+      "!frontend/harness/meta.generated.js",
+      "!frontend/src/brand-mark.ts",
+      "!frontend/src/translations/en.ts",
+      "!frontend/tests/fixtures/*.json"
+    ]
+  },
+  "formatter": {
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all",
+      "arrowParentheses": "always"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        // tsc's noPropertyAccessFromIndexSignature asks for obj["key"] on index signatures.
+        "useLiteralKeys": "off"
+      }
+    }
+  },
+  "overrides": [
+    {
+      "includes": ["frontend/tests/**", "tests/e2e/**"],
+      "linter": {
+        "rules": {
+          // Tests assert on elements they just rendered; a wrong `!` fails the test anyway.
+          "style": { "noNonNullAssertion": "off" }
+        }
+      }
+    },
+    {
+      "includes": ["tests/e2e/**"],
+      "linter": {
+        "rules": {
+          // Playwright reads a fixture's dependencies from its destructured first argument.
+          "correctness": { "noEmptyPattern": "off" }
+        }
+      }
+    }
+  ],
+  "assist": { "enabled": true }
+}

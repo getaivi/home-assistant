@@ -1,0 +1,6535 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "Aivi API",
+    "description": "Update Aivi Live Activities and widgets on your iPhone with a single HTTP request. Guides and examples: https://docs.getaivi.app/api-reference/",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://api.getaivi.app"
+    }
+  ],
+  "paths": {
+    "/activities/{slug}": {
+      "patch": {
+        "tags": [
+          "Activities"
+        ],
+        "summary": "Update Activity",
+        "operationId": "update_activity_activities__slug__patch",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityData-Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityData-Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`Template mismatch`: `content.template` is not the template the resource was created with.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Activity not found`: no activity with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "`Too many ongoing activities`: starting this activity would exceed the concurrent-activity quota. Or an array of field errors: the body failed validation, or the content (with the activity's name) makes a Live Activity push larger than Apple's 4096-byte limit (`type` `payload_too_large`, at `content`).",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorDetail"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities": {
+      "get": {
+        "tags": [
+          "Activities"
+        ],
+        "summary": "List activities",
+        "description": "Returns the Live Activities on your account, oldest first, a page at a time. Pass `next_cursor` back as `cursor` until it is `null`. An activity created while you page through lands on a later page. Activities shared with you from another account are not listed.",
+        "operationId": "list_activities_activities_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "How many items to return, from 1 to 50. Defaults to 50.",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "How many items to return, from 1 to 50. Defaults to 50."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The `next_cursor` from the previous page. Omit it for the first page. Treat it as opaque: a cursor this API did not issue answers 422.",
+              "title": "Cursor"
+            },
+            "description": "The `next_cursor` from the previous page. Omit it for the first page. Treat it as opaque: a cursor this API did not issue answers 422."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/activities/{slug}/webhooks": {
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Set activity webhooks",
+        "description": "Replaces the activity's webhooks with the given map and returns\nit, redacted. Aivi calls a webhook for each press on the activity's\nactions, with the event envelope as the default body. Keys don't\nhave to match the actions the activity shows right now.\n\nGuide: https://docs.getaivi.app/events/#webhooks",
+        "operationId": "put_activity_webhooks_activities__slug__webhooks_put",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ActivityWebhooksBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWebhooksResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Activity not found`: no activity with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get activity webhooks",
+        "description": "The activity's webhooks, redacted, with each one's last success\nand failure.",
+        "operationId": "get_activity_webhooks_activities__slug__webhooks_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ActivityWebhooksResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Activity not found`: no activity with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete activity webhooks",
+        "description": "Removes every webhook from the activity. Presses still reach\n`GET /events` streams.",
+        "operationId": "delete_activity_webhooks_activities__slug__webhooks_delete",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Activity not found`: no activity with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/account": {
+      "get": {
+        "tags": [
+          "Account"
+        ],
+        "summary": "Get account",
+        "description": "Returns the subscription status of the account your token belongs to. Unlike every other route, it answers `200` while the subscription is inactive, so a client can check a token, and whether the API will answer, in one call.",
+        "operationId": "get_account_account_get",
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Account"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/widgets": {
+      "get": {
+        "tags": [
+          "Widgets"
+        ],
+        "summary": "List widgets",
+        "description": "Returns the widgets on your account, oldest first, a page at a time. Pass `next_cursor` back as `cursor` until it is `null`. A widget created while you page through lands on a later page. Widgets shared with you from another account are not listed.",
+        "operationId": "list_widgets_widgets_get",
+        "parameters": [
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 50,
+              "minimum": 1,
+              "description": "How many items to return, from 1 to 50. Defaults to 50.",
+              "default": 50,
+              "title": "Limit"
+            },
+            "description": "How many items to return, from 1 to 50. Defaults to 50."
+          },
+          {
+            "name": "cursor",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string",
+                  "maxLength": 256
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The `next_cursor` from the previous page. Omit it for the first page. Treat it as opaque: a cursor this API did not issue answers 422.",
+              "title": "Cursor"
+            },
+            "description": "The `next_cursor` from the previous page. Omit it for the first page. Treat it as opaque: a cursor this API did not issue answers 422."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetPage"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/widgets/{slug}": {
+      "patch": {
+        "tags": [
+          "Widgets"
+        ],
+        "summary": "Update Widget",
+        "operationId": "update_widget_widgets__slug__patch",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetData-Input"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetData-Output"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "`Template mismatch`: `content.template` is not the template the resource was created with.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Widget not found`: no widget with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "`Invalid widget content`: `content` fails its template's schema. `Content exceeds the 4 KiB limit`: `content` is larger than 4 KiB as compact JSON. Or an array of field errors: the body failed validation.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "anyOf": [
+                    {
+                      "$ref": "#/components/schemas/ErrorDetail"
+                    },
+                    {
+                      "$ref": "#/components/schemas/HTTPValidationError"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/widgets/{slug}/webhooks": {
+      "put": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Set widget webhooks",
+        "description": "Replaces the widget's webhooks with the given map and returns it, redacted. Aivi calls a webhook for each press on the widget, with the event envelope as the default body. Keys don't have to match the actions the widget shows right now, so you can configure webhooks before you publish the actions. A validation error never echoes a secret, a header value, or a query value.\n\nRedacted means the `secret` is never returned, and header values and the values in the URL's query string come back as `\"***\"`.\n\nGuide: https://docs.getaivi.app/events/#webhooks",
+        "operationId": "put_widget_webhooks_widgets__slug__webhooks_put",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/WidgetWebhooksBody"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetWebhooksResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Widget not found`: no widget with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Get widget webhooks",
+        "description": "Returns the widget's webhooks, redacted, with `last_success_at` and `last_failure_at` for each entry: when a delivery to it last succeeded and last failed, or `null`.\n\nRedacted means the `secret` is never returned, and header values and the values in the URL's query string come back as `\"***\"`.\n\nGuide: https://docs.getaivi.app/events/#webhooks",
+        "operationId": "get_widget_webhooks_widgets__slug__webhooks_get",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WidgetWebhooksResponse"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Widget not found`: no widget with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Delete widget webhooks",
+        "description": "Removes every webhook from the widget. Presses still reach `GET /events` streams.\n\nGuide: https://docs.getaivi.app/events/#webhooks",
+        "operationId": "delete_widget_webhooks_widgets__slug__webhooks_delete",
+        "parameters": [
+          {
+            "name": "slug",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "title": "Slug"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "The webhooks were removed."
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "`Widget not found`: no widget with that `slug` exists on your account.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/events": {
+      "get": {
+        "tags": [
+          "Events"
+        ],
+        "summary": "Stream events",
+        "description": "Opens a server-sent event stream of your account's events, such as `widget.action.v1` presses on a switchboard widget. One stream carries the events of every widget on your account; filter it with `types` and `subject`.\n\nEach event arrives as an `id:` line with the stream's position, then a `data:` line holding the event envelope as JSON. The stream opens with a `retry:` line and its starting position, and a `: ping` comment arrives every 20 seconds while nothing else happens.\n\nThe server closes every stream after 15 minutes: reconnect after the `retry:` delay, and send the last `id:` you saw as `Last-Event-ID` to replay the events you missed that haven't expired yet. An event can arrive twice, so deduplicate on its `id`. At most 4 streams per account.\n\nWhen a stream can't be set up for now, for example while the database is unavailable, the answer is still `200`: a stream that holds only a `retry:` line and ends. Reconnect after the delay.\n\nGuide: https://docs.getaivi.app/events/",
+        "operationId": "stream_events_events_get",
+        "parameters": [
+          {
+            "name": "types",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only events of these types, for example `widget.action.v1`. Repeatable. Omit for every type.",
+              "title": "Types"
+            },
+            "description": "Only events of these types, for example `widget.action.v1`. Repeatable. Omit for every type."
+          },
+          {
+            "name": "subject",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room`. Repeatable. Omit for every subject.",
+              "title": "Subject"
+            },
+            "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room`. Repeatable. Omit for every subject."
+          },
+          {
+            "name": "Last-Event-ID",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "description": "The last `id:` this client received, exactly as sent. The stream first replays the unexpired events after it. Without it nothing is replayed.",
+              "title": "Last-Event-Id"
+            },
+            "description": "The last `id:` this client received, exactly as sent. The stream first replays the unexpired events after it. Without it nothing is replayed."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "A server-sent event stream.",
+            "content": {
+              "text/event-stream": {
+                "schema": {
+                  "type": "string",
+                  "description": "Server-sent events (`text/event-stream`), UTF-8, one event per block, blocks separated by a blank line:\n\n- `retry: <ms>`: first, the reconnect delay.\n- `id: <cursor>` alone: the stream's starting position.\n- `: ping`: a comment every 20 seconds while nothing else happens. Ignore it.\n- `id: <cursor>` then `data: <json>`: one event. `data` is a single line holding one JSON event envelope; `x-sse-data-schema` names its schema (`WidgetActionEvent` for `widget.action.v1`). Send the last `id` back as `Last-Event-ID` when you reconnect."
+                },
+                "x-sse-data-schema": {
+                  "oneOf": [
+                    {
+                      "$ref": "#/components/schemas/WidgetActionEvent"
+                    }
+                  ],
+                  "discriminator": {
+                    "propertyName": "type",
+                    "mapping": {
+                      "widget.action.v1": "#/components/schemas/WidgetActionEvent"
+                    }
+                  }
+                },
+                "example": "retry: 1000\nid: u:6\n\n: ping\n\nid: u:7\ndata: {\"id\":\"7c1e5b0a-4d2f-5a8e-9b3c-2f6d8e1a4c57\",\"request_id\":\"act_3f9c2a71b04e\",\"type\":\"widget.action.v1\",\"subject\":{\"kind\":\"widget\",\"slug\":\"living-room\"},\"occurred_at\":\"2026-10-01T19:04:07.512000Z\",\"expires_at\":\"2026-10-01T19:04:12.512000Z\",\"data\":{\"action\":\"porch\",\"kind\":\"toggle\",\"value\":true}}\n\n"
+              }
+            }
+          },
+          "401": {
+            "description": "`Could not validate credentials`: the `Authorization` header is missing, malformed, or the token is unknown.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "402": {
+            "description": "`No active subscription was found`: the token is valid but the account has no active subscription. `code` is `subscription_inactive`, and `expired_at` says when the last subscription ended, or is `null` if there never was one.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SubscriptionInactiveDetail"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "A `subject` filter is not `<kind>/<slug>` with a known kind, for example `widget/living-room`.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "`Too many event streams`: the account already has 4 streams open.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorDetail"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Account": {
+        "properties": {
+          "subscription": {
+            "$ref": "#/components/schemas/SubscriptionStatus"
+          }
+        },
+        "type": "object",
+        "required": [
+          "subscription"
+        ],
+        "title": "Account",
+        "description": "The account your API token belongs to."
+      },
+      "Action-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ButtonAction-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ToggleAction-Input"
+          }
+        ]
+      },
+      "Action-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ButtonAction-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ToggleAction-Output"
+          }
+        ]
+      },
+      "ActionId": {
+        "type": "string",
+        "pattern": "^[a-z0-9][a-z0-9_-]{0,31}$"
+      },
+      "ActiveStatus": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "const": "active",
+            "title": "State"
+          },
+          "expires_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expires At",
+            "description": "When the paid period ends, or `null` if it does not end."
+          },
+          "renews": {
+            "type": "boolean",
+            "title": "Renews",
+            "description": "Whether the subscription renews at `expires_at`."
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "expires_at",
+          "renews"
+        ],
+        "title": "ActiveStatus",
+        "description": "A paid period is running: the API answers."
+      },
+      "ActivityAction-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityButtonAction-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityToggleAction-Input"
+          }
+        ]
+      },
+      "ActivityAction-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActivityButtonAction-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityToggleAction-Output"
+          }
+        ]
+      },
+      "ActivityButtonAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "button",
+            "title": "Kind",
+            "default": "button"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon"
+        ],
+        "title": "ActivityButtonAction",
+        "description": "A switchboard `ButtonAction` on a Live Activity: its id, label,\nicon, color and `active` highlight; nothing else is drawn."
+      },
+      "ActivityButtonAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "button",
+            "title": "Kind",
+            "default": "button"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon"
+        ],
+        "title": "ActivityButtonAction",
+        "description": "A switchboard `ButtonAction` on a Live Activity: its id, label,\nicon, color and `active` highlight; nothing else is drawn."
+      },
+      "ActivityContent-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GenericActivityContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/MonitorActivityContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ProgressActivityContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/RemoteActivityContent-Input"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "template",
+          "mapping": {
+            "generic": "#/components/schemas/GenericActivityContent-Input",
+            "monitor": "#/components/schemas/MonitorActivityContent-Input",
+            "progress": "#/components/schemas/ProgressActivityContent-Input",
+            "remote": "#/components/schemas/RemoteActivityContent-Input"
+          }
+        }
+      },
+      "ActivityContent-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/GenericActivityContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/MonitorActivityContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ProgressActivityContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/RemoteActivityContent-Output"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "template",
+          "mapping": {
+            "generic": "#/components/schemas/GenericActivityContent-Output",
+            "monitor": "#/components/schemas/MonitorActivityContent-Output",
+            "progress": "#/components/schemas/ProgressActivityContent-Output",
+            "remote": "#/components/schemas/RemoteActivityContent-Output"
+          }
+        }
+      },
+      "ActivityData-Input": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/ActivityState"
+          },
+          "content": {
+            "$ref": "#/components/schemas/ActivityContent-Input"
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "content"
+        ],
+        "title": "ActivityData"
+      },
+      "ActivityData-Output": {
+        "properties": {
+          "state": {
+            "$ref": "#/components/schemas/ActivityState"
+          },
+          "content": {}
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "content"
+        ],
+        "title": "ActivityData"
+      },
+      "ActivityImage": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 512,
+            "pattern": "^https://[^\\s/?#]+[^\\s]*$",
+            "title": "Url"
+          },
+          "alt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "ActivityImage",
+        "description": "The picture, by URL only: never fetched or stored by the\nbackend. The device draws it only once its app has cached it, and\nthe icon until then."
+      },
+      "ActivityPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/ActivitySummary"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor",
+            "description": "Pass it as `cursor` to get the next page. `null` on the last page."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "ActivityPage",
+        "description": "A page of your Live Activities, oldest first."
+      },
+      "ActivityReading": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 64,
+            "title": "Value"
+          },
+          "text_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "formatter": {
+            "$ref": "#/components/schemas/Formatter"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "ActivityReading",
+        "description": "A `Value` held to `READING_MAX_LENGTH` characters."
+      },
+      "ActivityState": {
+        "type": "string",
+        "enum": [
+          "IDLE",
+          "ONGOING"
+        ],
+        "title": "ActivityState"
+      },
+      "ActivitySummary": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "description": "The activity's ID, as in `PATCH /activities/{slug}`."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name shown in the Aivi app."
+          },
+          "template": {
+            "type": "string",
+            "title": "Template",
+            "description": "The template ID: which `content` shape the activity takes."
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "template"
+        ],
+        "title": "ActivitySummary",
+        "description": "A Live Activity on your account: enough to address it and to know\nwhich content shape it takes."
+      },
+      "ActivityToggleAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "toggle",
+            "title": "Kind",
+            "default": "toggle"
+          },
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "on"
+        ],
+        "title": "ActivityToggleAction",
+        "description": "A switchboard `ToggleAction` on a Live Activity: its id, label,\nicon, color and `on`; nothing else is drawn."
+      },
+      "ActivityToggleAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "toggle",
+            "title": "Kind",
+            "default": "toggle"
+          },
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "on"
+        ],
+        "title": "ActivityToggleAction",
+        "description": "A switchboard `ToggleAction` on a Live Activity: its id, label,\nicon, color and `on`; nothing else is drawn."
+      },
+      "ActivityWebhooksBody": {
+        "properties": {
+          "webhooks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WebhookConfig"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/WebhookKey"
+            },
+            "type": "object",
+            "maxProperties": 9,
+            "title": "Webhooks"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "webhooks"
+        ],
+        "title": "ActivityWebhooksBody",
+        "description": "An activity's webhooks: one per action id, and `\"*\"` for the\nrest."
+      },
+      "ActivityWebhooksResponse": {
+        "properties": {
+          "webhooks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RedactedWebhookEntry"
+            },
+            "type": "object",
+            "title": "Webhooks"
+          }
+        },
+        "type": "object",
+        "required": [
+          "webhooks"
+        ],
+        "title": "ActivityWebhooksResponse",
+        "description": "An activity's webhooks, redacted."
+      },
+      "BatteryDevice-Input": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "level": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Level"
+          },
+          "charging": {
+            "type": "boolean",
+            "title": "Charging",
+            "default": false
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "level"
+        ],
+        "title": "BatteryDevice",
+        "description": "One device's battery: level in percent, optional charging flag.\n\nThe device colors the ring automatically (green, red when low) unless\n`color` overrides it."
+      },
+      "BatteryDevice-Output": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Name"
+          },
+          "level": {
+            "type": "number",
+            "maximum": 100.0,
+            "minimum": 0.0,
+            "title": "Level"
+          },
+          "charging": {
+            "type": "boolean",
+            "title": "Charging",
+            "default": false
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "name",
+          "level"
+        ],
+        "title": "BatteryDevice",
+        "description": "One device's battery: level in percent, optional charging flag.\n\nThe device colors the ring automatically (green, red when low) unless\n`color` overrides it."
+      },
+      "BatteryWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "battery",
+            "title": "Template",
+            "default": "battery"
+          },
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/BatteryDevice-Input"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Devices"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "devices"
+        ],
+        "title": "BatteryWidgetContent"
+      },
+      "BatteryWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "battery",
+            "title": "Template",
+            "default": "battery"
+          },
+          "devices": {
+            "items": {
+              "$ref": "#/components/schemas/BatteryDevice-Output"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Devices"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "devices"
+        ],
+        "title": "BatteryWidgetContent"
+      },
+      "BudgetEntry-Input": {
+        "properties": {
+          "spent": {
+            "$ref": "#/components/schemas/aivi__widget__templates__budget__Money-Input__1"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/aivi__widget__templates__budget__Money-Input__2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "spent"
+        ],
+        "title": "BudgetEntry",
+        "description": "One budget line; the device derives the ring from spent and budget."
+      },
+      "BudgetEntry-Output": {
+        "properties": {
+          "spent": {
+            "$ref": "#/components/schemas/Money-Output"
+          },
+          "budget": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Money-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "spent"
+        ],
+        "title": "BudgetEntry",
+        "description": "One budget line; the device derives the ring from spent and budget."
+      },
+      "BudgetWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "budget",
+            "title": "Template",
+            "default": "budget"
+          },
+          "total": {
+            "$ref": "#/components/schemas/BudgetEntry-Input"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetEntry-Input"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "title": "Categories"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency"
+          },
+          "display": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "remaining",
+                  "spent"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "total",
+          "currency"
+        ],
+        "title": "BudgetWidgetContent"
+      },
+      "BudgetWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "budget",
+            "title": "Template",
+            "default": "budget"
+          },
+          "total": {
+            "$ref": "#/components/schemas/BudgetEntry-Output"
+          },
+          "categories": {
+            "items": {
+              "$ref": "#/components/schemas/BudgetEntry-Output"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "title": "Categories"
+          },
+          "currency": {
+            "type": "string",
+            "pattern": "^[A-Z]{3}$",
+            "title": "Currency"
+          },
+          "display": {
+            "anyOf": [
+              {
+                "type": "string",
+                "enum": [
+                  "remaining",
+                  "spent"
+                ]
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Display"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "total",
+          "currency"
+        ],
+        "title": "BudgetWidgetContent"
+      },
+      "ButtonAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "button",
+            "title": "Kind",
+            "default": "button"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          },
+          "state_text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ButtonStateText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon"
+        ],
+        "title": "ButtonAction",
+        "description": "A momentary action. `active` is a highlight only, e.g. the scene\nthat is currently running; pressing never changes it locally."
+      },
+      "ButtonAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "button",
+            "title": "Kind",
+            "default": "button"
+          },
+          "active": {
+            "type": "boolean",
+            "title": "Active",
+            "default": false
+          },
+          "state_text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ButtonStateText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon"
+        ],
+        "title": "ButtonAction",
+        "description": "A momentary action. `active` is a highlight only, e.g. the scene\nthat is currently running; pressing never changes it locally."
+      },
+      "ButtonStateText": {
+        "properties": {
+          "idle": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Idle"
+          },
+          "active": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Active"
+          },
+          "sent": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Sent"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ButtonStateText",
+        "description": "A button's words for its states; the same rules as\n`ToggleStateText`."
+      },
+      "Color": {
+        "type": "string",
+        "enum": [
+          "red",
+          "orange",
+          "yellow",
+          "green",
+          "mint",
+          "teal",
+          "cyan",
+          "blue",
+          "indigo",
+          "purple",
+          "pink",
+          "brown",
+          "gray",
+          "gray2",
+          "gray3",
+          "gray4",
+          "gray5",
+          "gray6"
+        ]
+      },
+      "ColorRendering": {
+        "type": "string",
+        "enum": [
+          "flat",
+          "gradient"
+        ]
+      },
+      "ColorV2": {
+        "anyOf": [
+          {
+            "$ref": "#/components/schemas/Color"
+          },
+          {
+            "type": "string",
+            "pattern": "^#[0-9A-Fa-f]{6}$"
+          }
+        ]
+      },
+      "Column-Input": {
+        "properties": {
+          "header": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "footer": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Footer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "Column"
+      },
+      "Column-Output": {
+        "properties": {
+          "header": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Header"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "footer": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Footer"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "Column"
+      },
+      "ColumnId": {
+        "type": "string",
+        "enum": [
+          "left",
+          "right"
+        ]
+      },
+      "CountdownWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "countdown",
+            "title": "Template",
+            "default": "countdown"
+          },
+          "target": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Target"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expired_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expired Text"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "target"
+        ],
+        "title": "CountdownWidgetContent",
+        "description": "A moment in time rendered as a self-updating countdown.\n\nOne push sets the target; the device keeps the countdown current\nwithout further pushes (garbage day, next departure, appliance done)."
+      },
+      "CountdownWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "countdown",
+            "title": "Template",
+            "default": "countdown"
+          },
+          "target": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Target"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "expired_text": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expired Text"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "target"
+        ],
+        "title": "CountdownWidgetContent",
+        "description": "A moment in time rendered as a self-updating countdown.\n\nOne push sets the target; the device keeps the countdown current\nwithout further pushes (garbage day, next departure, appliance done)."
+      },
+      "EnergyNode-Input": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "power": {
+            "type": "number",
+            "title": "Power"
+          },
+          "today": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Today"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "power"
+        ],
+        "title": "EnergyNode",
+        "description": "One point in the home energy picture.\n\nSign conventions: grid power is positive when importing and negative\nwhen exporting; battery power is positive when charging and negative\nwhen discharging. The device colors flows accordingly."
+      },
+      "EnergyNode-Output": {
+        "properties": {
+          "name": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 30
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Name"
+          },
+          "power": {
+            "type": "number",
+            "title": "Power"
+          },
+          "today": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Today"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "type": "number",
+                "maximum": 100.0,
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Level"
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "power"
+        ],
+        "title": "EnergyNode",
+        "description": "One point in the home energy picture.\n\nSign conventions: grid power is positive when importing and negative\nwhen exporting; battery power is positive when charging and negative\nwhen discharging. The device colors flows accordingly."
+      },
+      "EnergyWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "energy",
+            "title": "Template",
+            "default": "energy"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/EnergyNode-Input"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Sources"
+          },
+          "grid": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "battery": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "home": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "EnergyWidgetContent",
+        "description": "Home energy at a glance: generation sources, grid, battery, home.\n\nSources are generation of any kind — solar, wind, hydro, generator —\nand default to the solar presentation when unnamed. The display caps\nat three so the medium family's columns stay legible."
+      },
+      "EnergyWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "energy",
+            "title": "Template",
+            "default": "energy"
+          },
+          "sources": {
+            "items": {
+              "$ref": "#/components/schemas/EnergyNode-Output"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Sources"
+          },
+          "grid": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "battery": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "home": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/EnergyNode-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "EnergyWidgetContent",
+        "description": "Home energy at a glance: generation sources, grid, battery, home.\n\nSources are generation of any kind — solar, wind, hydro, generator —\nand default to the solar presentation when unnamed. The display caps\nat three so the medium family's columns stay legible."
+      },
+      "ErrorDetail": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail"
+        ],
+        "title": "ErrorDetail",
+        "description": "An error response: `detail` says what went wrong."
+      },
+      "ExpiredStatus": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "const": "expired",
+            "title": "State"
+          },
+          "expired_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Expired At",
+            "description": "When the subscription ended, the same date as `expired_at` in the `402` body."
+          }
+        },
+        "type": "object",
+        "required": [
+          "state",
+          "expired_at"
+        ],
+        "title": "ExpiredStatus",
+        "description": "The subscription ended: every other route answers `402`."
+      },
+      "Formatter": {
+        "anyOf": [
+          {
+            "type": "string",
+            "enum": [
+              "time_since",
+              "time_until"
+            ]
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "GaugeWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "gauge",
+            "title": "Template",
+            "default": "gauge"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Color"
+                },
+                "type": "array",
+                "maxItems": 4,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "GaugeWidgetContent"
+      },
+      "GaugeWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "gauge",
+            "title": "Template",
+            "default": "gauge"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/Color"
+                },
+                "type": "array",
+                "maxItems": 4,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "GaugeWidgetContent"
+      },
+      "GenericActivityContent-Input": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "template": {
+            "type": "string",
+            "const": "generic",
+            "title": "Template",
+            "default": "generic"
+          },
+          "progress": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress"
+          },
+          "remaining_time": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining Time"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "progress"
+        ],
+        "title": "GenericActivityContent"
+      },
+      "GenericActivityContent-Output": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {},
+          "template": {
+            "type": "string",
+            "const": "generic",
+            "title": "Template",
+            "default": "generic"
+          },
+          "progress": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Progress"
+          },
+          "remaining_time": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "minimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Remaining Time"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 32
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "icon_v2": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Icon"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "progress",
+          "icon_v2"
+        ],
+        "title": "GenericActivityContent"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "type": "array",
+            "title": "Detail"
+          }
+        },
+        "type": "object",
+        "title": "HTTPValidationError"
+      },
+      "HeroImage": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[^\\s/?#]+[^\\s]*$",
+            "title": "Url"
+          },
+          "alt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt"
+          },
+          "fit": {
+            "type": "string",
+            "enum": [
+              "contain",
+              "cover"
+            ],
+            "title": "Fit",
+            "default": "contain"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "HeroImage",
+        "description": "A template's main picture, by URL only (never fetched or stored\nby the backend). `contain` (the default) is a cut-out on a clear\nbackground, whose transparent edges the device trims; `cover` is a\nphoto, cropped to fill the slot. `alt` is what VoiceOver reads; the\nwidget's name stands in when it is absent."
+      },
+      "Icon": {
+        "properties": {
+          "name": {
+            "type": "string",
+            "maxLength": 64,
+            "title": "Name"
+          },
+          "rendering_mode": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RenderingMode"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "primary_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "secondary_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tertiary_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "color_rendering": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorRendering"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "name"
+        ],
+        "title": "Icon"
+      },
+      "IconField-Input": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 64
+          },
+          {
+            "$ref": "#/components/schemas/Icon"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "IconField-Output": {
+        "anyOf": [
+          {
+            "type": "string",
+            "maxLength": 64
+          },
+          {
+            "$ref": "#/components/schemas/Icon"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "Image": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "pattern": "^https://[^\\s/?#]+[^\\s]*$",
+            "title": "Url"
+          },
+          "alt": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Alt"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "Image",
+        "description": "A picture the device shows, by URL only. The backend validates the\nURL and never fetches or stores the image: the device downloads it,\ndownsamples it and caches it for offline rendering."
+      },
+      "JSONSerializable-Input": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JSONSerializable-Input"
+            },
+            "type": "object"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/JSONSerializable-Input"
+            },
+            "type": "array"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "JSONSerializable-Output": {
+        "anyOf": [
+          {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/JSONSerializable-Output"
+            },
+            "type": "object"
+          },
+          {
+            "items": {
+              "$ref": "#/components/schemas/JSONSerializable-Output"
+            },
+            "type": "array"
+          },
+          {
+            "type": "string"
+          },
+          {
+            "type": "integer"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "boolean"
+          },
+          {
+            "type": "null"
+          }
+        ]
+      },
+      "ListRow-Input": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "ListRow",
+        "description": "One row: icon + label + trailing value."
+      },
+      "ListRow-Output": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label"
+        ],
+        "title": "ListRow",
+        "description": "One row: icon + label + trailing value."
+      },
+      "ListWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "list",
+            "title": "Template",
+            "default": "list"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ListRow-Input"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Rows"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rows"
+        ],
+        "title": "ListWidgetContent",
+        "description": "Rows of labeled values: the generic multi-entity readout."
+      },
+      "ListWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "list",
+            "title": "Template",
+            "default": "list"
+          },
+          "rows": {
+            "items": {
+              "$ref": "#/components/schemas/ListRow-Output"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Rows"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "rows"
+        ],
+        "title": "ListWidgetContent",
+        "description": "Rows of labeled values: the generic multi-entity readout."
+      },
+      "Money-Output": {
+        "type": "string"
+      },
+      "MonitorActivityContent-Input": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "template": {
+            "type": "string",
+            "const": "monitor",
+            "title": "Template",
+            "default": "monitor"
+          },
+          "left_column": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Column-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "right_column": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Column-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "primary_column": {
+            "$ref": "#/components/schemas/ColumnId",
+            "default": "right"
+          }
+        },
+        "type": "object",
+        "title": "MonitorActivityContent"
+      },
+      "MonitorActivityContent-Output": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {},
+          "template": {
+            "type": "string",
+            "const": "monitor",
+            "title": "Template",
+            "default": "monitor"
+          },
+          "left_column": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Column-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "right_column": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Column-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "primary_column": {
+            "$ref": "#/components/schemas/ColumnId",
+            "default": "right"
+          },
+          "icon_v2": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Icon"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "icon_v2"
+        ],
+        "title": "MonitorActivityContent"
+      },
+      "NoStatus": {
+        "properties": {
+          "state": {
+            "type": "string",
+            "const": "none",
+            "title": "State"
+          }
+        },
+        "type": "object",
+        "required": [
+          "state"
+        ],
+        "title": "NoStatus",
+        "description": "The account never had a subscription: every other route answers\n`402`."
+      },
+      "PriceEntry": {
+        "properties": {
+          "start": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Start"
+          },
+          "price": {
+            "type": "number",
+            "title": "Price"
+          },
+          "level": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/PriceLevel"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "start",
+          "price"
+        ],
+        "title": "PriceEntry",
+        "description": "One pricing period; it lasts until the next entry starts."
+      },
+      "PriceLevel": {
+        "type": "string",
+        "enum": [
+          "low",
+          "medium",
+          "high"
+        ]
+      },
+      "PricesWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "prices",
+            "title": "Template",
+            "default": "prices"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/PriceEntry"
+            },
+            "type": "array",
+            "maxItems": 48,
+            "minItems": 1,
+            "title": "Entries"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "entries"
+        ],
+        "title": "PricesWidgetContent",
+        "description": "A price timeline (dynamic electricity tariffs and the like).\n\nPublishers post the known periods (for example today plus tomorrow,\nhourly); the device charts them and highlights the current one, so a\nsingle nightly push stays correct all day. The entry cap keeps two days\nof hourly prices under the 4 KiB content limit."
+      },
+      "PricesWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "prices",
+            "title": "Template",
+            "default": "prices"
+          },
+          "entries": {
+            "items": {
+              "$ref": "#/components/schemas/PriceEntry"
+            },
+            "type": "array",
+            "maxItems": 48,
+            "minItems": 1,
+            "title": "Entries"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "entries"
+        ],
+        "title": "PricesWidgetContent",
+        "description": "A price timeline (dynamic electricity tariffs and the like).\n\nPublishers post the known periods (for example today plus tomorrow,\nhourly); the device charts them and highlights the current one, so a\nsingle nightly push stays correct all day. The entry cap keeps two days\nof hourly prices under the 4 KiB content limit."
+      },
+      "ProgressActivityContent-Input": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "template": {
+            "type": "string",
+            "const": "progress",
+            "title": "Template",
+            "default": "progress"
+          },
+          "header_left": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "header_right": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "progress": {
+            "$ref": "#/components/schemas/ProgressBar-Input"
+          },
+          "footer_left": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "footer_right": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "compact_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "type": "object",
+        "required": [
+          "progress"
+        ],
+        "title": "ProgressActivityContent"
+      },
+      "ProgressActivityContent-Output": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {},
+          "template": {
+            "type": "string",
+            "const": "progress",
+            "title": "Template",
+            "default": "progress"
+          },
+          "header_left": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "header_right": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "progress": {
+            "$ref": "#/components/schemas/ProgressBar-Output"
+          },
+          "footer_left": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "footer_right": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "compact_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon_v2": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Icon"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "type": "object",
+        "required": [
+          "progress",
+          "icon_v2"
+        ],
+        "title": "ProgressActivityContent"
+      },
+      "ProgressBar-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SimpleProgressBar"
+          },
+          {
+            "$ref": "#/components/schemas/SegmentedProgressBar-Input"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "style",
+          "mapping": {
+            "segmented": "#/components/schemas/SegmentedProgressBar-Input",
+            "simple": "#/components/schemas/SimpleProgressBar"
+          }
+        }
+      },
+      "ProgressBar-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/SimpleProgressBar"
+          },
+          {
+            "$ref": "#/components/schemas/SegmentedProgressBar-Output"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "style",
+          "mapping": {
+            "segmented": "#/components/schemas/SegmentedProgressBar-Output",
+            "simple": "#/components/schemas/SimpleProgressBar"
+          }
+        }
+      },
+      "ProgressWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "progress",
+            "title": "Template",
+            "default": "progress"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/ProgressBar-Input"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "progress"
+        ],
+        "title": "ProgressWidgetContent"
+      },
+      "ProgressWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "progress",
+            "title": "Template",
+            "default": "progress"
+          },
+          "progress": {
+            "$ref": "#/components/schemas/ProgressBar-Output"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "end_date": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "End Date"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "progress"
+        ],
+        "title": "ProgressWidgetContent"
+      },
+      "RedactedWebhookConfig": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "title": "Url"
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "POST",
+              "PUT",
+              "PATCH",
+              "GET"
+            ],
+            "title": "Method"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Headers"
+          },
+          "body": {
+            "$ref": "#/components/schemas/JSONSerializable-Output"
+          }
+        },
+        "type": "object",
+        "required": [
+          "url",
+          "method",
+          "headers",
+          "body"
+        ],
+        "title": "RedactedWebhookConfig",
+        "description": "A stored webhook as the API returns it: no `secret`, and header\nvalues and URL query values replaced with `\"***\"`."
+      },
+      "RedactedWebhookEntry": {
+        "properties": {
+          "config": {
+            "$ref": "#/components/schemas/RedactedWebhookConfig"
+          },
+          "last_success_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Success At",
+            "description": "When a delivery to this webhook last succeeded."
+          },
+          "last_failure_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Failure At",
+            "description": "When a delivery to this webhook last failed."
+          }
+        },
+        "type": "object",
+        "required": [
+          "config",
+          "last_success_at",
+          "last_failure_at"
+        ],
+        "title": "RedactedWebhookEntry",
+        "description": "One webhook of a widget, redacted, with its delivery record."
+      },
+      "RemoteAction-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ButtonAction-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ToggleAction-Input"
+          }
+        ]
+      },
+      "RemoteAction-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ButtonAction-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ToggleAction-Output"
+          }
+        ]
+      },
+      "RemoteActivityContent-Input": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "template": {
+            "type": "string",
+            "const": "remote",
+            "title": "Template",
+            "default": "remote"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StateValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/ActivityReading"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "value_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 24
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Label"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProgressBar"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Input"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "title": "Stats"
+          },
+          "compact_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityReading"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityAction-Input"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "actions"
+        ],
+        "title": "RemoteActivityContent",
+        "description": "Every optional part is left out of the stored content and the\npushes while unset, `stats` while empty (the device reads a missing\nkey as none). Unknown keys are refused, unlike the older activity\ntemplates: a key this build drops silently would never reach a\ndevice."
+      },
+      "RemoteActivityContent-Output": {
+        "properties": {
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {},
+          "template": {
+            "type": "string",
+            "const": "remote",
+            "title": "Template",
+            "default": "remote"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/StateValue"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/ActivityReading"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "value_label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 24
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Value Label"
+          },
+          "progress": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SimpleProgressBar"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Output"
+            },
+            "type": "array",
+            "maxItems": 2,
+            "title": "Stats"
+          },
+          "compact_value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ActivityReading"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/ActivityAction-Output"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "minItems": 1,
+            "title": "Actions"
+          },
+          "icon_v2": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Icon"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "actions",
+          "icon_v2"
+        ],
+        "title": "RemoteActivityContent",
+        "description": "Every optional part is left out of the stored content and the\npushes while unset, `stats` while empty (the device reads a missing\nkey as none). Unknown keys are refused, unlike the older activity\ntemplates: a key this build drops silently would never reach a\ndevice."
+      },
+      "RemoteWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "remote",
+            "title": "Template",
+            "default": "remote"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeroImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reported_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported At"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Input"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Stats"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/RemoteAction-Input"
+            },
+            "type": "array",
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "actions"
+        ],
+        "title": "RemoteWidgetContent",
+        "description": "Every optional part is left out of the stored content while\nunset, `stats` while empty (the device reads a missing key as none).\nThere is no state mark: the device words the state from the actions\n(the first active button, else the first toggle that is on). Five\nfully dressed actions with pictures can pass the 4 KiB content\nlimit, which refuses them rather than a tighter per-field cap."
+      },
+      "RemoteWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "remote",
+            "title": "Template",
+            "default": "remote"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeroImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reported_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported At"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Output"
+            },
+            "type": "array",
+            "maxItems": 3,
+            "title": "Stats"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/RemoteAction-Output"
+            },
+            "type": "array",
+            "maxItems": 5,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "actions"
+        ],
+        "title": "RemoteWidgetContent",
+        "description": "Every optional part is left out of the stored content while\nunset, `stats` while empty (the device reads a missing key as none).\nThere is no state mark: the device words the state from the actions\n(the first active button, else the first toggle that is on). Five\nfully dressed actions with pictures can pass the 4 KiB content\nlimit, which refuses them rather than a tighter per-field cap."
+      },
+      "RenderingMode": {
+        "type": "string",
+        "enum": [
+          "monochrome",
+          "hierarchical",
+          "palette",
+          "multicolor"
+        ]
+      },
+      "Segment": {
+        "properties": {
+          "value": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value"
+          },
+          "fill_color": {
+            "$ref": "#/components/schemas/Color"
+          },
+          "track_color": {
+            "$ref": "#/components/schemas/Color",
+            "default": "gray"
+          },
+          "track_fill": {
+            "$ref": "#/components/schemas/TrackFill",
+            "default": "solid"
+          },
+          "label": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Label"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "fill_color"
+        ],
+        "title": "Segment"
+      },
+      "SegmentDisplay": {
+        "type": "string",
+        "enum": [
+          "split",
+          "layered"
+        ]
+      },
+      "SegmentedProgressBar-Input": {
+        "properties": {
+          "style": {
+            "type": "string",
+            "const": "segmented",
+            "title": "Style",
+            "default": "segmented"
+          },
+          "value": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value"
+          },
+          "segments": {
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Segments"
+          },
+          "display": {
+            "$ref": "#/components/schemas/SegmentDisplay",
+            "default": "split"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "segments"
+        ],
+        "title": "SegmentedProgressBar"
+      },
+      "SegmentedProgressBar-Output": {
+        "properties": {
+          "style": {
+            "type": "string",
+            "const": "segmented",
+            "title": "Style",
+            "default": "segmented"
+          },
+          "value": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value"
+          },
+          "segments": {
+            "items": {
+              "$ref": "#/components/schemas/Segment"
+            },
+            "type": "array",
+            "maxItems": 4,
+            "minItems": 1,
+            "title": "Segments"
+          },
+          "display": {
+            "$ref": "#/components/schemas/SegmentDisplay",
+            "default": "split"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value",
+          "segments"
+        ],
+        "title": "SegmentedProgressBar"
+      },
+      "ShowcaseState-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "text": {
+            "$ref": "#/components/schemas/StateValue"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ShowcaseState",
+        "description": "The state mark: an icon in front of a word, e.g. a lock and\nLocked."
+      },
+      "ShowcaseState-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "text": {
+            "$ref": "#/components/schemas/StateValue"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "text"
+        ],
+        "title": "ShowcaseState",
+        "description": "The state mark: an icon in front of a word, e.g. a lock and\nLocked."
+      },
+      "ShowcaseWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "showcase",
+            "title": "Template",
+            "default": "showcase"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeroImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "badge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShowcaseState-Input"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reported_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported At"
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Input"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Stats"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "stats"
+        ],
+        "title": "ShowcaseWidgetContent",
+        "description": "Every optional part is left out of the stored content while\nunset. Six stats at their caps (a 64-character icon name and a\n`max` each), with every other optional field at its cap, full\n`Icon`s for the widget and the state and the shortest picture URLs,\ncome to about 3.2 KB of ASCII (3,185 bytes). The 4 KiB content limit,\nnot a tighter per-field cap, refuses longer URLs or non-ASCII text\npast that."
+      },
+      "ShowcaseWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "showcase",
+            "title": "Template",
+            "default": "showcase"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/HeroImage"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "badge": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ShowcaseState-Output"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "reported_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reported At"
+          },
+          "stats": {
+            "items": {
+              "$ref": "#/components/schemas/Stat-Output"
+            },
+            "type": "array",
+            "maxItems": 6,
+            "minItems": 1,
+            "title": "Stats"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "stats"
+        ],
+        "title": "ShowcaseWidgetContent",
+        "description": "Every optional part is left out of the stored content while\nunset. Six stats at their caps (a 64-character icon name and a\n`max` each), with every other optional field at its cap, full\n`Icon`s for the widget and the state and the shortest picture URLs,\ncome to about 3.2 KB of ASCII (3,185 bytes). The 4 KiB content limit,\nnot a tighter per-field cap, refuses longer URLs or non-ASCII text\npast that."
+      },
+      "SimpleProgressBar": {
+        "properties": {
+          "style": {
+            "type": "string",
+            "const": "simple",
+            "title": "Style",
+            "default": "simple"
+          },
+          "value": {
+            "type": "number",
+            "maximum": 1.0,
+            "minimum": 0.0,
+            "title": "Value"
+          },
+          "color": {
+            "$ref": "#/components/schemas/Color",
+            "default": "blue"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "SimpleProgressBar"
+      },
+      "Stat-Input": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "Stat",
+        "description": "One labelled reading, e.g. Range 312 km. `unit` is drawn smaller\nafter the value; `\"\"` draws none.\n\n`icon` is a symbol name that stands in for the label where the stat\nis shown alone, on the Lock Screen (circular, inline and the\nrectangular lead); the widget's `icon` is used when it is absent.\nHome Screen rows stay text only. A name only, not an `Icon`: the\nvalue's `text_color` tints it.\n\n`max` makes the stat a gauge filled `value / max`. It needs a plain\nnumber in `value.value` (e.g. `78` or `-3.5`) and no formatter. A\nreading past either end is taken as sent and the device clamps the\nfill to 0 to 1, since live readings overshoot. Without `max`, the\ndevice still draws a gauge for a 0 to 100 value with a `%` unit."
+      },
+      "Stat-Output": {
+        "properties": {
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "value": {
+            "$ref": "#/components/schemas/Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 8
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "icon": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 64
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Icon"
+          },
+          "max": {
+            "anyOf": [
+              {
+                "type": "number",
+                "exclusiveMinimum": 0.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "label",
+          "value"
+        ],
+        "title": "Stat",
+        "description": "One labelled reading, e.g. Range 312 km. `unit` is drawn smaller\nafter the value; `\"\"` draws none.\n\n`icon` is a symbol name that stands in for the label where the stat\nis shown alone, on the Lock Screen (circular, inline and the\nrectangular lead); the widget's `icon` is used when it is absent.\nHome Screen rows stay text only. A name only, not an `Icon`: the\nvalue's `text_color` tints it.\n\n`max` makes the stat a gauge filled `value / max`. It needs a plain\nnumber in `value.value` (e.g. `78` or `-3.5`) and no formatter. A\nreading past either end is taken as sent and the device clamps the\nfill to 0 to 1, since live readings overshoot. Without `max`, the\ndevice still draws a gauge for a 0 to 100 value with a `%` unit."
+      },
+      "StateValue": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "pattern": "^[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*$",
+            "title": "Value",
+            "description": "Trimmed, then 1 to 24 characters with no control characters, line breaks or tabs."
+          },
+          "text_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "StateValue",
+        "description": "A state mark's word, e.g. Locked: one short line, and no\nformatter, since a state is a word, not a timer."
+      },
+      "StatusWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "status",
+            "title": "Template",
+            "default": "status"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StatusWidgetContent"
+      },
+      "StatusWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "status",
+            "title": "Template",
+            "default": "status"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "StatusWidgetContent"
+      },
+      "SubscriptionInactiveDetail": {
+        "properties": {
+          "detail": {
+            "type": "string",
+            "title": "Detail"
+          },
+          "code": {
+            "type": "string",
+            "const": "subscription_inactive",
+            "title": "Code",
+            "description": "Always `subscription_inactive` for this error."
+          },
+          "expired_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Expired At",
+            "description": "When the account's last subscription ended (ISO 8601), or `null` if the account never had one."
+          }
+        },
+        "type": "object",
+        "required": [
+          "detail",
+          "code",
+          "expired_at"
+        ],
+        "title": "SubscriptionInactiveDetail",
+        "description": "A `402`: the token is valid, but the account has no active\nsubscription. `detail` stays human-readable; `code` and `expired_at`\nare for clients that act on it."
+      },
+      "SubscriptionStatus": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/ActiveStatus"
+          },
+          {
+            "$ref": "#/components/schemas/ExpiredStatus"
+          },
+          {
+            "$ref": "#/components/schemas/NoStatus"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "state",
+          "mapping": {
+            "active": "#/components/schemas/ActiveStatus",
+            "expired": "#/components/schemas/ExpiredStatus",
+            "none": "#/components/schemas/NoStatus"
+          }
+        }
+      },
+      "SwitchboardWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "switchboard",
+            "title": "Template",
+            "default": "switchboard"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action-Input"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "actions"
+        ],
+        "title": "SwitchboardWidgetContent",
+        "description": "A grid of action tiles: buttons and toggles the user presses on the\nHome Screen. Eight is the cap: it fills the large widget's grid, and\neight plain actions serialize to about 1 KB against the 4 KiB content\nlimit. Marks (subtitle, gradient, image) and custom state words\n(`state_text`) cost more; eight fully dressed actions can pass it,\nand the content limit rejects those rather than a tighter per-field\ncap (see `Image`)."
+      },
+      "SwitchboardWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "switchboard",
+            "title": "Template",
+            "default": "switchboard"
+          },
+          "actions": {
+            "items": {
+              "$ref": "#/components/schemas/Action-Output"
+            },
+            "type": "array",
+            "maxItems": 8,
+            "minItems": 1,
+            "title": "Actions"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "actions"
+        ],
+        "title": "SwitchboardWidgetContent",
+        "description": "A grid of action tiles: buttons and toggles the user presses on the\nHome Screen. Eight is the cap: it fills the large widget's grid, and\neight plain actions serialize to about 1 KB against the 4 KiB content\nlimit. Marks (subtitle, gradient, image) and custom state words\n(`state_text`) cost more; eight fully dressed actions can pass it,\nand the content limit rejects those rather than a tighter per-field\ncap (see `Image`)."
+      },
+      "TapUrl": {
+        "type": "string",
+        "minLength": 1,
+        "format": "uri"
+      },
+      "ToggleAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "toggle",
+            "title": "Kind",
+            "default": "toggle"
+          },
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          },
+          "state_text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToggleStateText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "on"
+        ],
+        "title": "ToggleAction",
+        "description": "A two-state action. `on` is publisher-owned: a press posts the\nrequested value and the publisher confirms it with new content. The\nlabel and the glyph are the same in both states, as in Control\nCenter: the tile's fill is what says on or off."
+      },
+      "ToggleAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "toggle",
+            "title": "Kind",
+            "default": "toggle"
+          },
+          "on": {
+            "type": "boolean",
+            "title": "On"
+          },
+          "state_text": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ToggleStateText"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "on"
+        ],
+        "title": "ToggleAction",
+        "description": "A two-state action. `on` is publisher-owned: a press posts the\nrequested value and the publisher confirms it with new content. The\nlabel and the glyph are the same in both states, as in Control\nCenter: the tile's fill is what says on or off."
+      },
+      "ToggleStateText": {
+        "properties": {
+          "on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "On"
+          },
+          "off": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Off"
+          },
+          "turning_on": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turning On"
+          },
+          "turning_off": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Turning Off"
+          },
+          "no_response": {
+            "anyOf": [
+              {
+                "type": "string",
+                "pattern": "^(?:[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*|[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000](?:[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff]{0,22}[^\\u0000-\\u001f\\u007f-\\u009f\\u2028\\u2029\\ud800-\\udfff\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000])?[\\t\\n\\u000b\\f\\r \\u0085\\u00a0\\u1680\\u2000-\\u200a\\u2028\\u2029\\u202f\\u205f\\u3000]*)$",
+                "description": "Trimmed, then at most 24 characters with no control characters, line breaks or tabs. `\"\"` shows no word."
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "No Response"
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "title": "ToggleStateText",
+        "description": "A toggle's words for its states, each replacing the app's own\n(in parentheses). A missing key or `null` keeps the app's word, `\"\"`\nshows none, and every key stands alone: renaming `on` leaves\n`turning_on` as it was. VoiceOver still announces the app's word for\na state whose word is hidden."
+      },
+      "TrackFill": {
+        "type": "string",
+        "enum": [
+          "solid",
+          "hatched"
+        ]
+      },
+      "TrendWidgetContent-Input": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Input"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "trend",
+            "title": "Template",
+            "default": "trend"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "points": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 48,
+            "minItems": 2,
+            "title": "Points"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "points"
+        ],
+        "title": "TrendWidgetContent",
+        "description": "A current reading with a compact history sparkline.\n\n`points` is the recent history, oldest first; the device scales it to\nthe sparkline. The cap keeps the densest payload well under the 4 KiB\ncontent limit."
+      },
+      "TrendWidgetContent-Output": {
+        "properties": {
+          "icon": {
+            "$ref": "#/components/schemas/IconField-Output"
+          },
+          "accent": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "tap_url": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TapUrl",
+                "maxLength": 256
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "template": {
+            "type": "string",
+            "const": "trend",
+            "title": "Template",
+            "default": "trend"
+          },
+          "value": {
+            "type": "number",
+            "title": "Value"
+          },
+          "unit": {
+            "anyOf": [
+              {
+                "type": "string",
+                "maxLength": 16
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Unit"
+          },
+          "points": {
+            "items": {
+              "type": "number"
+            },
+            "type": "array",
+            "maxItems": 48,
+            "minItems": 2,
+            "title": "Points"
+          },
+          "min_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Min Value"
+          },
+          "max_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Max Value"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "value",
+          "points"
+        ],
+        "title": "TrendWidgetContent",
+        "description": "A current reading with a compact history sparkline.\n\n`points` is the recent history, oldest first; the device scales it to\nthe sparkline. The cap keeps the densest payload well under the 4 KiB\ncontent limit."
+      },
+      "ValidationError": {
+        "properties": {
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "type": "array",
+            "title": "Location"
+          },
+          "msg": {
+            "type": "string",
+            "title": "Message"
+          },
+          "type": {
+            "type": "string",
+            "title": "Error Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError"
+      },
+      "Value": {
+        "properties": {
+          "value": {
+            "type": "string",
+            "maxLength": 128,
+            "title": "Value"
+          },
+          "text_color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Color"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "formatter": {
+            "$ref": "#/components/schemas/Formatter"
+          }
+        },
+        "type": "object",
+        "required": [
+          "value"
+        ],
+        "title": "Value"
+      },
+      "WebhookConfig": {
+        "properties": {
+          "url": {
+            "type": "string",
+            "maxLength": 2048,
+            "title": "Url",
+            "description": "The URL to call. Must start with `https://`. May contain placeholders such as `{{action}}`."
+          },
+          "method": {
+            "type": "string",
+            "enum": [
+              "POST",
+              "PUT",
+              "PATCH",
+              "GET"
+            ],
+            "title": "Method",
+            "description": "A `GET` sends no body.",
+            "default": "POST"
+          },
+          "headers": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object",
+            "title": "Headers",
+            "description": "Extra request headers, up to 1 KiB in total. `Host`, `Content-Length`, `Connection`, `Transfer-Encoding`, `Upgrade`, `TE`, `Trailer`, `Proxy-Authorization`, and any name starting with `X-Aivi-` are refused."
+          },
+          "body": {
+            "$ref": "#/components/schemas/JSONSerializable-Input",
+            "description": "A JSON template of up to 2 KiB whose strings may contain placeholders. Omit it, or send `null`, to receive the event envelope as the body."
+          },
+          "secret": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Secret",
+            "description": "Turns on request signing: each request then carries `X-Aivi-Timestamp` and an HMAC-SHA256 `X-Aivi-Signature`. Use a long random string. Never returned."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "title": "WebhookConfig",
+        "description": "A request template: Aivi fills it in for each event and sends it\nto `url`. Every request carries `Idempotency-Key: <event id>`, and\nevery request except a `GET` carries `Content-Type: application/json`."
+      },
+      "WebhookKey": {
+        "anyOf": [
+          {
+            "type": "string",
+            "const": "*"
+          },
+          {
+            "$ref": "#/components/schemas/ActionId"
+          }
+        ]
+      },
+      "WidgetContent-Input": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StatusWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ProgressWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/GaugeWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/BudgetWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/BatteryWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/TrendWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/CountdownWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ListWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/PricesWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/EnergyWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/SwitchboardWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ShowcaseWidgetContent-Input"
+          },
+          {
+            "$ref": "#/components/schemas/RemoteWidgetContent-Input"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "template",
+          "mapping": {
+            "battery": "#/components/schemas/BatteryWidgetContent-Input",
+            "budget": "#/components/schemas/BudgetWidgetContent-Input",
+            "countdown": "#/components/schemas/CountdownWidgetContent-Input",
+            "energy": "#/components/schemas/EnergyWidgetContent-Input",
+            "gauge": "#/components/schemas/GaugeWidgetContent-Input",
+            "list": "#/components/schemas/ListWidgetContent-Input",
+            "prices": "#/components/schemas/PricesWidgetContent-Input",
+            "progress": "#/components/schemas/ProgressWidgetContent-Input",
+            "remote": "#/components/schemas/RemoteWidgetContent-Input",
+            "showcase": "#/components/schemas/ShowcaseWidgetContent-Input",
+            "status": "#/components/schemas/StatusWidgetContent-Input",
+            "switchboard": "#/components/schemas/SwitchboardWidgetContent-Input",
+            "trend": "#/components/schemas/TrendWidgetContent-Input"
+          }
+        }
+      },
+      "WidgetContent-Output": {
+        "oneOf": [
+          {
+            "$ref": "#/components/schemas/StatusWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ProgressWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/GaugeWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/BudgetWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/BatteryWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/TrendWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/CountdownWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ListWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/PricesWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/EnergyWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/SwitchboardWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ShowcaseWidgetContent-Output"
+          },
+          {
+            "$ref": "#/components/schemas/RemoteWidgetContent-Output"
+          }
+        ],
+        "discriminator": {
+          "propertyName": "template",
+          "mapping": {
+            "battery": "#/components/schemas/BatteryWidgetContent-Output",
+            "budget": "#/components/schemas/BudgetWidgetContent-Output",
+            "countdown": "#/components/schemas/CountdownWidgetContent-Output",
+            "energy": "#/components/schemas/EnergyWidgetContent-Output",
+            "gauge": "#/components/schemas/GaugeWidgetContent-Output",
+            "list": "#/components/schemas/ListWidgetContent-Output",
+            "prices": "#/components/schemas/PricesWidgetContent-Output",
+            "progress": "#/components/schemas/ProgressWidgetContent-Output",
+            "remote": "#/components/schemas/RemoteWidgetContent-Output",
+            "showcase": "#/components/schemas/ShowcaseWidgetContent-Output",
+            "status": "#/components/schemas/StatusWidgetContent-Output",
+            "switchboard": "#/components/schemas/SwitchboardWidgetContent-Output",
+            "trend": "#/components/schemas/TrendWidgetContent-Output"
+          }
+        }
+      },
+      "WidgetData-Input": {
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/WidgetContent-Input"
+          },
+          "stale_after": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 604800.0,
+                "minimum": 60.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stale After"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "WidgetData",
+        "description": "Request and response body, mirroring the activity endpoint's shape.\n\nThe response reports the stored state rather than echoing the request:\n`stale_after` is the widget's effective setting, which the request may\nhave left untouched by omitting the field."
+      },
+      "WidgetData-Output": {
+        "properties": {
+          "content": {
+            "$ref": "#/components/schemas/WidgetContent-Output"
+          },
+          "stale_after": {
+            "anyOf": [
+              {
+                "type": "integer",
+                "maximum": 604800.0,
+                "minimum": 60.0
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Stale After"
+          }
+        },
+        "type": "object",
+        "required": [
+          "content"
+        ],
+        "title": "WidgetData",
+        "description": "Request and response body, mirroring the activity endpoint's shape.\n\nThe response reports the stored state rather than echoing the request:\n`stale_after` is the widget's effective setting, which the request may\nhave left untouched by omitting the field."
+      },
+      "WidgetPage": {
+        "properties": {
+          "items": {
+            "items": {
+              "$ref": "#/components/schemas/WidgetSummary"
+            },
+            "type": "array",
+            "title": "Items"
+          },
+          "next_cursor": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Next Cursor",
+            "description": "Pass it as `cursor` to get the next page. `null` on the last page."
+          }
+        },
+        "type": "object",
+        "required": [
+          "items",
+          "next_cursor"
+        ],
+        "title": "WidgetPage",
+        "description": "A page of your widgets, oldest first."
+      },
+      "WidgetSummary": {
+        "properties": {
+          "slug": {
+            "type": "string",
+            "title": "Slug",
+            "description": "The widget's ID, as in `PATCH /widgets/{slug}`."
+          },
+          "name": {
+            "type": "string",
+            "title": "Name",
+            "description": "The name shown in the Aivi app."
+          },
+          "template": {
+            "type": "string",
+            "title": "Template",
+            "description": "The template ID: which `content` shape the widget takes."
+          }
+        },
+        "type": "object",
+        "required": [
+          "slug",
+          "name",
+          "template"
+        ],
+        "title": "WidgetSummary",
+        "description": "A widget on your account: enough to address it and to know which\ncontent shape it takes."
+      },
+      "WidgetWebhooksBody": {
+        "properties": {
+          "webhooks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/WebhookConfig"
+            },
+            "propertyNames": {
+              "$ref": "#/components/schemas/WebhookKey"
+            },
+            "type": "object",
+            "maxProperties": 9,
+            "title": "Webhooks",
+            "description": "Keyed by action id, plus `\"*\"` for the default. A press goes to its action's own entry if there is one, otherwise to `\"*\"`, otherwise nowhere. At most 9 entries: eight actions and the default."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "webhooks"
+        ],
+        "title": "WidgetWebhooksBody",
+        "description": "A widget's webhooks: one per action id, and `\"*\"` for the rest."
+      },
+      "WidgetWebhooksResponse": {
+        "properties": {
+          "webhooks": {
+            "additionalProperties": {
+              "$ref": "#/components/schemas/RedactedWebhookEntry"
+            },
+            "type": "object",
+            "title": "Webhooks",
+            "description": "Keyed by action id, plus `\"*\"` for the default."
+          }
+        },
+        "type": "object",
+        "required": [
+          "webhooks"
+        ],
+        "title": "WidgetWebhooksResponse",
+        "description": "A widget's webhooks, redacted."
+      },
+      "aivi__widget__templates__budget__Money-Input__1": {
+        "anyOf": [
+          {
+            "type": "number"
+          },
+          {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+          }
+        ]
+      },
+      "aivi__widget__templates__budget__Money-Input__2": {
+        "anyOf": [
+          {
+            "type": "number",
+            "exclusiveMinimum": 0.0
+          },
+          {
+            "type": "string",
+            "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
+          }
+        ]
+      },
+      "WidgetActionData": {
+        "additionalProperties": false,
+        "description": "The press.",
+        "properties": {
+          "action": {
+            "description": "The `id` of the pressed action, as published in the widget's content.",
+            "title": "Action",
+            "type": "string"
+          },
+          "kind": {
+            "description": "The action's kind.",
+            "enum": [
+              "button",
+              "toggle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "description": "Toggles only: the state asked for, `true` for on. A request, not a fact: confirm it by publishing the widget's content. Absent for a button.",
+            "title": "Value",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "action",
+          "kind"
+        ],
+        "title": "WidgetActionData",
+        "type": "object"
+      },
+      "WidgetActionEvent": {
+        "additionalProperties": false,
+        "description": "A `widget.action.v1` event: a press on an interactive widget, such\nas a switchboard.",
+        "properties": {
+          "id": {
+            "description": "The delivery id, a UUID. The same on every delivery of one press (a replay, a retry, the webhook `Idempotency-Key`): deduplicate on it.",
+            "title": "Id",
+            "type": "string"
+          },
+          "request_id": {
+            "description": "The id the phone gave the press. Unique only within one widget: for logs and correlation, not deduplication.",
+            "title": "Request Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "widget.action.v1",
+            "description": "What happened, with the version of `data`.",
+            "title": "Type",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/WidgetEventSubject"
+          },
+          "occurred_at": {
+            "description": "When the press happened.",
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "expires_at": {
+            "description": "When the event stops being useful, 5 seconds after `occurred_at`. Drop an event that reaches you later.",
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/WidgetActionData"
+          }
+        },
+        "required": [
+          "id",
+          "request_id",
+          "type",
+          "subject",
+          "occurred_at",
+          "expires_at",
+          "data"
+        ],
+        "title": "WidgetActionEvent",
+        "type": "object"
+      },
+      "WidgetEventSubject": {
+        "additionalProperties": false,
+        "description": "The widget the event is about.",
+        "properties": {
+          "kind": {
+            "const": "widget",
+            "description": "What the resource is. Always `widget` for this type.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "slug": {
+            "description": "The widget's slug.",
+            "minLength": 1,
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "slug"
+        ],
+        "title": "WidgetEventSubject",
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "apiToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "Authorization",
+        "description": "Your API token from the Aivi app, sent as `Authorization: Token <token>`."
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Activities",
+      "description": "Update a Live Activity."
+    },
+    {
+      "name": "Widgets",
+      "description": "Update a Home Screen widget."
+    },
+    {
+      "name": "Events",
+      "description": "Receive presses on interactive widgets, such as a switchboard, over an event stream or webhooks."
+    },
+    {
+      "name": "Account",
+      "description": "Check your token and your subscription."
+    }
+  ],
+  "security": [
+    {
+      "apiToken": []
+    }
+  ]
+}

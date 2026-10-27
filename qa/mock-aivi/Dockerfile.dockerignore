@@ -1,0 +1,7 @@
+*
+!pyproject.toml
+!uv.lock
+!qa/mock-aivi/pyproject.toml
+!qa/mock-aivi/server.py
+!qa/mock-aivi/mock_aivi
+**/__pycache__

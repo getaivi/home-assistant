@@ -1,0 +1,1326 @@
+{
+  "colors": [
+    "red",
+    "orange",
+    "yellow",
+    "green",
+    "mint",
+    "teal",
+    "cyan",
+    "blue",
+    "indigo",
+    "purple",
+    "pink",
+    "brown",
+    "gray",
+    "gray2",
+    "gray3",
+    "gray4",
+    "gray5",
+    "gray6"
+  ],
+  "image_url": [
+    [
+      "https://example.com",
+      true
+    ],
+    [
+      "https://images.example.com/fountain.png",
+      true
+    ],
+    [
+      "https://example.com/a b",
+      false
+    ],
+    [
+      "https://exa mple.com",
+      false
+    ],
+    [
+      "https://",
+      false
+    ],
+    [
+      "https:///path",
+      false
+    ],
+    [
+      "http://example.com/x.png",
+      false
+    ],
+    [
+      "example.com",
+      false
+    ],
+    [
+      "/api/image/serve/movie/512x512",
+      false
+    ],
+    [
+      " https://example.com",
+      false
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      false
+    ],
+    [
+      "homeassistant://navigate/lovelace/0",
+      false
+    ],
+    [
+      "homeassistant://navigate/history?entity_id=sensor.x",
+      false
+    ],
+    [
+      "mailto:me@example.com",
+      false
+    ],
+    [
+      "shortcuts://run-shortcut?name=Lights",
+      false
+    ],
+    [
+      "HTTP://EXAMPLE.COM",
+      false
+    ],
+    [
+      "http://x:99999/",
+      false
+    ],
+    [
+      "https://例え.jp/path",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      true
+    ],
+    [
+      "https://example.com",
+      true
+    ]
+  ],
+  "tap_url": [
+    [
+      "https://example.com",
+      true
+    ],
+    [
+      "https://images.example.com/fountain.png",
+      true
+    ],
+    [
+      "https://example.com/a b",
+      true
+    ],
+    [
+      "https://exa mple.com",
+      false
+    ],
+    [
+      "https://",
+      false
+    ],
+    [
+      "https:///path",
+      true
+    ],
+    [
+      "http://example.com/x.png",
+      true
+    ],
+    [
+      "example.com",
+      false
+    ],
+    [
+      "/api/image/serve/movie/512x512",
+      false
+    ],
+    [
+      " https://example.com",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      false
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      false
+    ],
+    [
+      "homeassistant://navigate/lovelace/0",
+      true
+    ],
+    [
+      "homeassistant://navigate/history?entity_id=sensor.x",
+      true
+    ],
+    [
+      "mailto:me@example.com",
+      true
+    ],
+    [
+      "shortcuts://run-shortcut?name=Lights",
+      true
+    ],
+    [
+      "HTTP://EXAMPLE.COM",
+      true
+    ],
+    [
+      "http://x:99999/",
+      false
+    ],
+    [
+      "https://例え.jp/path",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      true
+    ],
+    [
+      "https://example.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      false
+    ],
+    [
+      "https://example.com",
+      true
+    ]
+  ],
+  "action_color": [
+    [
+      "red",
+      "red"
+    ],
+    [
+      " Red ",
+      "red"
+    ],
+    [
+      "GRAY2",
+      "gray2"
+    ],
+    [
+      "#ffaa00",
+      "#FFAA00"
+    ],
+    [
+      "#FFAA00",
+      "#FFAA00"
+    ],
+    [
+      "#fa0",
+      null
+    ],
+    [
+      "#ffaa0011",
+      null
+    ],
+    [
+      "ffaa00",
+      null
+    ],
+    [
+      "nope",
+      null
+    ],
+    [
+      "",
+      null
+    ],
+    [
+      "  ",
+      null
+    ]
+  ],
+  "user_gradient": [
+    [
+      "red, blue",
+      [
+        "red",
+        "blue"
+      ]
+    ],
+    [
+      "red,blue,green",
+      [
+        "red",
+        "blue",
+        "green"
+      ]
+    ],
+    [
+      "red, blue, green, yellow",
+      null
+    ],
+    [
+      "red",
+      null
+    ],
+    [
+      "red, nope",
+      null
+    ],
+    [
+      "#FFD27A, #ff8a4c",
+      [
+        "#FFD27A",
+        "#FF8A4C"
+      ]
+    ],
+    [
+      " purple , #FF375F ",
+      [
+        "purple",
+        "#FF375F"
+      ]
+    ],
+    [
+      "red,,blue",
+      [
+        "red",
+        "blue"
+      ]
+    ],
+    [
+      "none",
+      null
+    ],
+    [
+      "",
+      null
+    ]
+  ],
+  "money": [
+    [
+      "12",
+      "12"
+    ],
+    [
+      "12.50",
+      "12.50"
+    ],
+    [
+      " 12 ",
+      "12"
+    ],
+    [
+      "+5",
+      "5"
+    ],
+    [
+      ".5",
+      "0.5"
+    ],
+    [
+      "5.",
+      "5"
+    ],
+    [
+      "+.5",
+      "0.5"
+    ],
+    [
+      "5.e2",
+      "500"
+    ],
+    [
+      "1e3",
+      "1000"
+    ],
+    [
+      "1E3",
+      "1000"
+    ],
+    [
+      "1e+3",
+      "1000"
+    ],
+    [
+      "1e-5",
+      "0.00001"
+    ],
+    [
+      "1e-400",
+      null
+    ],
+    [
+      "1e400",
+      "10000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000"
+    ],
+    [
+      "1_000",
+      "1000"
+    ],
+    [
+      "1e1_0",
+      "10000000000"
+    ],
+    [
+      "12.345678901234567890",
+      "12.345678901234567890"
+    ],
+    [
+      "0",
+      null
+    ],
+    [
+      "0.0",
+      null
+    ],
+    [
+      "-0",
+      null
+    ],
+    [
+      "-5",
+      null
+    ],
+    [
+      "",
+      null
+    ],
+    [
+      " ",
+      null
+    ],
+    [
+      ".",
+      null
+    ],
+    [
+      ".e3",
+      null
+    ],
+    [
+      "e3",
+      null
+    ],
+    [
+      "1e",
+      null
+    ],
+    [
+      "1e3.5",
+      null
+    ],
+    [
+      "1,5",
+      null
+    ],
+    [
+      "1 000",
+      null
+    ],
+    [
+      "1.2.3",
+      null
+    ],
+    [
+      "12a",
+      null
+    ],
+    [
+      "0x10",
+      null
+    ],
+    [
+      "Infinity",
+      null
+    ],
+    [
+      "inf",
+      null
+    ],
+    [
+      "NaN",
+      null
+    ]
+  ],
+  "sources": [
+    [
+      {},
+      "x",
+      "literal",
+      null
+    ],
+    [
+      {},
+      "x",
+      "entity",
+      null
+    ],
+    [
+      {
+        "x": "red"
+      },
+      "x",
+      "literal",
+      null
+    ],
+    [
+      {
+        "x": "light.a"
+      },
+      "x",
+      "entity",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__entity": "light.a"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__entity": "light.a",
+        "x": "red"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__entity": "light.b",
+        "x": "light.a"
+      },
+      "x",
+      "entity",
+      {
+        "kind": "entity",
+        "entity": "light.b"
+      }
+    ],
+    [
+      {
+        "x__entity": "",
+        "x": "light.a"
+      },
+      "x",
+      "entity",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__entity": "light.a",
+        "x__attribute": "brightness"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "attribute",
+        "entity": "light.a",
+        "attribute": "brightness"
+      }
+    ],
+    [
+      {
+        "x": "light.a",
+        "x__attribute": "brightness"
+      },
+      "x",
+      "entity",
+      {
+        "kind": "attribute",
+        "entity": "light.a",
+        "attribute": "brightness"
+      }
+    ],
+    [
+      {
+        "x__entity": "light.a",
+        "x__attribute": ""
+      },
+      "x",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__attribute": "brightness"
+      },
+      "x",
+      "literal",
+      null
+    ],
+    [
+      {
+        "x__template": "{{ 1 }}",
+        "x__watched": [
+          "light.a"
+        ]
+      },
+      "x",
+      "literal",
+      {
+        "kind": "template",
+        "template": "{{ 1 }}",
+        "watched": [
+          "light.a"
+        ]
+      }
+    ],
+    [
+      {
+        "x__template": "{{ 1 }}",
+        "x__entity": "light.a"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "template",
+        "template": "{{ 1 }}",
+        "watched": []
+      }
+    ],
+    [
+      {
+        "x__template": "",
+        "x__entity": "light.a"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__template": "",
+        "x": "light.a"
+      },
+      "x",
+      "entity",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__color__entity": "light.a",
+        "x": "red"
+      },
+      "x__color",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__color__template": "{{ 'red' }}"
+      },
+      "x",
+      "literal",
+      null
+    ],
+    [
+      {
+        "source": "sensor.a",
+        "source__attribute": "level"
+      },
+      "source",
+      "entity",
+      {
+        "kind": "attribute",
+        "entity": "sensor.a",
+        "attribute": "level"
+      }
+    ],
+    [
+      {
+        "x__bands": {
+          "entity": "sensor.a",
+          "limits": [
+            1
+          ],
+          "values": [
+            "red",
+            "blue"
+          ]
+        },
+        "x": "red"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "bands",
+        "bands": {
+          "entity": "sensor.a",
+          "limits": [
+            1
+          ],
+          "values": [
+            "red",
+            "blue"
+          ]
+        }
+      }
+    ],
+    [
+      {
+        "x__bands": {
+          "entity": "sensor.a",
+          "limits": [],
+          "values": []
+        },
+        "x__entity": "light.a"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "entity",
+        "entity": "light.a"
+      }
+    ],
+    [
+      {
+        "x__bands": {
+          "entity": "sensor.a",
+          "limits": [
+            1
+          ],
+          "values": [
+            "red",
+            "blue"
+          ]
+        },
+        "x__template": "{{ 1 }}"
+      },
+      "x",
+      "literal",
+      {
+        "kind": "template",
+        "template": "{{ 1 }}",
+        "watched": []
+      }
+    ]
+  ],
+  "bands": [
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          50
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          50
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      [
+        [
+          "-20",
+          "red"
+        ],
+        [
+          "0",
+          "red"
+        ],
+        [
+          "19.99",
+          "red"
+        ],
+        [
+          "20",
+          "orange"
+        ],
+        [
+          "20.0",
+          "orange"
+        ],
+        [
+          "35",
+          "orange"
+        ],
+        [
+          "50",
+          "green"
+        ],
+        [
+          "50.5",
+          "green"
+        ],
+        [
+          "100",
+          "green"
+        ],
+        [
+          " 7 ",
+          "red"
+        ],
+        [
+          "1e1",
+          "red"
+        ],
+        [
+          "",
+          null
+        ],
+        [
+          "unavailable",
+          null
+        ],
+        [
+          "on",
+          null
+        ],
+        [
+          "nan",
+          null
+        ],
+        [
+          "inf",
+          null
+        ]
+      ]
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          "20",
+          50.5
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          50.5
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      [
+        [
+          "-20",
+          "red"
+        ],
+        [
+          "0",
+          "red"
+        ],
+        [
+          "19.99",
+          "red"
+        ],
+        [
+          "20",
+          "orange"
+        ],
+        [
+          "20.0",
+          "orange"
+        ],
+        [
+          "35",
+          "orange"
+        ],
+        [
+          "50",
+          "orange"
+        ],
+        [
+          "50.5",
+          "green"
+        ],
+        [
+          "100",
+          "green"
+        ],
+        [
+          " 7 ",
+          "red"
+        ],
+        [
+          "1e1",
+          "red"
+        ],
+        [
+          "",
+          null
+        ],
+        [
+          "unavailable",
+          null
+        ],
+        [
+          "on",
+          null
+        ],
+        [
+          "nan",
+          null
+        ],
+        [
+          "inf",
+          null
+        ]
+      ]
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          -10,
+          0,
+          10,
+          20
+        ],
+        "values": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ]
+      },
+      {
+        "entity": "sensor.a",
+        "limits": [
+          -10,
+          0,
+          10,
+          20
+        ],
+        "values": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e"
+        ]
+      },
+      [
+        [
+          "-20",
+          "a"
+        ],
+        [
+          "0",
+          "c"
+        ],
+        [
+          "19.99",
+          "d"
+        ],
+        [
+          "20",
+          "e"
+        ],
+        [
+          "20.0",
+          "e"
+        ],
+        [
+          "35",
+          "e"
+        ],
+        [
+          "50",
+          "e"
+        ],
+        [
+          "50.5",
+          "e"
+        ],
+        [
+          "100",
+          "e"
+        ],
+        [
+          " 7 ",
+          "c"
+        ],
+        [
+          "1e1",
+          "d"
+        ],
+        [
+          "",
+          null
+        ],
+        [
+          "unavailable",
+          null
+        ],
+        [
+          "on",
+          null
+        ],
+        [
+          "nan",
+          null
+        ],
+        [
+          "inf",
+          null
+        ]
+      ]
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          1,
+          2,
+          3,
+          4,
+          5
+        ],
+        "values": [
+          "a",
+          "b",
+          "c",
+          "d",
+          "e",
+          "f"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          50,
+          20
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          20
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          "x"
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          true
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20,
+          null
+        ],
+        "values": [
+          "red",
+          "orange",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [],
+        "values": [
+          "red"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "",
+        "limits": [
+          20
+        ],
+        "values": [
+          "red",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "entity": "sensor.a",
+        "limits": [
+          20
+        ],
+        "values": [
+          "red",
+          2
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      {
+        "limits": [
+          20
+        ],
+        "values": [
+          "red",
+          "green"
+        ]
+      },
+      null,
+      null
+    ],
+    [
+      "sensor.a",
+      null,
+      null
+    ],
+    [
+      null,
+      null,
+      null
+    ]
+  ],
+  "press": [
+    [
+      "light.kitchen",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "switch.heater",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "fan.ceiling",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "input_boolean.guest",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "automation.morning",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "humidifier.bedroom",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "siren.alarm",
+      "toggle",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "cover.garage",
+      "toggle",
+      [
+        "cover",
+        "open_cover"
+      ]
+    ],
+    [
+      "valve.garden",
+      "toggle",
+      [
+        "valve",
+        "open_valve"
+      ]
+    ],
+    [
+      "lock.front",
+      "toggle",
+      [
+        "lock",
+        "lock"
+      ]
+    ],
+    [
+      "scene.movie",
+      "button",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "script.bedtime",
+      "button",
+      [
+        "homeassistant",
+        "turn_on"
+      ]
+    ],
+    [
+      "button.restart",
+      "button",
+      [
+        "button",
+        "press"
+      ]
+    ],
+    [
+      "input_button.bell",
+      "button",
+      [
+        "input_button",
+        "press"
+      ]
+    ],
+    [
+      "climate.living_room",
+      "toggle",
+      [
+        "climate",
+        "turn_on"
+      ]
+    ]
+  ],
+  "limits": {
+    "image_url": 2048,
+    "label": 64,
+    "tap_url": 256,
+    "rows": 8
+  }
+}

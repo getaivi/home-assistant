@@ -1,0 +1,448 @@
+{
+  "aivi/activities": {
+    "type": "object",
+    "keys": {
+      "activities": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "supported": {
+              "type": "boolean"
+            },
+            "template": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "aivi/automations/turn_off": {
+    "type": "object",
+    "keys": {
+      "automations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "blueprint": {
+              "type": "boolean"
+            },
+            "config_id": {
+              "type": "null|string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "entity_id": {
+              "type": "string"
+            },
+            "keep": {
+              "type": "null|string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  },
+  "aivi/config": {
+    "type": "object",
+    "keys": {
+      "accounts": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "activities": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "keys": {
+                  "active": {
+                    "type": "string"
+                  },
+                  "bindings": {
+                    "type": "object"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "subentry_id": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  },
+                  "throttle": {
+                    "type": "number"
+                  }
+                }
+              }
+            },
+            "entry_id": {
+              "type": "string"
+            },
+            "keep_log": {
+              "type": "boolean"
+            },
+            "stream": {
+              "type": "null|object",
+              "keys": {
+                "connected": {
+                  "type": "boolean"
+                },
+                "connected_since": {
+                  "type": "null|string"
+                },
+                "last_error": {
+                  "type": "null|string"
+                },
+                "last_event": {
+                  "type": "null|string"
+                },
+                "reason": {
+                  "type": "null|string"
+                },
+                "reconnects": {
+                  "type": "number"
+                },
+                "state": {
+                  "type": "string"
+                }
+              }
+            },
+            "subscription": {
+              "type": "string"
+            },
+            "subscription_ended": {
+              "type": "null|string"
+            },
+            "title": {
+              "type": "string"
+            },
+            "widgets": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "keys": {
+                  "bindings": {
+                    "type": "object"
+                  },
+                  "name": {
+                    "type": "string"
+                  },
+                  "slug": {
+                    "type": "string"
+                  },
+                  "stale_after": {
+                    "type": "null|number"
+                  },
+                  "subentry_id": {
+                    "type": "string"
+                  },
+                  "template": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "automations": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "blueprint": {
+              "type": "boolean"
+            },
+            "config_id": {
+              "type": "null|string"
+            },
+            "enabled": {
+              "type": "boolean"
+            },
+            "entity_id": {
+              "type": "string"
+            },
+            "keep": {
+              "type": "null|string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            }
+          }
+        }
+      },
+      "suggest_models": {
+        "type": "array"
+      },
+      "suggest_state": {
+        "type": "string"
+      },
+      "version": {
+        "type": "string"
+      }
+    }
+  },
+  "aivi/inputs/subscribe": {
+    "type": "object",
+    "keys": {
+      "presses": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "count": {
+              "type": "number"
+            },
+            "entity_id": {
+              "type": "null|string"
+            },
+            "error": {
+              "type": "null|string"
+            },
+            "event_type": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "label": {
+              "type": "null|string"
+            },
+            "outcome": {
+              "type": "string"
+            },
+            "received_at": {
+              "type": "string"
+            },
+            "recorded": {
+              "type": "boolean"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "subentry_id": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "value": {
+              "type": "any"
+            }
+          }
+        }
+      },
+      "pushes": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "count": {
+              "type": "number"
+            },
+            "duration_ms": {
+              "type": "null|number"
+            },
+            "error": {
+              "type": "null|string"
+            },
+            "held": {
+              "type": "null|object",
+              "keys": {
+                "interval": {
+                  "type": "number"
+                },
+                "until": {
+                  "type": "string"
+                }
+              }
+            },
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "type": "string"
+            },
+            "outcome": {
+              "type": "string"
+            },
+            "request": {
+              "type": "null|object",
+              "keys": {
+                "body": {
+                  "type": "any"
+                },
+                "method": {
+                  "type": "string"
+                },
+                "path": {
+                  "type": "string"
+                }
+              }
+            },
+            "slug": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "subentry_id": {
+              "type": "string"
+            },
+            "time": {
+              "type": "string"
+            },
+            "truncated": {
+              "type": "boolean"
+            },
+            "waiting": {
+              "type": "null|object",
+              "keys": {
+                "entity_id": {
+                  "type": "null|string"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reading": {
+                  "type": "null|string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "status": {
+        "type": "object",
+        "values": {
+          "type": "object",
+          "keys": {
+            "held": {
+              "type": "null|object",
+              "keys": {
+                "interval": {
+                  "type": "number"
+                },
+                "until": {
+                  "type": "string"
+                }
+              }
+            },
+            "status": {
+              "type": "string"
+            },
+            "waiting": {
+              "type": "null|object",
+              "keys": {
+                "entity_id": {
+                  "type": "null|string"
+                },
+                "field": {
+                  "type": "string"
+                },
+                "fields": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                },
+                "reading": {
+                  "type": "null|string"
+                }
+              }
+            }
+          }
+        }
+      },
+      "stream": {
+        "type": "null|object",
+        "keys": {
+          "connected": {
+            "type": "boolean"
+          },
+          "connected_since": {
+            "type": "null|string"
+          },
+          "last_error": {
+            "type": "null|string"
+          },
+          "last_event": {
+            "type": "null|string"
+          },
+          "reason": {
+            "type": "null|string"
+          },
+          "reconnects": {
+            "type": "number"
+          },
+          "state": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  },
+  "aivi/widgets": {
+    "type": "object",
+    "keys": {
+      "widgets": {
+        "type": "array",
+        "items": {
+          "type": "object",
+          "keys": {
+            "name": {
+              "type": "string"
+            },
+            "slug": {
+              "type": "string"
+            },
+            "supported": {
+              "type": "boolean"
+            },
+            "template": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    }
+  }
+}

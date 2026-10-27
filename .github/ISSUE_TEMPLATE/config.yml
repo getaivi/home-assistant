@@ -1,0 +1,14 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Setup guide
+    url: https://docs.getaivi.app/home-assistant/integration/
+    about: Installing the integration and setting up widgets and Live Activities.
+  - name: Questions and ideas
+    url: https://github.com/getaivi/community/discussions
+    about: Ask the community, share a setup or talk through an idea.
+  - name: Aivi app and account support
+    url: https://docs.getaivi.app/support/
+    about: Questions about the app, your subscription or your account.
+  - name: Marketplace problems
+    url: https://github.com/home-assistant/core/issues
+    about: The Marketplace itself (Settings → Marketplace) fails to list, download or update integrations.

@@ -1,0 +1,24 @@
+{
+  "domain": "aivi",
+  "name": "Aivi",
+  "after_dependencies": [
+    "automation",
+    "energy",
+    "frontend",
+    "http",
+    "panel_custom",
+    "recorder",
+    "websocket_api"
+  ],
+  "codeowners": [
+    "@kjagiello"
+  ],
+  "config_flow": true,
+  "documentation": "https://docs.getaivi.app/home-assistant/integration/",
+  "integration_type": "service",
+  "iot_class": "cloud_push",
+  "issue_tracker": "https://github.com/getaivi/home-assistant/issues",
+  "quality_scale": "platinum",
+  "requirements": [],
+  "version": "0.1.0"
+}

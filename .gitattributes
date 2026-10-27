@@ -1,0 +1,9 @@
+* text=auto eol=lf
+
+custom_components/aivi/translations/en.json linguist-generated=true
+frontend/src/translations/en.ts linguist-generated=true
+frontend/harness/meta.generated.js linguist-generated=true
+frontend/tests/fixtures/*.json linguist-generated=true
+frontend/src/brand-mark.ts linguist-generated=true
+contract/aivi-openapi.json linguist-generated=true
+custom_components/aivi/frontend/sf-symbols.json linguist-generated=true

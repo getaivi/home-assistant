@@ -1,0 +1,124 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  merge_group:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  lint:
+    name: Lint & typecheck
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.2
+        with:
+          enable-cache: true
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run ruff format --check .
+      - run: uv run ty check
+      # Generated from the Python side: the English catalogs, the dev
+      # harness's template metadata and the panel's golden fixtures. Fail
+      # if any is stale.
+      - run: uv run python scripts/refresh_catalog.py --check
+      - run: uv run python scripts/refresh_harness_meta.py --check
+      - run: uv run python scripts/refresh_fixtures.py --check
+      - name: Verify the workflow lockfile
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh extension install github/gh-actions-lock --pin v0.4.0
+          gh actions-lock --verify
+
+  test:
+    name: Tests (HA ${{ matrix.ha }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        ha: [latest, min]
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.2
+        with:
+          enable-cache: true
+      # latest: the phacc-pinned HA from uv.lock (Python 3.14), with the
+      # coverage gate.
+      - if: matrix.ha == 'latest'
+        run: uv sync --locked
+      - if: matrix.ha == 'latest'
+        run: uv run pytest -q
+      # min: proves the hacs.json "homeassistant" minimum. Old HA needs
+      # Python 3.13, so this leg uses a separate env pinned by
+      # tests/min-ha-pins.txt. Coverage is only gated once, on latest.
+      - if: matrix.ha == 'min'
+        run: uv venv --python 3.13 .venv-min
+      - if: matrix.ha == 'min'
+        run: uv pip install --python .venv-min/bin/python -r tests/min-ha-pins.txt
+      - if: matrix.ha == 'min'
+        run: PYTHONPATH=. .venv-min/bin/python -m pytest tests -q --no-cov -p no:cacheprovider
+
+  panel:
+    name: Panel frontend
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx biome ci --error-on-warnings
+      - run: npm run typecheck
+      - run: npm test
+      # The bundle is generated (gitignored), not committed; the build run
+      # proves the source compiles and the release workflow can build it.
+      - run: npm run build
+      - run: for f in frontend/harness/*.js; do node --check "$f" || exit 1; done
+
+  harness:
+    name: Panel in a browser
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v7.0.1
+      - uses: astral-sh/setup-uv@v10.3.2
+        with:
+          enable-cache: true
+      - uses: actions/setup-node@v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      # The harness server answers previews with the integration over a
+      # test Home Assistant, so it needs the Python environment too.
+      - run: uv sync --locked
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # The interaction and accessibility checks; the screenshots are
+      # for review, not compared.
+      - run: make snapshots
+      - name: Upload the screenshots
+        if: always()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: snapshots
+          path: snapshots/
+          if-no-files-found: ignore
+      - name: Upload the Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v7.0.2
+        with:
+          name: playwright-report-harness
+          path: |
+            playwright-report/harness/
+            test-results/harness/
+          if-no-files-found: ignore

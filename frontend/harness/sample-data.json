@@ -1,0 +1,826 @@
+{
+  "states": {
+    "input_number.washer_progress": {
+      "entity_id": "input_number.washer_progress",
+      "state": "62",
+      "attributes": {
+        "friendly_name": "Washer progress",
+        "unit_of_measurement": "%"
+      }
+    },
+    "input_text.washer_state": {
+      "entity_id": "input_text.washer_state",
+      "state": "Washing",
+      "attributes": {
+        "friendly_name": "Washer state"
+      }
+    },
+    "input_boolean.front_door": {
+      "entity_id": "input_boolean.front_door",
+      "state": "on",
+      "attributes": {
+        "friendly_name": "Front door open"
+      }
+    },
+    "sensor.living_temp": {
+      "entity_id": "sensor.living_temp",
+      "state": "21.4",
+      "attributes": {
+        "friendly_name": "Living room temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      }
+    },
+    "sensor.vacuum_battery": {
+      "entity_id": "sensor.vacuum_battery",
+      "state": "68",
+      "attributes": {
+        "friendly_name": "Robot vacuum battery",
+        "device_class": "battery"
+      }
+    },
+    "sensor.lock_battery": {
+      "entity_id": "sensor.lock_battery",
+      "state": "45",
+      "attributes": {
+        "friendly_name": "Door lock battery",
+        "device_class": "battery"
+      }
+    },
+    "sensor.doorbell_battery": {
+      "entity_id": "sensor.doorbell_battery",
+      "state": "92",
+      "attributes": {
+        "friendly_name": "Doorbell battery",
+        "device_class": "battery"
+      }
+    },
+    "sensor.next_bin": {
+      "entity_id": "sensor.next_bin",
+      "state": "2026-07-30T07:00:00+00:00",
+      "attributes": {
+        "friendly_name": "Next bin collection",
+        "device_class": "timestamp"
+      }
+    },
+    "sensor.wash_remaining": {
+      "entity_id": "sensor.wash_remaining",
+      "state": "0.6",
+      "attributes": {
+        "friendly_name": "Wash phase share",
+        "remaining": "0.35"
+      }
+    },
+    "climate.living_room": {
+      "entity_id": "climate.living_room",
+      "state": "heat",
+      "attributes": {
+        "friendly_name": "Living room thermostat",
+        "current_temperature": 21.4,
+        "temperature": 22,
+        "hvac_action": "heating"
+      }
+    },
+    "sensor.outdoor_temp": {
+      "entity_id": "sensor.outdoor_temp",
+      "state": "14.8",
+      "attributes": {
+        "friendly_name": "Outdoor temperature",
+        "unit_of_measurement": "°C",
+        "device_class": "temperature"
+      }
+    },
+    "sensor.humidity": {
+      "entity_id": "sensor.humidity",
+      "state": "54",
+      "attributes": {
+        "friendly_name": "Indoor humidity",
+        "unit_of_measurement": "%",
+        "device_class": "humidity"
+      }
+    },
+    "sensor.power_now": {
+      "entity_id": "sensor.power_now",
+      "state": "1240",
+      "attributes": {
+        "friendly_name": "Power draw",
+        "unit_of_measurement": "W",
+        "device_class": "power"
+      }
+    },
+    "binary_sensor.garage": {
+      "entity_id": "binary_sensor.garage",
+      "state": "off",
+      "attributes": {
+        "friendly_name": "Garage door"
+      }
+    },
+    "sensor.phone_battery": {
+      "entity_id": "sensor.phone_battery",
+      "state": "81",
+      "attributes": {
+        "friendly_name": "Phone battery",
+        "device_class": "battery"
+      }
+    },
+    "light.porch": {
+      "entity_id": "light.porch",
+      "state": "on",
+      "attributes": {
+        "friendly_name": "Porch light",
+        "color_mode": "color_temp",
+        "color_temp_kelvin": 2700
+      }
+    },
+    "switch.fountain": {
+      "entity_id": "switch.fountain",
+      "state": "off",
+      "attributes": {
+        "friendly_name": "Garden fountain",
+        "entity_picture": "https://images.example.com/fountain.png"
+      }
+    },
+    "scene.movie": {
+      "entity_id": "scene.movie",
+      "state": "2026-07-27T12:00:00+00:00",
+      "attributes": {
+        "friendly_name": "Movie night",
+        "entity_picture": "/api/image/serve/movie/512x512"
+      }
+    },
+    "script.bedtime": {
+      "entity_id": "script.bedtime",
+      "state": "on",
+      "attributes": {
+        "friendly_name": "Bedtime"
+      }
+    },
+    "cover.garage": {
+      "entity_id": "cover.garage",
+      "state": "closed",
+      "attributes": {
+        "friendly_name": "Garage door",
+        "device_class": "garage"
+      }
+    },
+    "light.desk": {
+      "entity_id": "light.desk",
+      "state": "on",
+      "attributes": {
+        "friendly_name": "Desk lamp",
+        "color_mode": "rgb",
+        "rgb_color": [255, 80, 0],
+        "brightness": 128
+      }
+    },
+    "fan.bedroom": {
+      "entity_id": "fan.bedroom",
+      "state": "on",
+      "attributes": {
+        "friendly_name": "Bedroom fan",
+        "percentage": 60
+      }
+    },
+    "lock.front_door": {
+      "entity_id": "lock.front_door",
+      "state": "jammed",
+      "attributes": {
+        "friendly_name": "Front door lock"
+      }
+    },
+    "cover.blinds": {
+      "entity_id": "cover.blinds",
+      "state": "opening",
+      "attributes": {
+        "friendly_name": "Living room blinds"
+      }
+    },
+    "sensor.monthly_spent": {
+      "entity_id": "sensor.monthly_spent",
+      "state": "519.30",
+      "attributes": {
+        "friendly_name": "Spent this month",
+        "unit_of_measurement": "USD",
+        "device_class": "monetary"
+      }
+    },
+    "sensor.food_spent": {
+      "entity_id": "sensor.food_spent",
+      "state": "157.60",
+      "attributes": {
+        "friendly_name": "Food",
+        "unit_of_measurement": "USD",
+        "device_class": "monetary"
+      }
+    },
+    "sensor.car_spent": {
+      "entity_id": "sensor.car_spent",
+      "state": "98.7",
+      "attributes": {
+        "friendly_name": "Vehicle",
+        "unit_of_measurement": "USD",
+        "device_class": "monetary"
+      }
+    },
+    "sensor.travel_spent": {
+      "entity_id": "sensor.travel_spent",
+      "state": "unavailable",
+      "attributes": {
+        "friendly_name": "Travel",
+        "unit_of_measurement": "USD",
+        "device_class": "monetary"
+      }
+    },
+    "sensor.monthly_budget": {
+      "entity_id": "sensor.monthly_budget",
+      "state": "1500",
+      "attributes": {
+        "friendly_name": "Monthly budget"
+      }
+    },
+    "sensor.nordpool": {
+      "entity_id": "sensor.nordpool",
+      "state": "0.151",
+      "attributes": {
+        "friendly_name": "Electricity price",
+        "unit_of_measurement": "EUR/kWh",
+        "today": [
+          0.142, 0.128, 0.119, 0.114, 0.121, 0.136, 0.164, 0.198, 0.225, 0.217, 0.189, 0.162, 0.151,
+          0.144, 0.139, 0.147, 0.171, 0.212, 0.246, 0.231, 0.196, 0.168, 0.153, 0.146
+        ],
+        "raw_today": [
+          {
+            "start": "2026-01-15T00:00:00+01:00",
+            "end": "2026-01-15T01:00:00+01:00",
+            "value": 0.142
+          },
+          {
+            "start": "2026-01-15T01:00:00+01:00",
+            "end": "2026-01-15T02:00:00+01:00",
+            "value": 0.128
+          },
+          {
+            "start": "2026-01-15T02:00:00+01:00",
+            "end": "2026-01-15T03:00:00+01:00",
+            "value": 0.119
+          },
+          {
+            "start": "2026-01-15T03:00:00+01:00",
+            "end": "2026-01-15T04:00:00+01:00",
+            "value": 0.114
+          },
+          {
+            "start": "2026-01-15T04:00:00+01:00",
+            "end": "2026-01-15T05:00:00+01:00",
+            "value": 0.121
+          },
+          {
+            "start": "2026-01-15T05:00:00+01:00",
+            "end": "2026-01-15T06:00:00+01:00",
+            "value": 0.136
+          },
+          {
+            "start": "2026-01-15T06:00:00+01:00",
+            "end": "2026-01-15T07:00:00+01:00",
+            "value": 0.164
+          },
+          {
+            "start": "2026-01-15T07:00:00+01:00",
+            "end": "2026-01-15T08:00:00+01:00",
+            "value": 0.198
+          },
+          {
+            "start": "2026-01-15T08:00:00+01:00",
+            "end": "2026-01-15T09:00:00+01:00",
+            "value": 0.225
+          },
+          {
+            "start": "2026-01-15T09:00:00+01:00",
+            "end": "2026-01-15T10:00:00+01:00",
+            "value": 0.217
+          },
+          {
+            "start": "2026-01-15T10:00:00+01:00",
+            "end": "2026-01-15T11:00:00+01:00",
+            "value": 0.189
+          },
+          {
+            "start": "2026-01-15T11:00:00+01:00",
+            "end": "2026-01-15T12:00:00+01:00",
+            "value": 0.162
+          },
+          {
+            "start": "2026-01-15T12:00:00+01:00",
+            "end": "2026-01-15T13:00:00+01:00",
+            "value": 0.151
+          },
+          {
+            "start": "2026-01-15T13:00:00+01:00",
+            "end": "2026-01-15T14:00:00+01:00",
+            "value": 0.144
+          },
+          {
+            "start": "2026-01-15T14:00:00+01:00",
+            "end": "2026-01-15T15:00:00+01:00",
+            "value": 0.139
+          },
+          {
+            "start": "2026-01-15T15:00:00+01:00",
+            "end": "2026-01-15T16:00:00+01:00",
+            "value": 0.147
+          },
+          {
+            "start": "2026-01-15T16:00:00+01:00",
+            "end": "2026-01-15T17:00:00+01:00",
+            "value": 0.171
+          },
+          {
+            "start": "2026-01-15T17:00:00+01:00",
+            "end": "2026-01-15T18:00:00+01:00",
+            "value": 0.212
+          },
+          {
+            "start": "2026-01-15T18:00:00+01:00",
+            "end": "2026-01-15T19:00:00+01:00",
+            "value": 0.246
+          },
+          {
+            "start": "2026-01-15T19:00:00+01:00",
+            "end": "2026-01-15T20:00:00+01:00",
+            "value": 0.231
+          },
+          {
+            "start": "2026-01-15T20:00:00+01:00",
+            "end": "2026-01-15T21:00:00+01:00",
+            "value": 0.196
+          },
+          {
+            "start": "2026-01-15T21:00:00+01:00",
+            "end": "2026-01-15T22:00:00+01:00",
+            "value": 0.168
+          },
+          {
+            "start": "2026-01-15T22:00:00+01:00",
+            "end": "2026-01-15T23:00:00+01:00",
+            "value": 0.153
+          },
+          {
+            "start": "2026-01-15T23:00:00+01:00",
+            "end": "2026-01-15T00:00:00+01:00",
+            "value": 0.146
+          }
+        ],
+        "raw_tomorrow": [
+          {
+            "start": "2026-01-16T00:00:00+01:00",
+            "end": "2026-01-16T01:00:00+01:00",
+            "value": 0.128
+          },
+          {
+            "start": "2026-01-16T01:00:00+01:00",
+            "end": "2026-01-16T02:00:00+01:00",
+            "value": 0.115
+          },
+          {
+            "start": "2026-01-16T02:00:00+01:00",
+            "end": "2026-01-16T03:00:00+01:00",
+            "value": 0.107
+          },
+          {
+            "start": "2026-01-16T03:00:00+01:00",
+            "end": "2026-01-16T04:00:00+01:00",
+            "value": 0.103
+          },
+          {
+            "start": "2026-01-16T04:00:00+01:00",
+            "end": "2026-01-16T05:00:00+01:00",
+            "value": 0.109
+          },
+          {
+            "start": "2026-01-16T05:00:00+01:00",
+            "end": "2026-01-16T06:00:00+01:00",
+            "value": 0.122
+          },
+          {
+            "start": "2026-01-16T06:00:00+01:00",
+            "end": "2026-01-16T07:00:00+01:00",
+            "value": 0.148
+          },
+          {
+            "start": "2026-01-16T07:00:00+01:00",
+            "end": "2026-01-16T08:00:00+01:00",
+            "value": 0.178
+          },
+          {
+            "start": "2026-01-16T08:00:00+01:00",
+            "end": "2026-01-16T09:00:00+01:00",
+            "value": 0.203
+          },
+          {
+            "start": "2026-01-16T09:00:00+01:00",
+            "end": "2026-01-16T10:00:00+01:00",
+            "value": 0.195
+          },
+          {
+            "start": "2026-01-16T10:00:00+01:00",
+            "end": "2026-01-16T11:00:00+01:00",
+            "value": 0.17
+          },
+          {
+            "start": "2026-01-16T11:00:00+01:00",
+            "end": "2026-01-16T12:00:00+01:00",
+            "value": 0.146
+          },
+          {
+            "start": "2026-01-16T12:00:00+01:00",
+            "end": "2026-01-16T13:00:00+01:00",
+            "value": 0.136
+          },
+          {
+            "start": "2026-01-16T13:00:00+01:00",
+            "end": "2026-01-16T14:00:00+01:00",
+            "value": 0.13
+          },
+          {
+            "start": "2026-01-16T14:00:00+01:00",
+            "end": "2026-01-16T15:00:00+01:00",
+            "value": 0.125
+          },
+          {
+            "start": "2026-01-16T15:00:00+01:00",
+            "end": "2026-01-16T16:00:00+01:00",
+            "value": 0.132
+          },
+          {
+            "start": "2026-01-16T16:00:00+01:00",
+            "end": "2026-01-16T17:00:00+01:00",
+            "value": 0.154
+          },
+          {
+            "start": "2026-01-16T17:00:00+01:00",
+            "end": "2026-01-16T18:00:00+01:00",
+            "value": 0.191
+          },
+          {
+            "start": "2026-01-16T18:00:00+01:00",
+            "end": "2026-01-16T19:00:00+01:00",
+            "value": 0.221
+          },
+          {
+            "start": "2026-01-16T19:00:00+01:00",
+            "end": "2026-01-16T20:00:00+01:00",
+            "value": 0.208
+          },
+          {
+            "start": "2026-01-16T20:00:00+01:00",
+            "end": "2026-01-16T21:00:00+01:00",
+            "value": 0.176
+          },
+          {
+            "start": "2026-01-16T21:00:00+01:00",
+            "end": "2026-01-16T22:00:00+01:00",
+            "value": 0.151
+          },
+          {
+            "start": "2026-01-16T22:00:00+01:00",
+            "end": "2026-01-16T23:00:00+01:00",
+            "value": 0.138
+          },
+          {
+            "start": "2026-01-16T23:00:00+01:00",
+            "end": "2026-01-16T00:00:00+01:00",
+            "value": 0.131
+          }
+        ]
+      }
+    },
+    "sensor.solar_power": {
+      "entity_id": "sensor.solar_power",
+      "state": "3.2",
+      "attributes": {
+        "friendly_name": "Solar power",
+        "unit_of_measurement": "kW",
+        "device_class": "power"
+      }
+    },
+    "sensor.grid_power": {
+      "entity_id": "sensor.grid_power",
+      "state": "-1400",
+      "attributes": {
+        "friendly_name": "Grid power",
+        "unit_of_measurement": "W",
+        "device_class": "power"
+      }
+    },
+    "sensor.storage_power": {
+      "entity_id": "sensor.storage_power",
+      "state": "-800",
+      "attributes": {
+        "friendly_name": "Home storage power",
+        "unit_of_measurement": "W",
+        "device_class": "power"
+      }
+    },
+    "sensor.storage_charge": {
+      "entity_id": "sensor.storage_charge",
+      "state": "76",
+      "attributes": {
+        "friendly_name": "Home storage charge",
+        "unit_of_measurement": "%"
+      }
+    },
+    "sensor.solar_energy": {
+      "entity_id": "sensor.solar_energy",
+      "state": "1012.4",
+      "attributes": {
+        "friendly_name": "Solar energy",
+        "unit_of_measurement": "kWh",
+        "device_class": "energy"
+      }
+    },
+    "sensor.grid_import": {
+      "entity_id": "sensor.grid_import",
+      "state": "3100",
+      "attributes": {
+        "friendly_name": "Grid import",
+        "unit_of_measurement": "Wh",
+        "device_class": "energy"
+      }
+    },
+    "sensor.phone_charging": {
+      "entity_id": "sensor.phone_charging",
+      "state": "Charging",
+      "attributes": {
+        "friendly_name": "Phone charging"
+      }
+    },
+    "sensor.my_car_doors": {
+      "state": "Locked",
+      "attributes": {
+        "friendly_name": "Car doors",
+        "entity_picture": "https://pictures.example.com/car.png"
+      }
+    },
+    "sensor.my_car_charge": {
+      "state": "78",
+      "attributes": {
+        "friendly_name": "Car charge",
+        "unit_of_measurement": "%"
+      }
+    },
+    "sensor.my_car_range": {
+      "state": "312",
+      "attributes": {
+        "friendly_name": "Car range",
+        "unit_of_measurement": "km"
+      }
+    },
+    "sensor.my_car_odometer": {
+      "state": "24180",
+      "attributes": {
+        "friendly_name": "Car odometer",
+        "unit_of_measurement": "km"
+      }
+    },
+    "lock.my_car": {
+      "state": "locked",
+      "attributes": {
+        "friendly_name": "Car lock"
+      }
+    },
+    "climate.my_car": {
+      "state": "off",
+      "attributes": {
+        "friendly_name": "Car climate",
+        "hvac_modes": ["off", "heat_cool"]
+      }
+    },
+    "sensor.vacuum_status": {
+      "state": "Cleaning",
+      "attributes": {
+        "friendly_name": "Robot vacuum status"
+      }
+    },
+    "sensor.vacuum_cleaned": {
+      "state": "40",
+      "attributes": {
+        "friendly_name": "Robot vacuum cleaned",
+        "unit_of_measurement": "%"
+      }
+    },
+    "script.vacuum_pause": {
+      "state": "off",
+      "attributes": {
+        "friendly_name": "Pause the vacuum"
+      }
+    },
+    "script.vacuum_dock": {
+      "state": "off",
+      "attributes": {
+        "friendly_name": "Send the vacuum home"
+      }
+    },
+    "sensor.dryer_progress": {
+      "entity_id": "sensor.dryer_progress",
+      "state": "unknown",
+      "attributes": {
+        "friendly_name": "Dryer progress",
+        "unit_of_measurement": "%"
+      }
+    }
+  },
+  "areas": {
+    "light.porch": "Outside",
+    "switch.fountain": "Garden",
+    "scene.movie": "Living room",
+    "cover.blinds": "Living room",
+    "light.desk": "Office"
+  },
+  "bound": {
+    "widgets": [
+      {
+        "subentry_id": "w1",
+        "slug": "frontdoor",
+        "name": "Front door",
+        "template": "status",
+        "bindings": {
+          "state": "input_boolean.front_door",
+          "accent": "red"
+        }
+      }
+    ],
+    "activities": [
+      {
+        "subentry_id": "a1",
+        "slug": "washer",
+        "name": "Washer",
+        "template": "progress",
+        "active": "input_boolean.front_door",
+        "bindings": {
+          "progress": "input_number.washer_progress",
+          "header_left": "input_text.washer_state",
+          "compact_value": "input_text.washer_state",
+          "compact_value__color": "green"
+        }
+      }
+    ]
+  },
+  "suggestions": {
+    "progress": {
+      "progress": "input_number.washer_progress",
+      "state": "input_text.washer_state",
+      "icon": "washer.fill",
+      "accent": "cyan"
+    },
+    "status": {
+      "state": "input_boolean.front_door",
+      "state__color": "red",
+      "icon": "door.left.hand.open",
+      "accent": "red"
+    },
+    "battery": {
+      "devices": ["sensor.vacuum_battery", "sensor.lock_battery"]
+    },
+    "switchboard": {
+      "actions": ["light.porch", "switch.fountain", "scene.movie", "script.bedtime"],
+      "actions__options": {
+        "light.porch": {
+          "color": "yellow"
+        }
+      },
+      "accent": "indigo"
+    },
+    "gauge": {
+      "value": "sensor.living_temp",
+      "unit": "°C",
+      "label": "Living room"
+    },
+    "countdown": {
+      "target": "sensor.next_bin",
+      "icon": "trash.fill",
+      "accent": "green"
+    },
+    "monitor": {
+      "right_value": "sensor.living_temp",
+      "right_header": "Inside",
+      "left_value": "sensor.outdoor_temp",
+      "left_header": "Outside"
+    }
+  },
+  "samples": [
+    {
+      "id": "budget-categories",
+      "kind": "widget",
+      "template": "budget",
+      "bindings": {
+        "spent": "sensor.monthly_spent",
+        "budget": 1500,
+        "currency": "usd",
+        "subtitle": "input_text.washer_state",
+        "categories": ["sensor.food_spent", "sensor.car_spent", "sensor.travel_spent"],
+        "categories__options": {
+          "sensor.food_spent": {
+            "budget": "300",
+            "icon": "fork.knife",
+            "color": "blue"
+          },
+          "sensor.car_spent": {
+            "budget": "-1",
+            "label": "Car"
+          }
+        },
+        "total_color": "yellow"
+      }
+    },
+    {
+      "id": "budget-sourced-total",
+      "kind": "widget",
+      "template": "budget",
+      "bindings": {
+        "spent": "sensor.monthly_spent",
+        "budget": 10,
+        "budget__entity": "sensor.monthly_budget",
+        "currency": "EUR",
+        "display": "spent"
+      }
+    },
+    {
+      "id": "trend-history",
+      "kind": "widget",
+      "template": "trend",
+      "bindings": {
+        "value": "sensor.living_temp",
+        "state": "input_text.washer_state",
+        "color": "orange"
+      }
+    },
+    {
+      "id": "prices-cents",
+      "kind": "widget",
+      "template": "prices",
+      "bindings": {
+        "entries": "sensor.nordpool",
+        "entries__attribute": "raw_today",
+        "scale": "cents",
+        "icon": "bolt.fill"
+      }
+    },
+    {
+      "id": "energy-dashboard",
+      "kind": "widget",
+      "template": "energy",
+      "bindings": {
+        "sources": ["sensor.solar_power"],
+        "sources__options": {
+          "sensor.solar_power": {
+            "today": "sensor.solar_energy",
+            "label": "Roof"
+          }
+        },
+        "grid_power": "sensor.grid_power",
+        "grid_today": "sensor.grid_import",
+        "battery_power": "sensor.storage_power",
+        "battery_power__invert": true,
+        "battery_level": "sensor.storage_charge",
+        "home_power": "sensor.power_now"
+      }
+    }
+  ],
+  "history": {
+    "buckets:sensor.living_temp": [
+      18.2, 18.4, 18.9, 19.3, 19.6, 20.1, 20.8, 21.2, 21.6, 21.5, 21.2, 20.9, 20.7, 20.9, 21.1,
+      21.3, 21.4, 21.2, 21.0, 20.8, 20.9, 21.1, 21.3
+    ],
+    "day_low:sensor.solar_energy": 1000,
+    "day_low:sensor.grid_import": 0
+  },
+  "currency": "USD",
+  "energy_sources": [
+    {
+      "type": "solar",
+      "stat_energy_from": "sensor.solar_energy",
+      "stat_rate": "sensor.solar_power"
+    },
+    {
+      "type": "grid",
+      "flow_from": [
+        {
+          "stat_energy_from": "sensor.grid_import"
+        }
+      ],
+      "power": [
+        {
+          "stat_rate": "sensor.grid_power"
+        }
+      ]
+    },
+    {
+      "type": "battery",
+      "stat_rate": "sensor.storage_power",
+      "stat_soc": "sensor.storage_charge"
+    }
+  ],
+  "reported": {
+    "sensor.my_car_charge": 12
+  }
+}

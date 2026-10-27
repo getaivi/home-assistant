@@ -1,0 +1,22 @@
+# Test environment for the MINIMUM supported Home Assistant version.
+#
+# Keep in lockstep with the "homeassistant" key in hacs.json (currently
+# 2025.4.0): pytest-homeassistant-custom-component 0.13.232 pins
+# homeassistant==2025.4.0. CI's `Tests (HA min)` job installs this file
+# (Python 3.13) to prove the hacs.json claim — bump both together.
+#
+# The floor is 2025.4.0: the reconfigure step prefills the base URL inside
+# its collapsed section, and add_suggested_values_to_schema only reaches
+# into sections from 2025.4 (on 2025.3 the field comes up empty). The rest
+# of the suite passes on 2025.3.
+pytest-homeassistant-custom-component==0.13.232
+pytest-cov
+
+# HA 2025.4 pins aiodns 3.2.0, which is incompatible with pycares>=5
+# (pycares.ares_query_a_result was removed).
+pycares<5
+
+# The contract tests and the QA mock's tests (tests/test_contract.py,
+# tests/test_mock_aivi.py); werkzeug comes with openapi-core.
+openapi-core>=0.23.1
+jsonschema[format-nongpl]>=4.26.0

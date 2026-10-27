@@ -1,0 +1,1581 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect your Aivi account",
+        "description": "Paste the API token from the Settings tab of the Aivi app. Give the account a name if you connect more than one.",
+        "data": {
+          "token": "API token",
+          "name": "Account name"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced options",
+            "description": "Optional. Change the base URL only to connect to an Aivi API other than the default one.",
+            "data": {
+              "base_url": "API base URL"
+            }
+          }
+        }
+      },
+      "reauth_confirm": {
+        "title": "Reconnect Aivi",
+        "description": "Aivi rejected your API token. Paste a new one from the Settings tab of the Aivi app.",
+        "data": {
+          "token": "API token"
+        }
+      },
+      "reconfigure": {
+        "title": "Reconfigure Aivi",
+        "description": "Update the API token. Open Advanced options to change the base URL.",
+        "data": {
+          "token": "API token"
+        },
+        "sections": {
+          "advanced": {
+            "name": "Advanced options",
+            "description": "Optional. Change the base URL only to connect to an Aivi API other than the default one.",
+            "data": {
+              "base_url": "API base URL"
+            }
+          }
+        }
+      }
+    },
+    "error": {
+      "invalid_auth": "Aivi rejected that API token. Check it and try again.",
+      "cannot_connect": "Couldn't reach Aivi. Check your connection and try again.",
+      "no_subscription": "This Aivi account has no active subscription. Subscribe in the Aivi app, then try again."
+    },
+    "abort": {
+      "reauth_successful": "Aivi reconnected.",
+      "reconfigure_successful": "Aivi connection updated.",
+      "already_configured": "This Aivi account is already connected."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Aivi options",
+        "data": {
+          "keep_log": "Keep the log across restarts"
+        },
+        "data_description": {
+          "keep_log": "The log of pushes to Aivi and presses from your devices lives in memory and starts over when Home Assistant restarts. Turned on, it is also written to disk every so often, so it survives a restart. Leave it off on an SD card you want to spare."
+        }
+      }
+    }
+  },
+  "exceptions": {
+    "auth_rejected": {
+      "message": "Aivi rejected the API token. Reconnect the account to keep your widgets and Live Activities updated."
+    },
+    "cannot_connect": {
+      "message": "Couldn't reach Aivi: {error}"
+    }
+  },
+  "issues": {
+    "widget_missing": {
+      "title": "Widget \"{name}\" isn't in the Aivi app",
+      "description": "The Aivi app has no widget with the slug \"{slug}\", so Home Assistant has nothing to feed for \"{name}\". Create it again in the **Widgets** tab of the Aivi app with exactly that slug, or stop feeding \"{name}\" in the Aivi panel."
+    },
+    "content_rejected": {
+      "title": "Aivi rejected the content for \"{name}\"",
+      "description": "Aivi rejected what Home Assistant sent for \"{name}\" ({slug}) as invalid. Check what feeds it in the Aivi panel. Updates resume once Aivi accepts the content."
+    },
+    "content_too_large": {
+      "title": "Content for \"{name}\" is over the Aivi size limit",
+      "description": "What Home Assistant would send for \"{name}\" ({slug}) is over the 4 KiB Aivi accepts, so it is not sent and your devices keep showing the last update. In the Aivi panel, shorten picture URLs or second lines, or remove tiles. Updates resume once it fits."
+    },
+    "unsupported_template": {
+      "title": "\"{name}\" uses a template this version can't feed",
+      "description": "\"{name}\" uses the \"{template}\" template, which this version of the Aivi integration doesn't support. Update the integration to feed it, or stop feeding \"{name}\" in the Aivi panel."
+    },
+    "activity_missing": {
+      "title": "Live Activity \"{name}\" isn't in the Aivi app",
+      "description": "The Aivi app has no Live Activity with the slug \"{slug}\", so Home Assistant has nothing to feed for \"{name}\". Create it again in the **Activities** tab of the Aivi app with exactly that slug, or stop feeding \"{name}\" in the Aivi panel."
+    },
+    "template_mismatch": {
+      "title": "\"{name}\" has a different template in the Aivi app",
+      "description": "Aivi refused the content for \"{name}\" ({slug}) because the widget or Live Activity with that slug has a different template in the Aivi app than \"{template}\". Stop feeding it and set it up again in the Aivi panel. Updates resume once the templates match."
+    },
+    "activity_quota": {
+      "title": "Too many ongoing Live Activities for \"{name}\"",
+      "description": "Aivi didn't start the Live Activity \"{name}\" ({slug}) because the account already has as many ongoing Live Activities as it allows. End another one; the next update tries again."
+    },
+    "subscription_inactive": {
+      "title": "Aivi subscription isn't active",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Check the Aivi subscription",
+            "description": "The Aivi account \"{account}\" has no active subscription, so its widgets and Live Activities are paused.\n\nEverything you set up in the Aivi panel is kept. Renew in the Aivi app and updates resume within the hour. Renewed already? Select **Check now**.",
+            "submit": "Check now"
+          },
+          "still_inactive": {
+            "title": "Not renewed yet",
+            "description": "Aivi still reports no active subscription for \"{account}\". Renew it in the Aivi app, then select **Check again**. It is also checked every hour.",
+            "submit": "Check again"
+          },
+          "cannot_connect": {
+            "title": "Couldn't reach Aivi",
+            "description": "Check your connection, then select **Try again**.",
+            "submit": "Try again"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi rejected the API token. Reconnect the account first.",
+          "not_loaded": "The Aivi account isn't running. Reload it under **Settings → Devices & services**, then try again."
+        }
+      }
+    },
+    "subscription_expired": {
+      "title": "Aivi subscription isn't active",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Check the Aivi subscription",
+            "description": "The Aivi subscription for \"{account}\" ended on {expired}, so its widgets and Live Activities are paused.\n\nEverything you set up in the Aivi panel is kept. Renew in the Aivi app and updates resume within the hour. Renewed already? Select **Check now**.",
+            "submit": "Check now"
+          },
+          "still_inactive": {
+            "title": "Not renewed yet",
+            "description": "Aivi still reports no active subscription for \"{account}\". Renew it in the Aivi app, then select **Check again**. It is also checked every hour.",
+            "submit": "Check again"
+          },
+          "cannot_connect": {
+            "title": "Couldn't reach Aivi",
+            "description": "Check your connection, then select **Try again**.",
+            "submit": "Try again"
+          }
+        },
+        "abort": {
+          "auth_failed": "Aivi rejected the API token. Reconnect the account first.",
+          "not_loaded": "The Aivi account isn't running. Reload it under **Settings → Devices & services**, then try again."
+        }
+      }
+    },
+    "automation_conflict": {
+      "title": "\"{name}\" is also fed by an automation",
+      "fix_flow": {
+        "step": {
+          "confirm": {
+            "title": "Turn off the automation feeding \"{name}\"",
+            "description": "\"{name}\" ({slug}) is fed from the Aivi panel and also by: {automations}. The two overwrite each other, so your devices flip between them.\n\nTurning the automation off doesn't delete it. You can turn it back on under **Settings → Automations & scenes**.",
+            "submit": "Turn off"
+          }
+        }
+      }
+    },
+    "automation_conflict_manual": {
+      "title": "\"{name}\" is also fed by an automation",
+      "description": "\"{name}\" ({slug}) is fed from the Aivi panel and also by: {automations}. The two overwrite each other, so your devices flip between them. This automation feeds other widgets too, or turns itself back on when Home Assistant starts, so the Aivi integration doesn't turn it off for you. Change it under **Settings → Automations & scenes**, or stop feeding \"{name}\" in the Aivi panel."
+    }
+  },
+  "config_panel": {
+    "common": {
+      "retry": "Retry",
+      "edit": "Edit",
+      "back": "Back",
+      "save": "Save",
+      "saving": "Saving…",
+      "required": "required",
+      "none": "None",
+      "default": "Default",
+      "clear": "Clear",
+      "remove": "Remove",
+      "move-up": "Move up",
+      "move-down": "Move down",
+      "done": "Done",
+      "close": "Close",
+      "color": "Color",
+      "live-activity": "Live Activity",
+      "menu": "Open the sidebar"
+    },
+    "error": {
+      "boot-title": "Couldn't load Aivi"
+    },
+    "route": {
+      "widget-missing": "That widget wasn't found. Showing your widgets instead.",
+      "activity-missing": "That Live Activity wasn't found. Showing your widgets instead."
+    },
+    "onboarding": {
+      "title": "Connect your Aivi account",
+      "body": "Widgets are built in the Aivi app; Home Assistant feeds them with live data. Connect your account and every widget on it appears here, ready to set up.",
+      "connect": "Connect account",
+      "token-help": "Where do I find my token?",
+      "first-bind-title": "Your first widget is live.",
+      "first-bind-body": "{name} now updates whenever the entities that feed it change. There is nothing to refresh.",
+      "first-bind-dismiss": "Got it"
+    },
+    "hub": {
+      "widgets": "Widgets",
+      "live-activities": "Live Activities",
+      "accounts": "Accounts",
+      "account-connected": "Connected",
+      "account-paused": "Subscription paused",
+      "account-unreachable": "Unreachable",
+      "add-account": "Add account",
+      "manage-accounts": "Manage in Settings",
+      "docs": "Documentation",
+      "support": "Support",
+      "version": "Version {version}",
+      "fed-dot": "Fed by Home Assistant",
+      "running-dot": "Running",
+      "idle-dot": "Not running",
+      "waiting-dot": "Waiting for a value",
+      "empty-title": "No widgets or Live Activities yet",
+      "empty-body": "You create them in the Aivi app. Here you pick what feeds them.",
+      "empty-step-create": "Create a widget or a Live Activity in the Aivi app on your iPhone or iPad.",
+      "empty-step-refresh": "Press Refresh here. New ones appear then, not on their own.",
+      "empty-step-feed": "Press Set up on it and pick the entities that feed it.",
+      "empty-cta": "Open the Aivi app",
+      "empty-widgets-note": "No widgets yet. Create one in the Aivi app, then refresh.",
+      "empty-activities-note": "No Live Activities yet. Create one in the Aivi app, then refresh.",
+      "offline": "Aivi is unreachable. Showing only the widgets you set up.",
+      "subscription-inactive": "Your Aivi subscription isn't active. Everything you set up is kept and resumes when you renew.",
+      "check-again": "Check again",
+      "bind": "Set up",
+      "unbind": "Stop feeding",
+      "unbind-confirm": "Stop feeding?",
+      "unbound-toast": "Stopped feeding {name}",
+      "unbind-failed": "Couldn't stop feeding {name}: {error}",
+      "fed-by": "Fed by {sources}",
+      "nothing-yet": "nothing yet",
+      "template-count-one": "{count} templated field",
+      "template-count-other": "{count} templated fields",
+      "unsupported": "Needs a newer Aivi integration",
+      "widget-gone": "Not in the Aivi app, so nothing is shown. Stop feeding it, or create it again there with the same slug.",
+      "runs-on": "runs on {entity}",
+      "activity-gone": "Not in the Aivi app, so nothing is shown. Stop feeding it, or create it again there with the same slug.",
+      "search-placeholder": "Search widgets & Live Activities…",
+      "search-label": "Search widgets and Live Activities by name or template",
+      "refresh": "Refresh",
+      "refresh-same": "Up to date: nothing changed in the Aivi app.",
+      "refresh-changed": "Updated from the Aivi app.",
+      "refresh-failed": "Couldn't reach Aivi.",
+      "filter-label": "Filter by status",
+      "filter-all": "All",
+      "filter-bound": "Fed",
+      "filter-unbound": "Not fed",
+      "filter-unsupported": "Unsupported",
+      "no-matches": "No matches for “{query}”",
+      "no-matches-filter": "Nothing matches this filter",
+      "clear-search": "Clear filters",
+      "results-one": "{count} match shown",
+      "results-other": "{count} matches shown",
+      "subscription-inactive-some-one": "The Aivi subscription for {names} isn't active. Its widgets and Live Activities are paused until it is renewed. Everything you set up is kept.",
+      "subscription-inactive-some-other": "The Aivi subscriptions for {names} aren't active. Their widgets and Live Activities are paused until they are renewed. Everything you set up is kept.",
+      "paused-mark": "Paused",
+      "account-ended": "Subscription ended {date}"
+    },
+    "editor": {
+      "activity-chip": "Live Activity",
+      "widget-chip": "Widget",
+      "slug-hint": "Its slug: the ID the Aivi app, repairs and automations know it by",
+      "unknown-template": "Unknown template “{template}”",
+      "save-failed": "Couldn't save: {error}",
+      "saved-toast": "{name} is now fed by Home Assistant",
+      "active-label": "Active entity",
+      "active-hint": "Starts the Live Activity when it turns on; ends it when it turns off",
+      "template-error-blocks": "Fix the template error in {fields} to save.",
+      "fix-fields": "Fix the fields marked in red to save.",
+      "one-of": "one of {fields}",
+      "leave-title": "Discard your changes?",
+      "leave-body": "What you changed in {name} will not be saved.",
+      "leave-keep": "Keep editing",
+      "leave-discard": "Discard"
+    },
+    "presses": {
+      "count": "×{count}",
+      "type-toggle_on": "On",
+      "type-toggle_off": "Off",
+      "type-pressed": "Press",
+      "outcome-played": "Handled",
+      "outcome-expired": "Expired",
+      "outcome-not_bound": "Not handled",
+      "outcome-ignored": "Ignored",
+      "outcome-failed": "Failed"
+    },
+    "recent": {
+      "title": "Log",
+      "hint": "What Home Assistant last sent to Aivi for this, what your devices sent back, and what became of each.",
+      "empty": "Nothing yet. The first push to Aivi shows up here, and so does a press on one of your devices."
+    },
+    "pushes": {
+      "to-aivi": "To Aivi",
+      "from-devices": "From your devices",
+      "outcome-delivered": "Delivered",
+      "outcome-unchanged": "Unchanged",
+      "outcome-retrying": "Retrying",
+      "outcome-failed": "Failed",
+      "unchanged-why": "The same content as the last push, so nothing was sent.",
+      "took": "{ms} ms",
+      "content": "What was sent",
+      "content-cut": "Cut off here: the content is longer than the log keeps.",
+      "content-none": "Nothing resolved, so there was nothing to send.",
+      "outcome-waiting": "Waiting",
+      "outcome-held": "Held",
+      "waiting": "Nothing sent: {field} reads “{reading}”.",
+      "waiting-none": "Nothing sent: {field} has no value.",
+      "waiting-any": "Nothing sent: none of {fields} has a value.",
+      "held": "Held until {time}: this Live Activity updates at most {every}. Change it under “{setting}” in {section}."
+    },
+    "source": {
+      "entity": "Entity",
+      "attribute": "Attribute",
+      "template": "Template",
+      "bands": "By value",
+      "literal": "Fixed value",
+      "fixed": "Fixed value"
+    },
+    "bands": {
+      "follows": "Follows",
+      "follows-aria": "The reading {field} follows",
+      "follows-placeholder": "Pick a sensor",
+      "list": "{field} by value",
+      "below": "Below {limit}",
+      "between": "{from} to {limit}",
+      "above": "{from} and up",
+      "limit-aria": "Where {range} ends",
+      "color-aria": "Color for {range}",
+      "remove": "Remove the band {range}",
+      "add": "Add a band",
+      "full": "Up to {max} bands",
+      "as-template": "Write as template",
+      "now": "Now {reading}, so {color}",
+      "now-none": "{name} has no reading now, so the fixed color shows",
+      "order": "Type a number above the limit before it and below the one after it.",
+      "lock-hint": "Colors don't show on the Lock Screen, on a tinted Home Screen or when the screen dims. Show the reading on the widget too, or change its icon with it."
+    },
+    "field": {
+      "also-on": "Also shows in the {surface}",
+      "source-label": "{field} source",
+      "template-aria": "{field} template",
+      "pick-entity-first": "Pick an entity first, then its attribute",
+      "entity-missing": "This entity isn't available in Home Assistant right now.",
+      "choose-attribute": "Choose an attribute…",
+      "no-attributes": "This entity has no attributes to pick from.",
+      "style-title": "Text color & format",
+      "format": "Format",
+      "format-as-is": "As it is",
+      "source-unusable": "Reads “{value}”, which can't be used here. The fallback below applies.",
+      "source-unavailable": "Nothing to read right now. The fallback below applies.",
+      "fallback": "Fallback",
+      "fallback-hint": "Used whenever the source above can't be read",
+      "source-of": "{field} source",
+      "template-error": "Template error:",
+      "error-details": "Details",
+      "template-empty": "This template currently renders to nothing; the field counts as unset.",
+      "result": "Result",
+      "kind-text": "text",
+      "kind-number": "number",
+      "kind-bool": "true or false",
+      "kind-nothing": "nothing",
+      "kind-list-one": "list of {count} item",
+      "kind-list-other": "list of {count} items",
+      "kind-numbers-one": "list of {count} number",
+      "kind-numbers-other": "list of {count} numbers",
+      "kind-range": "{min} to {max}",
+      "updates-on": "Updates on",
+      "updates-domain": "any {domain} entity",
+      "updates-all": "any state change",
+      "updates-time": "the start of every minute",
+      "updates-more-one": "and {count} more",
+      "updates-more-other": "and {count} more",
+      "updates-limit-one": "at most once a second",
+      "updates-limit-other": "at most once every {count} seconds",
+      "updates-never": "Nothing it reads can change, so it never updates on its own.",
+      "unknown-entity": "Home Assistant has no {id}.",
+      "did-you-mean": "Did you mean:",
+      "use-entity": "Use {id}",
+      "badge-error": "The template has an error",
+      "error-at-line": "Line {line}:",
+      "error-at": "Line {line}, column {column}:",
+      "error-unclosed": "Something is not closed. Check that every {output} and {statement} is complete.",
+      "error-unclosed_block": "The {tag} block is never closed. Add {end} where it ends.",
+      "error-unexpected_end": "The template ends before everything it opens is closed.",
+      "error-stray_end": "{tag} closes a block that was never opened.",
+      "error-unknown_tag": "“{tag}” is not a statement templates know. Check the spelling.",
+      "error-unknown_filter": "There is no filter named “{name}”.",
+      "error-unknown_test": "There is no test named “{name}”.",
+      "error-bad_char": "The character “{char}” can't be used here.",
+      "error-missing": "A “{token}” is missing here.",
+      "error-incomplete": "The expression stops too early: something is missing at its end.",
+      "error-extra": "“{token}” does not belong here. Is an operator or a | missing before it?",
+      "error-unexpected": "“{token}” is not expected here.",
+      "error-undefined": "Nothing named “{name}” exists here. Check the spelling.",
+      "error-no_attribute": "“{value}” has no attribute “{name}”.",
+      "error-none_attribute": "This reads “{name}” from something that does not exist, often an entity id with a typo.",
+      "error-no_default": "{function} got “{value}”, which is not a number, and has no default. Give it one, like {example}.",
+      "error-type": "Text and numbers are mixed here. Turn text into a number first, like {example}.",
+      "error-division_by_zero": "This divides by zero.",
+      "number-placeholder": "e.g. 100",
+      "icon-placeholder": "e.g. washer.fill",
+      "symbol-styling": "Symbol styling",
+      "rendering": "Symbol style",
+      "secondary": "Second color",
+      "tertiary": "Third color",
+      "color-style": "Color style",
+      "suggestions": "Suggestions",
+      "device-chip": "Device: {name}",
+      "history-chip": "History: {name}",
+      "dashboard-chip": "Dashboard",
+      "url-invalid": "Use a full URL with its scheme, such as https:// for a web page or homeassistant:// for a Home Assistant view.",
+      "url-long": "The URL is longer than 256 characters.",
+      "invert": "Reverse the sign",
+      "icon-color": "Icon color",
+      "points-source": "History source",
+      "points-history": "History",
+      "points-list": "List",
+      "points-template": "Template",
+      "points-window": "Time span",
+      "points-entity": "History of",
+      "points-same": "Same as {field}",
+      "points-list-hint": "An attribute holding a list of numbers, oldest first",
+      "points-template-hint": "A Home Assistant template rendering a list of numbers, oldest first, for example a forecast mapped to its temperatures",
+      "points-no-history": "Feed {field} from an entity, or pick one here, to chart its history.",
+      "source-waiting": "Reads “{value}” right now, so nothing is sent until it has a value.",
+      "source-waiting-none": "Nothing to read right now, so nothing is sent until there is.",
+      "source-left-out": "Nothing to read right now, so this is left out.",
+      "source-unusable-left-out": "Reads “{value}”, which can't be used here, so this is left out.",
+      "badge-waiting": "Nothing to read right now",
+      "name": "{field}",
+      "name-grouped": "the {group} {field}",
+      "name-case": "lower"
+    },
+    "code": {
+      "completions": "Suggestions",
+      "fn-states": "The state of an entity, as text",
+      "fn-state_attr": "One attribute of an entity",
+      "fn-is_state": "Whether an entity is in a given state",
+      "fn-is_state_attr": "Whether an entity's attribute has a given value",
+      "fn-has_value": "Whether an entity has a state, not unknown or unavailable",
+      "fn-expand": "The member entities of groups and lists",
+      "fn-area_name": "The name of the area an entity is in",
+      "fn-area_entities": "Every entity in an area",
+      "fn-device_attr": "One detail of an entity's device, like its model",
+      "fn-now": "The current date and time",
+      "fn-today_at": "Today at a given time, like today_at('18:30')",
+      "fn-as_timestamp": "A date or time as seconds since 1970",
+      "fn-relative_time": "How long ago a time was, like 5 minutes",
+      "fn-timedelta": "A length of time, to add to or take from a time",
+      "fn-timestamp_custom": "Formats a timestamp, like timestamp_custom('%H:%M')",
+      "fn-iif": "One value if a condition holds, another if not",
+      "fn-float": "A number with decimals, with a fallback for text",
+      "fn-int": "A whole number, with a fallback for text",
+      "fn-is_number": "Whether a value is a number",
+      "fn-round": "Rounds a number to a number of decimals",
+      "fn-default": "A value to use when there is none",
+      "fn-min": "The smallest of several values",
+      "fn-max": "The largest of several values",
+      "fn-selectattr": "Keeps the items whose attribute passes a test",
+      "fn-map": "Takes one attribute of every item, or applies a filter to each",
+      "fn-list": "Turns the result into a list",
+      "fn-count": "How many items there are",
+      "fn-sum": "Adds up all the numbers",
+      "fn-join": "Joins items into text with a separator",
+      "fn-replace": "Replaces text with other text",
+      "fn-state_translated": "The state of an entity, in your language",
+      "fn-device_id": "The id of an entity's device",
+      "fn-device_entities": "Every entity of a device",
+      "fn-area_id": "The id of an area, by its name or an entity in it",
+      "fn-area_devices": "Every device in an area",
+      "fn-areas": "Every area",
+      "fn-floor_name": "The name of a floor",
+      "fn-label_entities": "Every entity with a label",
+      "fn-integration_entities": "Every entity of an integration, like 'hue'",
+      "fn-utcnow": "The current date and time in UTC",
+      "fn-as_datetime": "Text or a timestamp as a date and time",
+      "fn-as_local": "A date and time in your time zone",
+      "fn-strptime": "Reads a date and time from text in a given format",
+      "fn-time_since": "How long ago a time was, in words",
+      "fn-time_until": "How long until a time, in words",
+      "fn-as_timedelta": "Text like '00:10:00' as a length of time",
+      "fn-timestamp_local": "A timestamp as a local date and time",
+      "fn-timestamp_utc": "A timestamp as a date and time in UTC",
+      "fn-bool": "True or false, from text like on, yes or 1",
+      "fn-abs": "A number without its sign",
+      "fn-average": "The average of several numbers",
+      "fn-median": "The middle value of several numbers",
+      "fn-string": "Turns a value into text",
+      "fn-format": "Fills a text pattern, like '%.1f' | format(x)",
+      "fn-lower": "Turns text into lowercase",
+      "fn-upper": "Turns text into uppercase",
+      "fn-title": "Capitalizes every word",
+      "fn-capitalize": "Capitalizes the first letter",
+      "fn-trim": "Removes the spaces around text",
+      "fn-truncate": "Shortens text to a length",
+      "fn-slugify": "Turns text into a lowercase id with underscores",
+      "fn-regex_replace": "Replaces what a regular expression matches",
+      "fn-regex_match": "Whether text starts with a match of a regular expression",
+      "fn-regex_search": "Whether text holds a match of a regular expression",
+      "fn-from_json": "Reads JSON text into values",
+      "fn-rejectattr": "Leaves out the items whose attribute passes a test",
+      "fn-select": "Keeps the items that pass a test",
+      "fn-reject": "Leaves out the items that pass a test",
+      "fn-length": "How many items or characters there are",
+      "fn-first": "The first item",
+      "fn-last": "The last item",
+      "fn-sort": "Sorts the items",
+      "fn-unique": "Leaves out repeated items",
+      "fn-reverse": "Reverses the order",
+      "fn-contains": "Whether a list or text holds a value",
+      "fn-range": "The numbers from 0 up to a count",
+      "fn-namespace": "Holds values a loop can change",
+      "test-defined": "Whether a value exists",
+      "test-none": "Whether a value is None",
+      "test-number": "Whether a value is a number",
+      "test-string": "Whether a value is text",
+      "test-in": "Whether a value is in a list or text",
+      "test-match": "Whether text starts with a match of a regular expression",
+      "test-search": "Whether text holds a match of a regular expression",
+      "test-contains": "Whether a list or text holds a value"
+    },
+    "sheet": {
+      "expand": "Expand",
+      "expand-label": "Expand the {field} template",
+      "insert": "Insert",
+      "in-template": "In this template",
+      "all-entities": "All entities",
+      "matches": "Matching entities",
+      "keys": "Template keys",
+      "key-output": "Expression",
+      "key-statement": "Statement",
+      "key-pipe": "Filter",
+      "key-quote": "Quote",
+      "recipes": "Recipes",
+      "more": "Recipes and attributes",
+      "recipe-pick": "Pick the entity it is for",
+      "recipe-without": "Without an entity, to fill in",
+      "fits": "Entities it fits",
+      "or": "Or",
+      "recipe-words": "Words for on and off, like Open and Closed",
+      "recipe-rounded-unit": "A state rounded, with its unit",
+      "recipe-translated": "Its state as Home Assistant shows it",
+      "recipe-fallback": "Words for when it is unavailable",
+      "recipe-time-since": "Time since it changed",
+      "recipe-time-of-day": "Its time of day",
+      "recipe-rounded": "A state as a number, rounded",
+      "recipe-number": "A state as a number",
+      "recipe-share": "A percentage as a share from 0 to 1",
+      "recipe-entity-time": "The moment it holds",
+      "recipe-last-changed": "When it last changed",
+      "recipe-in-minutes": "In 5 minutes",
+      "recipe-attribute-list": "Numbers from a list attribute",
+      "recipe-color-by-state": "A color for on and off",
+      "recipe-color-by-number": "A color above a limit",
+      "recipe-icon-on-off": "An icon for on and off",
+      "recipe-icon-by-level": "An icon by level",
+      "recipe-is-on": "Whether it is on",
+      "recipe-above": "Whether it is above a limit",
+      "word-on": "On",
+      "word-off": "Off",
+      "word-open": "Open",
+      "word-closed": "Closed",
+      "word-detected": "Detected",
+      "word-clear": "Clear",
+      "word-home": "Home",
+      "word-away": "Away",
+      "word-wet": "Wet",
+      "word-dry": "Dry",
+      "word-problem": "Problem",
+      "word-ok": "OK",
+      "word-unsafe": "Unsafe",
+      "word-safe": "Safe",
+      "word-connected": "Connected",
+      "word-disconnected": "Disconnected",
+      "word-unlocked": "Unlocked",
+      "word-locked": "Locked",
+      "word-low": "Low",
+      "word-normal": "Normal",
+      "word-charging": "Charging",
+      "word-not-charging": "Not charging",
+      "word-no-data": "No data",
+      "writes": "Puts in"
+    },
+    "workspace": {
+      "search": "Search entities and recipes",
+      "no-matches": "Nothing matches",
+      "list-keys": "↑ ↓ to move, Enter to insert, → for more",
+      "inserted": "Inserted {name}",
+      "find": "Find",
+      "find-count": "{current} of {total}",
+      "find-none": "No matches",
+      "find-previous": "Previous",
+      "find-next": "Next",
+      "output": "Output",
+      "docs": "Docs",
+      "tab-hint": "Tab indents, {keys} lets it move the focus",
+      "position": "Line {line}, column {column}",
+      "wrap": "Wrap",
+      "key-left": "Move left",
+      "key-right": "Move right",
+      "key-undo": "Undo",
+      "strip-open": "Preview and result",
+      "search-entity": "Search entities",
+      "step-keys": "↑ ↓ to move, Enter to insert, ← to go back",
+      "step-back": "Back to everything",
+      "hints": "Hints",
+      "hint-limit": "Aivi takes {limit} characters here; the rest is cut off.",
+      "hint-clipped": "The {size} widget cuts it off at this length.",
+      "hint-kind-number": "This field takes a number, and “{value}” is not one, so its fallback shows.",
+      "hint-kind-bool": "This field takes true or false, and “{value}” is neither, so its fallback shows.",
+      "hint-kind-color": "“{value}” is not a color this field takes, so its fallback shows.",
+      "hint-kind-time": "This field takes a date and time, and “{value}” is not one, so its fallback shows.",
+      "hint-kind-other": "This field can't use “{value}”, so its fallback shows.",
+      "hint-unavailable": "{name} is {state} right now, so the widget shows “{state}”.",
+      "hint-none": "It shows “None”: what it reads has no value right now, often an attribute the entity lacks.",
+      "hint-decimals-one": "It shows {count} decimal.",
+      "hint-decimals-other": "It shows {count} decimals.",
+      "hint-symbol": "“{value}” is not in Apple's symbol list, so the device may show no icon.",
+      "fix-round": "Round it",
+      "fix-unit": "Drop the unit",
+      "fix-is-state": "Compare with “{state}”",
+      "fix-unavailable": "Show “{words}” instead",
+      "fix-symbol": "Use “{name}”",
+      "card-changed": "Changed {when}",
+      "card-more-one": "{count} more attribute",
+      "card-more-other": "{count} more attributes"
+    },
+    "formatter": {
+      "time-since": "Time since (live timer, counts up)",
+      "time-until": "Time until (live timer, counts down)"
+    },
+    "combobox": {
+      "placeholder": "Search entities…",
+      "no-matches": "No matching entities",
+      "more": "Showing {shown} of {total}. Type to narrow the list."
+    },
+    "checklist": {
+      "full": "That's all {max}. Remove one to add another.",
+      "over": "Only the first {max} are sent. Remove the rest.",
+      "none-left": "Nothing left to add: every entity that fits is in use.",
+      "add": "Add an entity…",
+      "add-more": "Add another…",
+      "add-label": "Add an entity",
+      "count": "{count} of {max}",
+      "order-label": "Selected rows, in widget order",
+      "reorder": "Reorder {name}",
+      "reorder-hint": "Drag to reorder; Alt+Arrow moves the focused row",
+      "moved": "{name} moved to position {position} of {count}",
+      "move-up": "Move {name} up",
+      "move-down": "Move {name} down",
+      "remove": "Remove {name}",
+      "fix": "Fix needed",
+      "label-aria": "Label for {name}",
+      "icon-aria": "Icon for {name}",
+      "color-aria": "Color for {name}",
+      "budget": "Budget",
+      "budget-aria": "Budget for {name}",
+      "budget-placeholder": "No budget",
+      "budget-invalid": "Use an amount above 0, like 250 or 99.50.",
+      "charging": "Charging",
+      "charging-aria": "Charging sensor for {name}",
+      "charging-auto": "Automatic",
+      "charging-off": "No charging bolt",
+      "charging-off-aria": "No charging bolt for {name}",
+      "charging-hint": "A binary sensor, or a sensor that reads “charging”. Left empty, the device's own charging sensor is filled in when you save.",
+      "charging-unavailable": "Can't read this sensor right now, so no charging bolt is shown.",
+      "today": "Today",
+      "today-aria": "Today's energy for {name}",
+      "today-hint": "An energy meter: today's figure is counted from midnight.",
+      "unit-aria": "Unit for {name}",
+      "unit-placeholder": "No unit",
+      "max": "Gauge up to",
+      "max-aria": "Gauge maximum for {name}",
+      "max-placeholder": "No gauge",
+      "max-invalid": "Use a number above 0, like 100.",
+      "max-hint": "Fills a gauge up to this where the reading stands alone, on the Lock Screen.",
+      "max-words": "Reads {value} now, which is not a number, so it shows as text with no gauge."
+    },
+    "bar": {
+      "mode-label": "Bar style",
+      "mode-solid": "Solid",
+      "mode-segmented": "Segmented",
+      "mode-layered": "Layered",
+      "mode-caption-solid": "One fill color across the whole bar",
+      "mode-caption-segmented": "Each phase is its own capsule, filled in order as the value rises",
+      "mode-caption-layered": "One continuous bar, the Live Activity look",
+      "mode-announced": "Bar style: {mode}"
+    },
+    "segments": {
+      "bar-label": "Phases",
+      "phase": "Phase {index}",
+      "segment-aria": "{name}: {pct}% of the bar",
+      "boundary-aria": "Boundary between {left} and {right}",
+      "boundary-at": "{left} {leftPct}%, {right} {rightPct}%",
+      "add": "Add a phase",
+      "added": "{name} added, {count} of {max} phases",
+      "removed": "{name} removed; {neighbor} absorbed its space",
+      "removed-last": "{name} removed",
+      "split": "Split",
+      "split-aria": "Split {name}",
+      "split-too-thin": "{name} is too small to split",
+      "remove-aria": "Remove {name}",
+      "size": "Size",
+      "size-label": "Size percent",
+      "size-applied": "{name} set to {pct}%",
+      "label-placeholder": "Label",
+      "label-aria": "Label for {name}",
+      "fill-label": "Fill color",
+      "track": "Not reached yet",
+      "track-label": "Color of the part not reached yet",
+      "track-style-label": "Pattern of the part not reached yet",
+      "gray-default": "Gray (default)",
+      "source": "Size from",
+      "source-label": "Size source for {name}",
+      "fallback": "Fallback",
+      "fallback-label": "Fallback size percent for {name}",
+      "sourced-hint": "Live from {source}; the fallback applies when it can't resolve",
+      "fallback-in-use": "The fallback size ({pct}%) is in use.",
+      "result-share": "{pct}% of the bar",
+      "template-empty": "This template currently renders to nothing; the fallback size ({pct}%) is in use.",
+      "source-fallback": "This source doesn't resolve to a usable size right now; the fallback size ({pct}%) is in use.",
+      "segment-live-aria": "{name}: {pct}% of the bar, live from {source}",
+      "boundary-locked": "This boundary follows a live source; edit that phase's source or fallback instead."
+    },
+    "suggest": {
+      "open": "Suggest",
+      "title": "Suggest a setup",
+      "title-off": "AI suggestions",
+      "intro": "Say what it should show, in your own words, and the form fills in. Or start here:",
+      "input-label": "Describe it",
+      "send": "Send",
+      "stop": "Stop",
+      "stopped": "Stopped: the answer was dropped.",
+      "retry": "Retry",
+      "problem-failed": "That did not work: {error}",
+      "footer": "Nothing is saved until you press Save.",
+      "options-label": "Suggested replies",
+      "model-label": "Model",
+      "model-hint": "Each model's settings (its reasoning effort, for one) live with it in Home Assistant.",
+      "enter-hint": "Enter to send, Shift+Enter for a new line",
+      "thinking": "Thinking…",
+      "still-working": "Still working…",
+      "placeholder-initial": "What should it show?",
+      "placeholder-refine": "What should change?",
+      "no-mapping": "The model returned nothing it could use here. Try naming the entity or being more specific.",
+      "round-none": "Nothing changed.",
+      "done-quiet": "Done.",
+      "change-set": "set {field}",
+      "change-changed": "changed {field}",
+      "change-unsourced": "{field} stopped following live state",
+      "change-cleared": "cleared {field}",
+      "not-applied": "Not applied: {list}",
+      "undo": "Undo",
+      "undone": "Undone: the form is back to how it was.",
+      "undone-kept": "Undone. What you changed by hand since was kept.",
+      "undone-count": "{count} undone.",
+      "redo": "Redo",
+      "failed": "Suggestion failed: {error}",
+      "stale": "The form changed while the answer was on its way, so it wasn't applied.",
+      "off-not-loaded": "Needs an AI provider in Home Assistant. None provides AI Task yet.",
+      "off-cta-not-loaded": "Add one in Integrations",
+      "off-no-entity": "AI Task is set up but no model provides data generation yet.",
+      "off-cta-no-entity": "Add one in AI preferences",
+      "off-what": "Describe a widget in your own words and this form fills in.",
+      "undo-label": "Undo “{ask}”",
+      "revert": "Undo this and {count} after it",
+      "revert-label": "Undo “{ask}” and the {count} after it",
+      "hint-accent": "Make the accent orange",
+      "hint-sensor": "Use a different sensor",
+      "hint-simpler": "Keep it simpler",
+      "hint-icon": "Pick a fitting icon",
+      "hint-phases": "Split the bar into phases",
+      "hint-tile": "Give the first tile a label and a color",
+      "hint-rows": "Put the most important row first",
+      "starter-setup": "Set it up for me",
+      "starter-bold": "Make it colorful",
+      "starter-calm": "Keep it minimal",
+      "starter-restyle": "Give it a fresh look",
+      "starter-simpler": "Simplify it",
+      "rejected": {
+        "no_entity": "{field}: there is no entity {value}",
+        "no_attribute": "{field}: no such attribute ({value})",
+        "not_a_color": "{field}: {value} is not one of the colors",
+        "not_a_symbol": "{field}: {value} is not an SF Symbol",
+        "not_an_option": "{field}: {value} is not an option",
+        "bad_template": "{field}: the template does not work",
+        "bad_value": "{field}: {value} can't be used",
+        "already_there": "{field}: {value} is already there",
+        "list_full": "{field}: no room left for {value}",
+        "no_value": "{field}: it shows nothing yet, so there is nothing to style"
+      },
+      "detail-added": "{count} added",
+      "detail-removed": "{count} removed",
+      "detail-reordered": "reordered",
+      "detail-more": "{count} more",
+      "detail-source": "where it reads from",
+      "detail-color": "color",
+      "detail-format": "format",
+      "detail-style": "styling"
+    },
+    "preview": {
+      "title": "Live preview",
+      "missing": "To save, set {fields}.",
+      "missing-count": "{count} to set",
+      "fix-count": "{count} to fix",
+      "resolving": "Resolving…",
+      "payload-title": "What will be sent",
+      "island-note": "Dynamic Island (approximate)",
+      "banner-note": "Lock Screen banner (approximate)",
+      "done-at": "done {time}",
+      "none-for-template": "No preview for {template}",
+      "press-hint": "Press any part of the preview to jump to its settings.",
+      "region-label": "{region}: go to its settings",
+      "skeleton-hint": "Nothing to show yet. Press a part of it to jump to its settings.",
+      "size-label": "Preview size",
+      "as": "Preview as",
+      "as-now": "Now",
+      "size-small": "Small",
+      "size-medium": "Medium",
+      "tile-off": "Off",
+      "tile-on": "On",
+      "tile-active": "Active",
+      "energy-source": "Solar",
+      "energy-grid": "Grid",
+      "energy-battery": "Battery",
+      "energy-home": "Home",
+      "budget-of": "of {amount}",
+      "energy-today": "Today {energy}",
+      "price-low": "Low",
+      "price-medium": "Medium",
+      "price-high": "High",
+      "reported-now": "Just now",
+      "in-a-moment": "In a moment",
+      "waiting": "Nothing is sent while {field} reads “{reading}”.",
+      "waiting-none": "Nothing is sent while {field} has no value.",
+      "waiting-any": "Nothing is sent until one of {fields} has a value.",
+      "waiting-hint": "Press the preview to jump to {field}."
+    },
+    "slot": {
+      "surface": {
+        "island": "Dynamic Island",
+        "banner": "Lock Screen"
+      }
+    },
+    "ramp": {
+      "mode-label": "Ring color",
+      "mode-solid": "One color",
+      "mode-ramp": "Color range",
+      "solid-hint": "The whole ring is this color.",
+      "solid-pick": "Pick a color",
+      "fallback-aria": "{field} without a reading",
+      "fallback-hint": "The whole ring is this color while the reading is not a number.",
+      "fallback-empty": "While the reading is not a number, the ring keeps its built-in range.",
+      "solid-empty": "Until you pick one, the dial keeps its color range.",
+      "presets-label": "Ready-made color ranges",
+      "preset": {
+        "builtin": "Built-in",
+        "cool-warm": "Cool to warm",
+        "good-bad": "Good to bad",
+        "bad-good": "Bad to good"
+      },
+      "preset-applied": "{name} applied",
+      "add": "Add a color",
+      "one-stop": "One color paints the whole ring. Add another to make a range.",
+      "count": "{count} of {max}",
+      "full": "Up to {max} colors",
+      "reverse": "Reverse",
+      "reversed": "Color order reversed",
+      "at-value": "at {value}",
+      "pick-color": "Color {position}: {color}",
+      "remove-stop": "Remove color {position}, {color}",
+      "move-up": "Move color {position}, {color}, up",
+      "move-down": "Move color {position}, {color}, down",
+      "added": "Color {position} added, {count} in total",
+      "removed": "{color} removed, {count} left",
+      "moved": "{color} moved to {position} of {count}",
+      "picked": "Color {position} is now {color}"
+    },
+    "enum": {
+      "color": {
+        "red": "Red",
+        "orange": "Orange",
+        "yellow": "Yellow",
+        "green": "Green",
+        "mint": "Mint",
+        "teal": "Teal",
+        "cyan": "Cyan",
+        "blue": "Blue",
+        "indigo": "Indigo",
+        "purple": "Purple",
+        "pink": "Pink",
+        "brown": "Brown",
+        "gray": "Gray",
+        "gray2": "Gray 2",
+        "gray3": "Gray 3",
+        "gray4": "Gray 4",
+        "gray5": "Gray 5",
+        "gray6": "Gray 6"
+      },
+      "rendering-mode": {
+        "monochrome": "Monochrome",
+        "hierarchical": "Hierarchical",
+        "palette": "Palette",
+        "multicolor": "Multicolor"
+      },
+      "color-rendering": {
+        "flat": "Solid",
+        "gradient": "Gradient"
+      },
+      "track-fill": {
+        "solid": "Solid",
+        "hatched": "Hatched"
+      },
+      "primary_column": {
+        "left": "Left",
+        "right": "Right"
+      },
+      "display": {
+        "remaining": "Remaining",
+        "spent": "Spent"
+      },
+      "scale": {
+        "cents": "Cents (× 100)"
+      },
+      "image_fit": {
+        "contain": "Cut-out",
+        "cover": "Photo"
+      }
+    },
+    "template": {
+      "status": {
+        "label": "Status",
+        "hint": "A single state at a glance"
+      },
+      "progress": {
+        "label": "Progress",
+        "hint": "Something running to completion"
+      },
+      "gauge": {
+        "label": "Gauge",
+        "hint": "A reading within a range"
+      },
+      "countdown": {
+        "label": "Countdown",
+        "hint": "Time left until a moment"
+      },
+      "list": {
+        "label": "List",
+        "hint": "Several readings in one widget"
+      },
+      "battery": {
+        "label": "Battery",
+        "hint": "Charge levels across devices"
+      },
+      "switchboard": {
+        "label": "Switchboard",
+        "hint": "Buttons and switches to press from the Home Screen"
+      },
+      "monitor": {
+        "label": "Monitor",
+        "hint": "Two columns of readings"
+      },
+      "generic": {
+        "label": "Generic",
+        "retired": "An older template Aivi no longer supports. Switch it to Progress or Monitor in the Aivi app."
+      },
+      "budget": {
+        "label": "Budget",
+        "hint": "Spending against a budget, by category"
+      },
+      "trend": {
+        "label": "Trend",
+        "hint": "A reading and its recent history"
+      },
+      "prices": {
+        "label": "Prices",
+        "hint": "An electricity price timeline"
+      },
+      "energy": {
+        "label": "Energy",
+        "hint": "Solar, grid, battery and home at a glance"
+      },
+      "showcase": {
+        "label": "Showcase",
+        "hint": "A picture of the thing, its state and readings"
+      },
+      "remote": {
+        "label": "Remote",
+        "hint": "A picture of the thing, a reading and buttons to press"
+      }
+    },
+    "field-label": {
+      "state": "State",
+      "value": "Value",
+      "progress": "Progress",
+      "target": "Target time",
+      "rows": "Entities",
+      "devices": "Battery sensors",
+      "actions": "Tiles",
+      "icon": "Icon",
+      "accent": "Accent color",
+      "tap_url": "Opens on tap",
+      "end_date": "Finish time",
+      "unit": "Unit",
+      "label": "Label",
+      "subtitle": "Subtitle",
+      "bar_color": "Bar color",
+      "min_value": "Minimum",
+      "max_value": "Maximum",
+      "ring": "Ring color",
+      "expired_text": "Expired text",
+      "segments": "Progress bar",
+      "header_left": "Headline",
+      "header_right": "Headline, right",
+      "footer_left": "Footnote",
+      "footer_right": "Footnote, right",
+      "compact_value": "Dynamic Island",
+      "right_value": "Right column value",
+      "right_header": "Right column header",
+      "right_footer": "Right column footer",
+      "left_value": "Left column value",
+      "left_header": "Left column header",
+      "left_footer": "Left column footer",
+      "primary_column": "Primary column",
+      "spent": "Spent",
+      "budget": "Budget",
+      "currency": "Currency",
+      "categories": "Categories",
+      "display": "Headline figure",
+      "total_color": "Ring color",
+      "points": "History",
+      "color": "Line color",
+      "entries": "Price sensor",
+      "scale": "Price scale",
+      "sources": "Generation",
+      "grid_power": "Grid power",
+      "battery_power": "Battery power",
+      "battery_level": "Battery charge",
+      "home_power": "Home power",
+      "grid_today": "Grid today",
+      "home_today": "Home today",
+      "image": "Picture",
+      "image_fit": "Picture style",
+      "image_alt": "Picture description",
+      "state_icon": "State icon",
+      "stats": "Readings",
+      "reported_at": "Last reported",
+      "badge": "Badge",
+      "badge_alt": "Badge description",
+      "value_label": "Under the value"
+    },
+    "field-hint": {
+      "state": "The entity whose state the widget shows",
+      "progress": "A sensor reporting 0–100",
+      "target": "A timestamp to count down to",
+      "rows": "Each selected entity becomes a row",
+      "devices": "Each selected sensor becomes a row",
+      "actions": "Each selected entity becomes a tile: lights and switches toggle, scenes and scripts run when pressed",
+      "icon": "An Apple SF Symbol; start typing to search by name or keyword",
+      "accent": "The widget's highlight color: the icon chip, and text that carries no color of its own",
+      "tap_url": "Where a tap on the widget goes: a dashboard, an app, a web page",
+      "end_date": "Counts down to this time, in place of the state",
+      "min_value": "Bottom of the dial's range (defaults to 0)",
+      "max_value": "Top of the dial's range (defaults to 1)",
+      "ring": "How the dial is colored across its range, from the low end to the high end",
+      "expired_text": "Shown once the target time has passed",
+      "compact_value": "The one value shown next to the icon while the Island is collapsed",
+      "spent": "What has been spent so far",
+      "budget": "The amount to spend: a number, or live from an entity",
+      "currency": "A three-letter code, like USD or EUR",
+      "categories": "Each selected sensor becomes a category; give it a budget in its options",
+      "display": "Remaining counts down from the budget, Spent counts up",
+      "total_color": "The ring around the headline figure",
+      "points": "Drawn from what Home Assistant recorded, so it is there from the first update",
+      "entries": "A price sensor (Nord Pool, ENTSO-e, Octopus Energy, Amber and the like): its timeline is read from its attributes. One update a day keeps the widget current.",
+      "scale": "Cents shows 0.25 EUR/kWh as 25 ct/kWh",
+      "color": "The line and the fill under it",
+      "header_left": "The banner's top line, at the left",
+      "header_right": "The banner's top line, at the right",
+      "footer_left": "The banner's bottom line, at the left",
+      "footer_right": "The banner's bottom line, at the right",
+      "left_value": "The left column's reading, shown large",
+      "left_header": "The small line above the left reading",
+      "left_footer": "The small line under the left reading",
+      "right_value": "The right column's reading, shown large",
+      "right_header": "The small line above the right reading",
+      "right_footer": "The small line under the right reading",
+      "primary_column": "The column the Dynamic Island shows while collapsed",
+      "image": "A public https URL the device downloads itself, like a car on a clear background",
+      "image_alt": "Read out by VoiceOver in place of the picture",
+      "reported_at": "The widget says how long ago this entity last reported"
+    },
+    "field-hint-template": {
+      "state": "What the widget shows, as the template renders it",
+      "progress": "A number from 0 to 100"
+    },
+    "switchboard": {
+      "subtitle": "Second line",
+      "subtitle-aria": "What the second line of {name} shows",
+      "subtitle-area": "Room",
+      "subtitle-state": "State, like 2700 K",
+      "subtitle-none": "Nothing",
+      "subtitle-custom": "Custom text",
+      "subtitle-hint": "The small text under the tile's name.",
+      "subtitle-custom-aria": "Custom second line for {name}",
+      "press": "When pressed",
+      "press-toggle": "Turns {name} on or off",
+      "press-on": "Turns {name} on",
+      "press-open": "Opens or closes {name}",
+      "press-lock": "Locks or unlocks {name}",
+      "press-scene": "Activates {name}",
+      "press-script": "Runs {name}",
+      "press-button": "Presses {name}",
+      "color-hint": "Paints the tile while it is on. Default is the widget's accent color.",
+      "subtitle-placeholder": "For example Upstairs",
+      "color-invalid": "Use a palette name or #RRGGBB.",
+      "gradient": "Gradient",
+      "gradient-aria": "Gradient for {name}",
+      "gradient-hint": "A gradient paints the tile while it is on, in place of its color.",
+      "gradient-color": "One of the stops is not a color: use a palette name or #RRGGBB.",
+      "gradient-count": "A gradient needs 2 or 3 colors.",
+      "image": "Picture URL",
+      "image-aria": "Picture URL for {name}",
+      "image-alt": "Picture description",
+      "image-alt-aria": "Picture description for {name}",
+      "image-alt-hint": "Read out by VoiceOver in place of the picture.",
+      "picture": "Picture",
+      "picture-custom": "From a URL",
+      "picture-entity": "The entity's picture",
+      "image-hint": "A public https URL the device downloads itself. Keep it small: at most 256 KB, 1024 px on a side and 1 megapixel, as PNG, JPEG, HEIC, WebP or GIF. The device keeps it for a day, so a new URL shows a new picture right away.",
+      "image-https": "The URL must start with https://.",
+      "image-long": "The URL is longer than 2048 characters.",
+      "image-space": "The URL can't contain spaces.",
+      "image-host": "The URL needs a host name after https://.",
+      "picture-use": "Use the entity's picture",
+      "picture-warn": "Only if that URL is public and stable: the device fetches it without Home Assistant credentials, and a URL with a rotating token stops working.",
+      "picture-local": "This entity's picture is a Home Assistant address the device can't fetch, so it can't be used.",
+      "too-big": "Too big for Aivi: {bytes} of {limit} bytes. Nothing is sent until it fits: shorten picture URLs or second lines, or remove tiles.",
+      "fix-options": "Fix the options marked in red to save: {rows}.",
+      "words": "State words",
+      "words-changed": "{count} changed",
+      "words-hint": "What the tile says in each state. Leave a word empty to use the one shown, or hide it. At most 24 characters.",
+      "word-aria": "{state} word for {name}",
+      "word-hide": "Hide",
+      "word-hide-aria": "Hide the {state} word for {name}",
+      "word-hidden": "Hidden",
+      "word-none": "No word",
+      "word-on": "On",
+      "word-off": "Off",
+      "word-turning-on": "Turning on",
+      "word-turning-off": "Turning off",
+      "word-no-response": "No response",
+      "word-idle": "Idle",
+      "word-active": "Active",
+      "word-sent": "Sent"
+    },
+    "field-hint-budget": {
+      "subtitle": "Shown with the total, like “20 days left”"
+    },
+    "field-hint-trend": {
+      "value": "The current reading, shown large",
+      "unit": "Defaults to the sensor's own unit",
+      "min_value": "A fixed bottom for the chart (otherwise it fits the data)",
+      "max_value": "A fixed top for the chart (otherwise it fits the data)"
+    },
+    "field-hint-prices": {
+      "unit": "Defaults to the sensor's own unit"
+    },
+    "delivery": {
+      "stale-label": "Show as outdated after",
+      "stale-hint": "Once the content is this old without an update, the widget dims it and shows when it last updated.",
+      "stale-keep": "As set in the Aivi app",
+      "stale-never": "Never",
+      "throttle-label": "Update at most every",
+      "throttle-hint": "iOS allows a Live Activity about 240 updates. Changes in between are held back and the latest goes out when the time is up; starting and ending are never delayed.",
+      "throttle-off": "Every change (no limit)"
+    },
+    "duration": {
+      "seconds-one": "{count} second",
+      "seconds-other": "{count} seconds",
+      "minutes-one": "{count} minute",
+      "minutes-other": "{count} minutes",
+      "hours-one": "{count} hour",
+      "hours-other": "{count} hours",
+      "days-one": "{count} day",
+      "days-other": "{count} days"
+    },
+    "color-field": {
+      "pick": "{label}: {color}",
+      "picker-aria": "{label}, custom color",
+      "hex-aria": "{label}, hex code",
+      "invalid": "Use a hex code like #FFD27A."
+    },
+    "gradient": {
+      "auto": "Automatic",
+      "none": "None",
+      "custom": "Custom",
+      "auto-hint": "Follows the light's own color while it is on.",
+      "none-hint": "No gradient: the tile uses its color.",
+      "stop-aria": "Gradient color {n}",
+      "remove-aria": "Remove gradient color {n}",
+      "add": "Add a color"
+    },
+    "section": {
+      "content": "What it shows",
+      "look": "Appearance",
+      "behavior": "Behavior",
+      "runs": "When it runs"
+    },
+    "fold": {
+      "set": "{count} set"
+    },
+    "group": {
+      "progress": "Progress",
+      "reading": "Reading",
+      "range": "Range",
+      "countdown": "Countdown",
+      "total": "Total",
+      "prices": "Prices",
+      "grid": "Grid",
+      "battery": "Battery",
+      "home": "Home",
+      "headline": "Headline",
+      "footnote": "Footnote",
+      "left-column": "Left column",
+      "right-column": "Right column"
+    },
+    "group-hint-gauge": {
+      "range": "The two ends of the dial. Left empty, it runs from 0 to 1."
+    },
+    "group-hint-trend": {
+      "range": "A fixed range for the chart. Left empty, it fits the data."
+    },
+    "field-short": {
+      "min_value": "Minimum",
+      "max_value": "Maximum",
+      "left_value": "Value",
+      "left_header": "Header",
+      "left_footer": "Footer",
+      "right_value": "Value",
+      "right_header": "Header",
+      "right_footer": "Footer",
+      "header_left": "Left",
+      "header_right": "Right",
+      "footer_left": "Left",
+      "footer_right": "Right",
+      "grid_power": "Power",
+      "grid_today": "Today",
+      "battery_power": "Power",
+      "battery_level": "Charge",
+      "home_power": "Power",
+      "home_today": "Today",
+      "segments": "Bar",
+      "progress": "Value"
+    },
+    "field-placeholder-gauge": {
+      "min_value": "0",
+      "max_value": "1",
+      "unit": "°C",
+      "label": "Living room"
+    },
+    "field-placeholder-trend": {
+      "min_value": "Auto",
+      "max_value": "Auto",
+      "unit": "kWh"
+    },
+    "symbols": {
+      "placeholder": "Search symbols, like washer or lightbulb",
+      "categories": "Symbol categories",
+      "cat-all": "All",
+      "cat-home": "Home",
+      "cat-devices": "Devices",
+      "cat-objectsandtools": "Objects",
+      "cat-weather": "Weather",
+      "cat-nature": "Nature",
+      "cat-transportation": "Transport",
+      "cat-automotive": "Car",
+      "cat-privacyandsecurity": "Security",
+      "cat-human": "People",
+      "cat-health": "Health",
+      "cat-media": "Media",
+      "cat-communication": "Communication",
+      "cat-commerce": "Money",
+      "cat-time": "Time",
+      "list": "Matching symbols",
+      "loading": "Loading Apple's symbol names…",
+      "failed": "The symbol list couldn't be loaded. Any symbol name still works when typed.",
+      "no-matches": "No symbol matches. Any name still works when typed.",
+      "unknown": "Not a name in Apple's symbol list. It is kept as typed.",
+      "ios": "iOS {version}+",
+      "help": "The preview shows a similar icon, or ✦ where it has none. Your device draws Apple's own symbol."
+    },
+    "field-hint-status": {
+      "value": "A reading shown large; the state then moves to the line under it"
+    },
+    "field-hint-gauge": {
+      "value": "The reading the dial points at",
+      "unit": "Shown after the reading, like °C or %",
+      "label": "The small line above the dial; the widget's name when empty"
+    },
+    "field-hint-countdown": {
+      "subtitle": "The small line under the countdown"
+    },
+    "field-hint-energy": {
+      "sources": "Power sensors of what generates: solar, wind, a generator",
+      "grid_power": "Positive while drawing from the grid, negative while exporting",
+      "grid_today": "An energy meter; today's figure counts from midnight",
+      "battery_power": "Positive while charging, negative while discharging",
+      "battery_level": "The battery's charge, 0–100",
+      "home_power": "What the home uses right now",
+      "home_today": "An energy meter; today's figure counts from midnight"
+    },
+    "field-placeholder": {
+      "tap_url": "https://…",
+      "image": "https://…/car.png",
+      "image_alt": "The car from the side"
+    },
+    "field-placeholder-countdown": {
+      "expired_text": "Done"
+    },
+    "field-placeholder-budget": {
+      "currency": "EUR"
+    },
+    "field-placeholder-prices": {
+      "unit": "ct/kWh"
+    },
+    "field-placeholder-monitor": {
+      "left_header": "Inside",
+      "right_header": "Outside",
+      "left_footer": "Humidity 46%",
+      "right_footer": "Feels like 9°"
+    },
+    "field-idle": {
+      "primary_column": "Applies once both columns show something: with one column there is nothing to choose."
+    },
+    "events": {
+      "title": "Events from your devices",
+      "button": "Events: {state}",
+      "tooltip": "Events",
+      "state-ok": "connected",
+      "state-warn": "not connected right now",
+      "state-bad": "disconnected",
+      "state-idle": "not listening",
+      "stream-connected": "Connected",
+      "stream-reconnecting": "Reconnecting…",
+      "stream-paused": "Paused",
+      "stream-stopped": "Disconnected",
+      "stream-idle": "Not listening",
+      "since": "Listening since {time}",
+      "paused-why": "The Aivi subscription isn't active, so events from your devices do not arrive.",
+      "idle-why": "Nothing set up here takes input, so there is nothing to listen for. That is expected: listening starts by itself once something does, like a Switchboard or a Remote.",
+      "list-label": "Latest events",
+      "empty": "Nothing yet. Press a tile on one of your devices and it shows up here as it happens.",
+      "see-all": "See all events"
+    },
+    "log": {
+      "title": "Log",
+      "open": "Open the log",
+      "account-label": "Account",
+      "show-label": "Show",
+      "show-all": "Everything",
+      "show-pushes": "Pushes to Aivi",
+      "show-presses": "Presses from your devices",
+      "show-problems": "Problems only",
+      "for-label": "For",
+      "for-any": "Anything",
+      "option-count": "{label} ({count})",
+      "showing-one": "{shown} of {count} entry",
+      "showing-other": "{shown} of {count} entries",
+      "show-everything": "Show everything",
+      "list-label": "The log, newest first",
+      "empty": "Nothing yet. Pushes to Aivi and presses from your devices show up here as they happen.",
+      "no-matches": "Nothing matches these filters",
+      "footer-memory": "Kept in memory: the list starts over when Home Assistant restarts. To keep it, turn on “Keep the log across restarts” in the account’s options.",
+      "footer-kept": "Kept across restarts: this account writes its log to disk."
+    },
+    "conflict": {
+      "also-fed": "An automation also feeds this: {names}. The two overwrite each other.",
+      "also-fed-several": "Automations also feed this: {names}. They and this panel overwrite each other.",
+      "mark": "Also fed by an automation",
+      "fed": "Fed by an automation: {names}",
+      "turn-off": "Turn off the automation",
+      "turn-off-all": "Turn them off",
+      "turn-off-named": "Turn off {names}",
+      "turned-off": "Automation turned off. Only this panel feeds it now.",
+      "keep-shared": "{name} feeds other widgets too, so it is not turned off from here.",
+      "keep-initial_state": "{name} turns itself back on whenever Home Assistant starts, so turn it off in its own settings."
+    },
+    "field-hint-showcase": {
+      "image_fit": "A cut-out stands on the widget; a photo fills its side",
+      "state": "A word for how it is, like Locked or Charging",
+      "state_icon": "Shown in front of the state's word",
+      "stats": "Each selected entity becomes a reading: Small shows the first, Medium three",
+      "badge": "A small brand mark beside the report time, left off photos",
+      "badge_alt": "Read out by VoiceOver in place of the badge",
+      "icon": "Stands in for the picture while there is none"
+    },
+    "field-placeholder-showcase": {
+      "badge": "https://…/logo.png",
+      "badge_alt": "The brand's logo"
+    },
+    "group-showcase": {
+      "picture": "Picture",
+      "state": "State",
+      "badge": "Badge"
+    },
+    "showcase": {
+      "too-big": "Too big for Aivi: {bytes} of {limit} bytes. Nothing is sent until it fits: shorten picture URLs or labels, or remove readings."
+    },
+    "field-label-remote": {
+      "actions": "Buttons",
+      "value": "Reading"
+    },
+    "field-hint-remote": {
+      "value": "The big reading, like a car's charge; a number keeps its entity's unit",
+      "actions": "Each selected entity becomes a button: Small shows the first two, Medium up to five",
+      "stats": "Up to three readings, shown from the Large size up",
+      "image_fit": "A cut-out stands beside the reading; a photo sits in a rounded frame",
+      "icon": "Stands in for the picture while there is none"
+    },
+    "group-remote": {
+      "picture": "Picture",
+      "reading": "Reading",
+      "bar": "Bar"
+    },
+    "remote": {
+      "too-big": "Too big for Aivi: {bytes} of {limit} bytes. Nothing is sent until it fits: shorten picture URLs or second lines, or remove buttons."
+    },
+    "field-hint-activity-remote": {
+      "value": "The big reading, like a vacuum's battery; its unit is a field of its own",
+      "actions": "Each selected entity becomes a button: up to three, with their labels while there are two or fewer",
+      "stats": "Up to two readings, on the Lock Screen while there is no bar",
+      "image": "A public https URL; the device shows it once the app has fetched it, and the icon until then",
+      "state": "A word for how it is, like Cleaning or Charging",
+      "unit": "Drawn right after the value, like % or km",
+      "value_label": "A word under the value, like left",
+      "progress": "Draws a bar from a sensor reporting 0–100; the readings make way for it",
+      "bar_color": "The bar's color; the state's color, else the accent, when unset",
+      "compact_value": "Shown next to the icon while the Island is collapsed; the value and its unit when unset"
+    },
+    "field-placeholder-activity-remote": {
+      "unit": "%",
+      "value_label": "left"
+    },
+    "every": {
+      "seconds-one": "every second",
+      "seconds-other": "every {count} seconds",
+      "minutes-one": "every minute",
+      "minutes-other": "every {count} minutes",
+      "hours-one": "every hour",
+      "hours-other": "every {count} hours",
+      "days-one": "every day",
+      "days-other": "every {count} days"
+    }
+  },
+  "entity": {
+    "binary_sensor": {
+      "event_stream": {
+        "name": "Event stream",
+        "state_attributes": {
+          "reason": {
+            "name": "Reason",
+            "state": {
+              "subscription_inactive": "No active subscription",
+              "auth_failed": "Token rejected"
+            }
+          },
+          "last_error": {
+            "name": "Last error"
+          },
+          "connected_since": {
+            "name": "Connected since"
+          },
+          "reconnects": {
+            "name": "Reconnects"
+          },
+          "last_event": {
+            "name": "Last event"
+          }
+        }
+      },
+      "problem": {
+        "name": "Health",
+        "state_attributes": {
+          "problems": {
+            "name": "Problems"
+          },
+          "subscription": {
+            "name": "Subscription",
+            "state": {
+              "expired": "Expired",
+              "none": "No subscription"
+            }
+          },
+          "event_stream": {
+            "name": "Event stream",
+            "state": {
+              "auth_failed": "Token rejected"
+            }
+          }
+        }
+      }
+    },
+    "event": {
+      "presses": {
+        "name": "Presses",
+        "state_attributes": {
+          "event_type": {
+            "state": {
+              "toggle_on": "Turned on",
+              "toggle_off": "Turned off",
+              "pressed": "Pressed"
+            }
+          }
+        }
+      }
+    },
+    "sensor": {
+      "last_pushed": {
+        "name": "Last sent"
+      },
+      "push_status": {
+        "name": "Update status",
+        "state": {
+          "ok": "OK",
+          "retrying": "Retrying",
+          "auth_failed": "Token rejected",
+          "not_found": "Not in the Aivi app",
+          "rejected": "Content rejected",
+          "too_large": "Content too large",
+          "template_error": "Home Assistant template error",
+          "template_mismatch": "Template mismatch",
+          "no_subscription": "No active subscription",
+          "quota_exceeded": "Live Activity limit reached",
+          "error": "Error",
+          "waiting": "Waiting for a value"
+        },
+        "state_attributes": {
+          "last_error": {
+            "name": "Last error"
+          },
+          "waiting_for": {
+            "name": "Waiting for"
+          }
+        }
+      },
+      "subscription": {
+        "name": "Subscription",
+        "state": {
+          "active": "Active",
+          "expired": "Expired",
+          "none": "No subscription"
+        },
+        "state_attributes": {
+          "expires_at": {
+            "name": "Ends"
+          },
+          "renews": {
+            "name": "Renews"
+          },
+          "expired_at": {
+            "name": "Ended"
+          }
+        }
+      }
+    }
+  }
+}

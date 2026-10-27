@@ -1,0 +1,233 @@
+// What the completion list knows of Home Assistant's template language:
+// its functions and filters (Home Assistant's own and the Jinja built-ins
+// templates use) and its tests. It is the panel's, handed to the editor
+// chunk through `CompletionEnv`, so the chunk does not carry it. Each
+// function has a one-line hint in the catalog (`code.fn-<name>`), each
+// test one too (`code.test-<name>`).
+
+import type { JinjaFunction } from "./jinja-complete";
+
+/** Home Assistant's template functions and filters, by what they work
+ * on. `|` in a form marks where the caret lands. */
+export const JINJA_FUNCTIONS: readonly JinjaFunction[] = [
+  // Entities and their states.
+  { name: "states", args: "(entity_id)", fn: "states('|')", group: "entity" },
+  {
+    name: "state_attr",
+    args: "(entity_id, attribute)",
+    fn: "state_attr('|', '')",
+    group: "entity",
+  },
+  { name: "is_state", args: "(entity_id, state)", fn: "is_state('|', '')", group: "entity" },
+  {
+    name: "is_state_attr",
+    args: "(entity_id, attribute, value)",
+    fn: "is_state_attr('|', '', '')",
+    group: "entity",
+  },
+  { name: "has_value", args: "(entity_id)", fn: "has_value('|')", group: "entity" },
+  { name: "state_translated", args: "(entity_id)", fn: "state_translated('|')", group: "entity" },
+  { name: "expand", args: "(entity_id, …)", fn: "expand('|')", filter: "expand", group: "entity" },
+  {
+    name: "device_attr",
+    args: "(entity_id, attribute)",
+    fn: "device_attr('|', '')",
+    group: "entity",
+  },
+  {
+    name: "device_id",
+    args: "(entity_id)",
+    fn: "device_id('|')",
+    filter: "device_id",
+    group: "entity",
+  },
+  {
+    name: "device_entities",
+    args: "(device_id)",
+    fn: "device_entities(|)",
+    filter: "device_entities",
+    group: "entity",
+  },
+  {
+    name: "area_name",
+    args: "(entity_id)",
+    fn: "area_name('|')",
+    filter: "area_name",
+    group: "entity",
+  },
+  { name: "area_id", args: "(name)", fn: "area_id('|')", filter: "area_id", group: "entity" },
+  {
+    name: "area_entities",
+    args: "(area)",
+    fn: "area_entities('|')",
+    filter: "area_entities",
+    group: "entity",
+  },
+  {
+    name: "area_devices",
+    args: "(area)",
+    fn: "area_devices('|')",
+    filter: "area_devices",
+    group: "entity",
+  },
+  { name: "areas", args: "()", fn: "areas()", group: "entity" },
+  {
+    name: "floor_name",
+    args: "(floor_id)",
+    fn: "floor_name('|')",
+    filter: "floor_name",
+    group: "entity",
+  },
+  {
+    name: "label_entities",
+    args: "(label)",
+    fn: "label_entities('|')",
+    filter: "label_entities",
+    group: "entity",
+  },
+  {
+    name: "integration_entities",
+    args: "(integration)",
+    fn: "integration_entities('|')",
+    group: "entity",
+  },
+  // Dates and times.
+  { name: "now", args: "()", fn: "now()", group: "time" },
+  { name: "utcnow", args: "()", fn: "utcnow()", group: "time" },
+  { name: "today_at", args: "(time)", fn: "today_at('|')", filter: "today_at", group: "time" },
+  {
+    name: "as_timestamp",
+    args: "(value)",
+    fn: "as_timestamp(|)",
+    filter: "as_timestamp",
+    group: "time",
+  },
+  {
+    name: "as_datetime",
+    args: "(value)",
+    fn: "as_datetime(|)",
+    filter: "as_datetime",
+    group: "time",
+  },
+  { name: "as_local", args: "(datetime)", fn: "as_local(|)", filter: "as_local", group: "time" },
+  { name: "strptime", args: "(text, format)", fn: "strptime(|, '%Y-%m-%d')", group: "time" },
+  {
+    name: "relative_time",
+    args: "(datetime)",
+    fn: "relative_time(|)",
+    filter: "relative_time",
+    group: "time",
+  },
+  {
+    name: "time_since",
+    args: "(datetime)",
+    fn: "time_since(|)",
+    filter: "time_since",
+    group: "time",
+  },
+  {
+    name: "time_until",
+    args: "(datetime)",
+    fn: "time_until(|)",
+    filter: "time_until",
+    group: "time",
+  },
+  { name: "timedelta", args: "(days, hours, minutes)", fn: "timedelta(minutes=|)", group: "time" },
+  {
+    name: "as_timedelta",
+    args: "(text)",
+    fn: "as_timedelta(|)",
+    filter: "as_timedelta",
+    group: "time",
+  },
+  { name: "timestamp_custom", args: "(format)", filter: "timestamp_custom('|')", group: "time" },
+  { name: "timestamp_local", args: "", filter: "timestamp_local", group: "time" },
+  { name: "timestamp_utc", args: "", filter: "timestamp_utc", group: "time" },
+  // Numbers.
+  { name: "float", args: "(default)", fn: "float(|, 0)", filter: "float(0)", group: "convert" },
+  { name: "int", args: "(default)", fn: "int(|, 0)", filter: "int(0)", group: "convert" },
+  {
+    name: "bool",
+    args: "(default)",
+    fn: "bool(|, false)",
+    filter: "bool(false)",
+    group: "convert",
+  },
+  { name: "is_number", args: "(value)", fn: "is_number(|)", filter: "is_number", group: "convert" },
+  { name: "round", args: "(precision)", filter: "round(1)", group: "number" },
+  { name: "abs", args: "", filter: "abs", group: "number" },
+  { name: "min", args: "(values)", fn: "min(|)", filter: "min", group: "list" },
+  { name: "max", args: "(values)", fn: "max(|)", filter: "max", group: "list" },
+  { name: "sum", args: "", filter: "sum", group: "list" },
+  { name: "average", args: "(values)", fn: "average(|)", filter: "average", group: "list" },
+  { name: "median", args: "(values)", fn: "median(|)", filter: "median", group: "list" },
+  // Choosing and falling back.
+  {
+    name: "iif",
+    args: "(condition, if_true, if_false)",
+    fn: "iif(|)",
+    filter: "iif(|)",
+    group: "any",
+  },
+  { name: "default", args: "(value)", filter: "default(|)", group: "any" },
+  // Text.
+  { name: "string", args: "", filter: "string", group: "any" },
+  { name: "format", args: "(values)", filter: "format(|)", group: "text" },
+  { name: "replace", args: "(old, new)", filter: "replace('|', '')", group: "text" },
+  { name: "lower", args: "", filter: "lower", group: "text" },
+  { name: "upper", args: "", filter: "upper", group: "text" },
+  { name: "title", args: "", filter: "title", group: "text" },
+  { name: "capitalize", args: "", filter: "capitalize", group: "text" },
+  { name: "trim", args: "", filter: "trim", group: "text" },
+  { name: "truncate", args: "(length)", filter: "truncate(|)", group: "text" },
+  { name: "slugify", args: "", filter: "slugify", group: "text" },
+  {
+    name: "regex_replace",
+    args: "(find, replace)",
+    filter: "regex_replace('|', '')",
+    group: "text",
+  },
+  { name: "regex_match", args: "(pattern)", filter: "regex_match('|')", group: "text" },
+  { name: "regex_search", args: "(pattern)", filter: "regex_search('|')", group: "text" },
+  { name: "from_json", args: "", filter: "from_json", group: "text" },
+  // Lists.
+  {
+    name: "selectattr",
+    args: "(attribute, test, value)",
+    filter: "selectattr('|')",
+    group: "list",
+  },
+  {
+    name: "rejectattr",
+    args: "(attribute, test, value)",
+    filter: "rejectattr('|')",
+    group: "list",
+  },
+  { name: "select", args: "(test)", filter: "select('|')", group: "list" },
+  { name: "reject", args: "(test)", filter: "reject('|')", group: "list" },
+  { name: "map", args: "(attribute)", filter: "map(|)", group: "list" },
+  { name: "list", args: "", filter: "list", group: "list" },
+  { name: "count", args: "", filter: "count", group: "list" },
+  { name: "length", args: "", filter: "length", group: "list" },
+  { name: "join", args: "(separator)", filter: "join(', ')", group: "list" },
+  { name: "first", args: "", filter: "first", group: "list" },
+  { name: "last", args: "", filter: "last", group: "list" },
+  { name: "sort", args: "(attribute)", filter: "sort", group: "list" },
+  { name: "unique", args: "", filter: "unique", group: "list" },
+  { name: "reverse", args: "", filter: "reverse", group: "list" },
+  { name: "contains", args: "(value)", filter: "contains(|)", group: "list" },
+  { name: "range", args: "(count)", fn: "range(|)", group: "list" },
+  { name: "namespace", args: "(name=value)", fn: "namespace(|)", group: "any" },
+];
+
+/** The tests after `is` (`x is defined`), Jinja's and Home Assistant's. */
+export const JINJA_TESTS: readonly string[] = [
+  "defined",
+  "none",
+  "number",
+  "string",
+  "in",
+  "match",
+  "search",
+  "contains",
+];

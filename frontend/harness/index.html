@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <!-- Same layout-viewport contract as HA's own frontend; without it a
+       mobile-emulated (or real) WebView lays the page out at 980px. -->
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>aivi panel harness</title>
+  <style>
+    html, body { margin: 0; height: 100%; background: #111111; }
+    /* Emulate HA's CSS custom properties so the panel themes correctly:
+       these are Home Assistant's default dark theme values. */
+    :root {
+      --primary-background-color: #111111;
+      --card-background-color: #1c1c1c;
+      --secondary-background-color: #202020;
+      --primary-text-color: #e1e1e1;
+      --secondary-text-color: #9b9b9b;
+      --divider-color: rgba(225, 225, 225, 0.12);
+      /* The tokens every real HA install defines: the panel's chrome
+         accent and card chrome must follow them (theme.html proves the
+         same with a non-default user theme). */
+      --primary-color: #03a9f4;
+      --ha-card-border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <script type="module">
+    import { mountPanelHost } from "./mock-hass.js";
+    // Home Assistant defines <ha-icon>; here a stand-in does.
+    import "./ha-icon.js";
+    // Sample pictures from the harness folder, not the network.
+    import "./pictures.js";
+    import "../../custom_components/aivi/frontend/aivi-panel.js";
+
+    const el = document.createElement("aivi-panel");
+    el.style.display = "block";
+    el.style.height = "100vh";
+    document.body.appendChild(el);
+    // Assign hass/narrow/route/panel the way <ha-panel-custom> does; the
+    // route path is in the URL hash (#/widget/frontdoor deep-links).
+    mountPanelHost(el);
+    window.__panel = el;
+  </script>
+</body>
+</html>
