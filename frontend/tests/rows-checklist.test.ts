@@ -754,3 +754,73 @@ describe("row list: styles", () => {
     expect(coarse).toMatch(/\.ordhead \.rowtoggle\s*\{\s*min-height:\s*44px/);
   });
 });
+
+describe("row list: the label a row shows without one of its own", () => {
+  /** Open the bind editor for `template`, add `ids` to its `key` field,
+   * and read each row's label placeholder and its label in the preview. */
+  async function labels(
+    kind: "widget" | "activity",
+    template: string,
+    key: string,
+    ids: string[],
+  ): Promise<{ placeholders: string[]; previewed: string[] }> {
+    const panel = await mountPanel();
+    const acc = panel.accounts[0];
+    if (!acc) throw new Error("no mock account");
+    const remote = { slug: "naming", name: "Naming", template, supported: true };
+    if (kind === "widget") panel.openEditor(acc, remote, null);
+    else panel.openActivityEditor(acc, remote, null);
+    await until(() => !!sr(panel).querySelector("aivi-editor .form"), "the editor");
+    const editor = $(sr(panel), "aivi-editor") as AiviEditor;
+    const checks = $(editor, `.field[data-key="${key}"] aivi-rows-checklist`);
+    for (const id of ids) {
+      adder(checks).onSelect(id);
+      await tick();
+    }
+    for (const row of $$(checks, ".rowtoggle")) row.click();
+    await tick();
+    const placeholders = $$(checks, '.rowopts input[aria-label^="Label"]').map(
+      (input) => (input as HTMLInputElement).placeholder,
+    );
+    // A remote needs its reading before it previews.
+    if (template === "remote") editor.editorState.bindings["value"] = "sensor.my_car_charge";
+    editor.schedulePreview();
+    await until(() => !!editor.editorState.preview, "the preview");
+    const rows = editor.editorState.preview?.[key];
+    const previewed = Array.isArray(rows)
+      ? rows.map((row: { label?: unknown }) => String(row.label))
+      : [];
+    return { placeholders, previewed };
+  }
+
+  const CAR = ["lock.my_car", "climate.my_car", "light.porch"];
+
+  it("names a remote's buttons by their own name, as the integration does", async () => {
+    const { placeholders, previewed } = await labels("widget", "remote", "actions", CAR);
+    // The car's lock by its own name; its main entity (no name of its
+    // own) and the porch light (on no device) by their friendly names.
+    expect(placeholders).toEqual(["Lock", "Car climate", "Porch light"]);
+    expect(previewed).toEqual(placeholders);
+  });
+
+  it("names a Live Activity's buttons the same way", async () => {
+    const { placeholders, previewed } = await labels("activity", "remote", "actions", CAR);
+    expect(placeholders).toEqual(["Lock", "Car climate", "Porch light"]);
+    expect(previewed).toEqual(placeholders);
+  });
+
+  it("names a showcase's stats by their own name", async () => {
+    const { placeholders, previewed } = await labels("widget", "showcase", "stats", [
+      "sensor.my_car_range",
+      "sensor.living_temp",
+    ]);
+    expect(placeholders).toEqual(["Range", "Living room temperature"]);
+    expect(previewed).toEqual(placeholders);
+  });
+
+  it("keeps the full name on a switchboard, which mixes devices", async () => {
+    const { placeholders, previewed } = await labels("widget", "switchboard", "actions", CAR);
+    expect(placeholders).toEqual(["Car lock", "Car climate", "Porch light"]);
+    expect(previewed).toEqual(placeholders);
+  });
+});

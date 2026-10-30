@@ -629,6 +629,19 @@
       }
     }
   },
+  "devices": {
+    "dev-car": {
+      "name": "Car",
+      "entities": {
+        "sensor.my_car_doors": "Doors",
+        "sensor.my_car_charge": "Charge",
+        "sensor.my_car_range": "Range",
+        "sensor.my_car_odometer": "Odometer",
+        "lock.my_car": "Lock",
+        "climate.my_car": null
+      }
+    }
+  },
   "areas": {
     "light.porch": "Outside",
     "switch.fountain": "Garden",

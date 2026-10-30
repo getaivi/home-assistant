@@ -179,6 +179,28 @@ def name_in_device_of(resolver: StateResolver, entity_id: str) -> str | None:
     return None
 
 
+class Naming(StrEnum):
+    """How a row without a label of its own names its entity. ``FULL``
+    is the ``friendly_name`` ("Washer Time left"), for rows that mix
+    devices; ``IN_DEVICE`` is the name within the entity's device ("Time
+    left"), for rows that all show one thing."""
+
+    FULL = "full"
+    IN_DEVICE = "in_device"
+
+
+def entity_name_of(
+    resolver: StateResolver, entity_id: str, naming: Naming = Naming.FULL
+) -> str:
+    """The entity's name by ``naming``: ``IN_DEVICE`` falls back to the
+    ``friendly_name`` where the entity has no name within a device, and
+    both to the entity id."""
+    if naming is Naming.IN_DEVICE and (own := name_in_device_of(resolver, entity_id)):
+        return own
+    name = str(resolver.attribute(entity_id, "friendly_name") or "").strip()
+    return name or entity_id
+
+
 def display_state_of(resolver: StateResolver, entity_id: str) -> str | None:
     """The entity's state as Home Assistant displays it, or the raw state
     where the resolver cannot say."""

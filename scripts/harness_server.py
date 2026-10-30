@@ -4,7 +4,7 @@ The harness (``frontend/harness/``) fakes everything Home Assistant gives the
 panel, except the commands that need the integration's own logic:
 ``aivi/preview``, ``aivi/save`` and ``aivi/defaults`` are POSTed to
 ``/engine`` here and run through the real WebSocket handlers, over a test
-Home Assistant holding the harness's entity states, areas, recorded
+Home Assistant holding the harness's entity states, devices, areas, recorded
 history and Energy dashboard (``frontend/harness/sample-data.json``).
 
 Usage: ``make harness`` (``--port`` to pick the port, 0 for any).
@@ -27,6 +27,7 @@ from aiohttp import web
 from homeassistant.components.energy.data import async_get_manager
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers import area_registry as ar
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from pytest_homeassistant_custom_component.common import (
     MockConfigEntry,
@@ -115,6 +116,28 @@ async def engine(*, started: float | None = None) -> Any:
     history.async_fetch = recorded
     async with async_test_home_assistant() as hass:
         areas, entities = ar.async_get(hass), er.async_get(hass)
+        entry = MockConfigEntry(domain=DOMAIN, entry_id=ENTRY_ID)
+        entry.add_to_hass(hass)
+        for device_id, device in data["devices"].items():
+            # Named the way an integration with has_entity_name names them:
+            # the device's name, then the entity's own (none for its main
+            # entity).
+            found = dr.async_get(hass).async_get_or_create(
+                config_entry_id=entry.entry_id,
+                identifiers={("harness", device_id)},
+                name=device["name"],
+            )
+            for entity_id, name in device["entities"].items():
+                domain, object_id = entity_id.split(".")
+                entities.async_get_or_create(
+                    domain,
+                    "harness",
+                    object_id,
+                    suggested_object_id=object_id,
+                    device_id=found.id,
+                    has_entity_name=True,
+                    original_name=name,
+                )
         for entity_id, area in data["areas"].items():
             domain, object_id = entity_id.split(".")
             entities.async_get_or_create(
@@ -136,8 +159,6 @@ async def engine(*, started: float | None = None) -> Any:
         energy = await async_get_manager(hass)
         sources = data["energy_sources"]
         energy.data = {"energy_sources": sources, "device_consumption": []}
-        entry = MockConfigEntry(domain=DOMAIN, entry_id=ENTRY_ID)
-        entry.add_to_hass(hass)
         yield Engine(hass, entry)
         await hass.async_stop(force=True)
 

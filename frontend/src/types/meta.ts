@@ -4,6 +4,10 @@
 
 import type { SlotMeta } from "../value-source";
 
+/** How a row without a label names its entity: its friendly name, or
+ * its own name within its device. */
+export type RowNaming = "full" | "in_device";
+
 export interface EntityFilter {
   domain?: string | string[];
   device_class?: string;
@@ -39,6 +43,9 @@ export interface FieldMeta {
   /** Rows fields: which per-row option keys apply (stored under
    * `<key>__options` as entity_id -> {option: value}). */
   row_options?: string[];
+  /** Rows fields: how a row without a label names its entity; absent
+   * means its friendly name (`rowName`). */
+  naming?: RowNaming;
   /** Sourceable values on this field, keyed by the suffix that addresses
    * them: "" is the field itself, "__color" its text color. Mode controls
    * are built from this, so the backend alone decides what is sourceable. */

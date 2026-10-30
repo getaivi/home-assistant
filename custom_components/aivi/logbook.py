@@ -104,7 +104,7 @@ def describe_press(hass: HomeAssistant, data: Mapping[str, Any]) -> dict[str, st
         bindings = dict(binding.get(CONF_BINDINGS) or {})
         entity_id = template.routes(bindings).get(action) if template.routes else None
         if entity_id is not None:
-            label = tile_label(bindings, entity_id, DegradingResolver(hass))
+            label = tile_label(template, bindings, entity_id, DegradingResolver(hass))
     kind = kind_of(entity_id) if entity_id else data.get("action_kind")
     event_type = press_event_type(kind, data.get("value"))
     if event_type is None or event_type == PRESSED:

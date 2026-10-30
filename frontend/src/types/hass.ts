@@ -17,6 +17,12 @@ export interface HassEntity {
 
 export interface RegistryEntry {
   device_id?: string;
+  /** The entity's own name: the user's rename, else the integration's
+   * (translated) name; absent for a device's main entity. */
+  name?: string | null;
+  /** Home Assistant builds the friendly name as the device's name, then
+   * this entity's. */
+  has_entity_name?: boolean;
 }
 
 export interface DeviceEntry {

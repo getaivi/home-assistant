@@ -2,7 +2,7 @@
 // and memoized, since every field row asks on every render.
 
 import type { EntityOption, HassLike } from "./types/hass";
-import type { EntityFilter } from "./types/meta";
+import type { EntityFilter, RowNaming } from "./types/meta";
 
 /** The domains a widget usually shows, ahead of the long tail in an
  * unfiltered picker. */
@@ -72,4 +72,17 @@ export class EntityOptions {
     this._cache.byFilter.set(key, out);
     return out;
   }
+}
+
+/** The name a row without a label shows, as the integration names it:
+ * with `in_device`, an entity on a device by its own name ("Time left",
+ * not "Washer Time left") where Home Assistant puts the device's name in
+ * front of it; else, and for a device's main entity, its friendly name. */
+export function rowName(hass: HassLike, id: string, naming: RowNaming = "full"): string {
+  if (naming === "in_device") {
+    const entry = hass.entities?.[id];
+    const own = entry?.device_id && entry.has_entity_name ? entry.name?.trim() : "";
+    if (own) return own;
+  }
+  return hass.states[id]?.attributes.friendly_name?.trim() || id;
 }

@@ -1,4 +1,4 @@
-// The dev harness's fixture data. Entity states, areas, recorded history
+// The dev harness's fixture data. Entity states, devices, areas, recorded history
 // and the bound subentries live in sample-data.json, which the dev server
 // (scripts/harness_server.py) also loads into the Home Assistant that
 // answers previews.
@@ -176,18 +176,31 @@ export const AIVI_ACTIVITIES = [
 ];
 
 // The subset of hass.entities / hass.devices the panel consumes (the
-// tap_url device deep-link chips in aivi-field-row.ts).
+// tap_url device deep-link chips in aivi-field-row.ts, the row label
+// placeholders). The car's entities are named the has_entity_name way,
+// as the dev server registers them (sample-data.json's devices).
 export const ENTITIES = {
   "input_boolean.front_door": { device_id: "dev-door" },
   "input_number.washer_progress": { device_id: "dev-washer" },
   "input_text.washer_state": { device_id: "dev-washer" },
   "sensor.vacuum_battery": { device_id: "dev-vacuum" },
+  ...Object.fromEntries(
+    Object.entries(data.devices).flatMap(([device_id, device]) =>
+      Object.entries(device.entities).map(([id, name]) => [
+        id,
+        { device_id, has_entity_name: true, ...(name ? { name } : {}) },
+      ]),
+    ),
+  ),
 };
 
 export const DEVICES = {
   "dev-door": { name: "Front door sensor" },
   "dev-washer": { name: "Washer" },
   "dev-vacuum": { name: "Robot vacuum", name_by_user: "Dusty" },
+  ...Object.fromEntries(
+    Object.entries(data.devices).map(([id, device]) => [id, { name: device.name }]),
+  ),
 };
 
 // ?switchboard=1 binds the Living room switchboard on the mock account,
