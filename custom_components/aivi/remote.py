@@ -23,7 +23,7 @@ from typing import Any, Final, override
 
 from . import blocks, limits
 from .showcase import StatRows, stored_image, stored_stat
-from .sources import Source, StateResolver
+from .sources import Naming, Source, StateResolver
 from .sourcing import Bare, ValueSlot
 from .switchboard import ActionRows, bound_actions
 from .switchboard.size import ICON_KEYS, VALUE_KEYS, filled, stored_actions, stored_url
@@ -71,10 +71,12 @@ class Reading(blocks.Value):
 
 
 class RemoteActions(ActionRows):
-    """A remote's buttons: the switchboard's tiles, one to five."""
+    """A remote's buttons: the switchboard's tiles, one to five. A remote
+    is one thing, so a button on its device reads by its own name, like
+    the stats."""
 
     def __init__(self) -> None:
-        super().__init__(max_rows=limits.REMOTE_ACTIONS)
+        super().__init__(max_rows=limits.REMOTE_ACTIONS, naming=Naming.IN_DEVICE)
 
 
 class RemoteStats(StatRows):
@@ -102,7 +104,9 @@ class ActivityActions(ActionRows):
     label, symbol and color only."""
 
     def __init__(self) -> None:
-        super().__init__(max_rows=limits.ACTIVITY_ACTIONS, tiles=False)
+        super().__init__(
+            max_rows=limits.ACTIVITY_ACTIONS, tiles=False, naming=Naming.IN_DEVICE
+        )
 
 
 class ActivityStats(StatRows):

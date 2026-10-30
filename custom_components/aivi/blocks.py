@@ -19,6 +19,7 @@ from . import limits
 from .sources import (
     HistoryKind,
     HistoryQuery,
+    Naming,
     Source,
     SourcedValue,
     StateResolver,
@@ -715,6 +716,7 @@ class EntityRows(EntityFilter):
         row_builder: RowBuilder | None = None,
         row_options: tuple[str, ...] = (),
         max_rows: int | None = None,
+        naming: Naming = Naming.FULL,
     ) -> None:
         super().__init__(
             domain=domain,
@@ -724,6 +726,9 @@ class EntityRows(EntityFilter):
         )
         self._row_builder = row_builder
         self._row_options = row_options
+        #: How a row without a label names its entity; the editor's label
+        #: placeholder follows it.
+        self.naming = naming
         if max_rows is not None:
             self.MAX = max_rows
 

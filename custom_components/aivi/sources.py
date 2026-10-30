@@ -159,6 +159,48 @@ class ReportedResolver(Protocol):
     def last_reported(self, entity_id: str) -> datetime | None: ...
 
 
+@runtime_checkable
+class DeviceNameResolver(Protocol):
+    """A resolver that knows an entity's own name within its device:
+    "Time left" for the "Washer" device's sensor whose ``friendly_name``
+    is "Washer Time left". Separate for the same reason as the others: a
+    resolver over a plain dict has no registry to read."""
+
+    def name_in_device(self, entity_id: str) -> str | None: ...
+
+
+def name_in_device_of(resolver: StateResolver, entity_id: str) -> str | None:
+    """The entity's name as Home Assistant shows it inside its device's
+    page, without the device's name in front; ``None`` where there is no
+    such name or the resolver cannot say, and the caller falls back to
+    ``friendly_name``."""
+    if isinstance(resolver, DeviceNameResolver):
+        return resolver.name_in_device(entity_id)
+    return None
+
+
+class Naming(StrEnum):
+    """How a row without a label of its own names its entity. ``FULL``
+    is the ``friendly_name`` ("Washer Time left"), for rows that mix
+    devices; ``IN_DEVICE`` is the name within the entity's device ("Time
+    left"), for rows that all show one thing."""
+
+    FULL = "full"
+    IN_DEVICE = "in_device"
+
+
+def entity_name_of(
+    resolver: StateResolver, entity_id: str, naming: Naming = Naming.FULL
+) -> str:
+    """The entity's name by ``naming``: ``IN_DEVICE`` falls back to the
+    ``friendly_name`` where the entity has no name within a device, and
+    both to the entity id."""
+    if naming is Naming.IN_DEVICE and (own := name_in_device_of(resolver, entity_id)):
+        return own
+    name = str(resolver.attribute(entity_id, "friendly_name") or "").strip()
+    return name or entity_id
+
+
 def display_state_of(resolver: StateResolver, entity_id: str) -> str | None:
     """The entity's state as Home Assistant displays it, or the raw state
     where the resolver cannot say."""
@@ -413,6 +455,18 @@ class HassStateResolver:
     def attributes(self, entity_id: str) -> dict[str, Any]:
         state = self._hass.states.get(entity_id)
         return dict(state.attributes) if state else {}
+
+    def name_in_device(self, entity_id: str) -> str | None:
+        """The entity's own name, without its device's: the user's rename,
+        else the integration's name. Only for an entity on a device whose
+        name Home Assistant builds as device name plus entity name
+        (``has_entity_name``); ``None`` for any other, and for a device's
+        main entity, which has no name of its own and takes the device's."""
+        entry = er.async_get(self._hass).async_get(entity_id)
+        if entry is None or entry.device_id is None or not entry.has_entity_name:
+            return None
+        name = (entry.name or entry.original_name or "").strip()
+        return name or None
 
     def area_name(self, entity_id: str) -> str | None:
         """The name of the entity's area: its own, else its device's (the

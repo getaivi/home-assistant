@@ -139,7 +139,10 @@ class AccountStream:
         if binding is not None and record.entity_id is not None:
             # The action's label as the device shows it.
             details["label"] = tile_label(
-                binding.bindings, record.entity_id, DegradingResolver(self._hass)
+                binding.template,
+                binding.bindings,
+                record.entity_id,
+                DegradingResolver(self._hass),
             )
         record = replace(
             record,

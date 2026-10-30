@@ -5115,6 +5115,441 @@
     "request": {
       "bindings": {
         "actions": [
+          "lock.my_car",
+          "climate.my_car",
+          "light.porch"
+        ],
+        "value": "sensor.my_car_charge"
+      },
+      "kind": "activity",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "remote",
+          "value": {
+            "value": "78"
+          },
+          "actions": [
+            {
+              "id": "lock_my_car",
+              "label": "Lock",
+              "icon": "lock.fill",
+              "kind": "toggle",
+              "on": true
+            },
+            {
+              "id": "climate_my_car",
+              "label": "Car climate",
+              "icon": "thermometer.medium",
+              "kind": "toggle",
+              "on": false
+            },
+            {
+              "id": "light_porch",
+              "label": "Porch light",
+              "icon": "lightbulb.fill",
+              "kind": "toggle",
+              "on": true
+            }
+          ]
+        },
+        "fields": {
+          "value": {
+            "status": "ok",
+            "value": "78"
+          }
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car",
+          "light.porch"
+        ],
+        "value": "sensor.my_car_charge"
+      },
+      "kind": "widget",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "remote",
+          "value": {
+            "value": "78%"
+          },
+          "actions": [
+            {
+              "id": "lock_my_car",
+              "label": "Lock",
+              "icon": "lock.fill",
+              "state_text": {
+                "on": "Locked",
+                "off": "Unlocked",
+                "turning_on": "Locking",
+                "turning_off": "Unlocking"
+              },
+              "kind": "toggle",
+              "on": true
+            },
+            {
+              "id": "climate_my_car",
+              "label": "Car climate",
+              "icon": "thermometer.medium",
+              "kind": "toggle",
+              "on": false
+            },
+            {
+              "id": "light_porch",
+              "label": "Porch light",
+              "icon": "lightbulb.fill",
+              "subtitle": {
+                "value": "Outside"
+              },
+              "gradient": [
+                "#FFE4AD",
+                "#FFAE5E"
+              ],
+              "kind": "toggle",
+              "on": true
+            }
+          ]
+        },
+        "fields": {
+          "value": {
+            "status": "ok",
+            "value": "78"
+          }
+        },
+        "size": {
+          "bytes": 744,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car",
+          "light.porch"
+        ]
+      },
+      "kind": "activity",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car",
+          "light.porch"
+        ]
+      },
+      "kind": "widget",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car",
+          "light.porch"
+        ]
+      },
+      "kind": "widget",
+      "template": "switchboard",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "switchboard",
+          "actions": [
+            {
+              "id": "lock_my_car",
+              "label": "Car lock",
+              "icon": "lock.fill",
+              "state_text": {
+                "on": "Locked",
+                "off": "Unlocked",
+                "turning_on": "Locking",
+                "turning_off": "Unlocking"
+              },
+              "kind": "toggle",
+              "on": true
+            },
+            {
+              "id": "climate_my_car",
+              "label": "Car climate",
+              "icon": "thermometer.medium",
+              "kind": "toggle",
+              "on": false
+            },
+            {
+              "id": "light_porch",
+              "label": "Porch light",
+              "icon": "lightbulb.fill",
+              "subtitle": {
+                "value": "Outside"
+              },
+              "gradient": [
+                "#FFE4AD",
+                "#FFAE5E"
+              ],
+              "kind": "toggle",
+              "on": true
+            }
+          ]
+        },
+        "fields": {},
+        "size": {
+          "bytes": 694,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car"
+        ]
+      },
+      "kind": "activity",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car"
+        ]
+      },
+      "kind": "widget",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car",
+          "climate.my_car"
+        ]
+      },
+      "kind": "widget",
+      "template": "switchboard",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "switchboard",
+          "actions": [
+            {
+              "id": "lock_my_car",
+              "label": "Car lock",
+              "icon": "lock.fill",
+              "state_text": {
+                "on": "Locked",
+                "off": "Unlocked",
+                "turning_on": "Locking",
+                "turning_off": "Unlocking"
+              },
+              "kind": "toggle",
+              "on": true
+            },
+            {
+              "id": "climate_my_car",
+              "label": "Car climate",
+              "icon": "thermometer.medium",
+              "kind": "toggle",
+              "on": false
+            }
+          ]
+        },
+        "fields": {},
+        "size": {
+          "bytes": 476,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car"
+        ]
+      },
+      "kind": "activity",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car"
+        ]
+      },
+      "kind": "widget",
+      "template": "remote",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": null,
+        "fields": {},
+        "waiting": {
+          "field": "value",
+          "fields": [
+            "value"
+          ],
+          "entity_id": null,
+          "reading": null
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
+          "lock.my_car"
+        ]
+      },
+      "kind": "widget",
+      "template": "switchboard",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "switchboard",
+          "actions": [
+            {
+              "id": "lock_my_car",
+              "label": "Car lock",
+              "icon": "lock.fill",
+              "state_text": {
+                "on": "Locked",
+                "off": "Unlocked",
+                "turning_on": "Locking",
+                "turning_off": "Unlocking"
+              },
+              "kind": "toggle",
+              "on": true
+            }
+          ]
+        },
+        "fields": {},
+        "size": {
+          "bytes": 317,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "actions": [
           "scene.movie"
         ],
         "actions__options": {
@@ -11824,7 +12259,7 @@
           "template": "showcase",
           "stats": [
             {
-              "label": "Car charge",
+              "label": "Charge",
               "value": {
                 "value": "78"
               },
@@ -11835,7 +12270,7 @@
         },
         "fields": {},
         "size": {
-          "bytes": 176,
+          "bytes": 172,
           "limit": 4096
         }
       }
@@ -11863,7 +12298,7 @@
           "template": "showcase",
           "stats": [
             {
-              "label": "Car charge",
+              "label": "Charge",
               "value": {
                 "value": "78"
               },
@@ -11873,7 +12308,7 @@
         },
         "fields": {},
         "size": {
-          "bytes": 166,
+          "bytes": 162,
           "limit": 4096
         }
       }
@@ -11896,7 +12331,7 @@
           "template": "showcase",
           "stats": [
             {
-              "label": "Car charge",
+              "label": "Charge",
               "value": {
                 "value": "78"
               },
@@ -11906,7 +12341,7 @@
         },
         "fields": {},
         "size": {
-          "bytes": 166,
+          "bytes": 162,
           "limit": 4096
         }
       }
@@ -11934,7 +12369,7 @@
           "template": "showcase",
           "stats": [
             {
-              "label": "Car doors",
+              "label": "Doors",
               "value": {
                 "value": "Locked"
               }
@@ -11943,7 +12378,7 @@
         },
         "fields": {},
         "size": {
-          "bytes": 158,
+          "bytes": 154,
           "limit": 4096
         }
       }
@@ -11966,7 +12401,7 @@
           "template": "showcase",
           "stats": [
             {
-              "label": "Car doors",
+              "label": "Doors",
               "value": {
                 "value": "Locked"
               }
@@ -11975,7 +12410,81 @@
         },
         "fields": {},
         "size": {
-          "bytes": 158,
+          "bytes": 154,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "stats": [
+          "sensor.my_car_range",
+          "sensor.living_temp"
+        ]
+      },
+      "kind": "widget",
+      "template": "showcase",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "showcase",
+          "stats": [
+            {
+              "label": "Range",
+              "value": {
+                "value": "312"
+              },
+              "unit": "km"
+            },
+            {
+              "label": "Living room temperature",
+              "value": {
+                "value": "21.4"
+              },
+              "unit": "°C"
+            }
+          ]
+        },
+        "fields": {},
+        "size": {
+          "bytes": 276,
+          "limit": 4096
+        }
+      }
+    }
+  },
+  {
+    "request": {
+      "bindings": {
+        "stats": [
+          "sensor.my_car_range"
+        ]
+      },
+      "kind": "widget",
+      "template": "showcase",
+      "type": "aivi/preview"
+    },
+    "answer": {
+      "result": {
+        "content": {
+          "template": "showcase",
+          "stats": [
+            {
+              "label": "Range",
+              "value": {
+                "value": "312"
+              },
+              "unit": "km"
+            }
+          ]
+        },
+        "fields": {},
+        "size": {
+          "bytes": 163,
           "limit": 4096
         }
       }

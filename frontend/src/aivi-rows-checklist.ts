@@ -13,6 +13,7 @@ import { repeat } from "lit/directives/repeat.js";
 import type { AiviEditor } from "./aivi-editor";
 import { define } from "./define";
 import { isTileField, rowsMax } from "./editor-validation";
+import { rowName } from "./entity-options";
 import { FoldState, fold, option } from "./form-kit";
 import { type TranslationKey, t } from "./i18n";
 import { icon } from "./icons";
@@ -131,7 +132,7 @@ class AiviRowsChecklist extends LitElement {
   }
 
   private _name(id: string): string {
-    return this.editor.panel.hass.states[id]?.attributes.friendly_name || id;
+    return rowName(this.editor.panel.hass, id);
   }
 
   private _store(order: string[]): void {
@@ -477,7 +478,12 @@ class AiviRowsChecklist extends LitElement {
         : nothing
     }${
       supported.includes("label")
-        ? text("label", t("field-label.label"), t("checklist.label-aria", { name }), name)
+        ? text(
+            "label",
+            t("field-label.label"),
+            t("checklist.label-aria", { name }),
+            rowName(this.editor.panel.hass, id, this.field.naming),
+          )
         : nothing
     }${
       supported.includes("unit")

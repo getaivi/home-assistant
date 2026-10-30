@@ -11,6 +11,7 @@ from typing import Any
 
 from . import blocks, limits, series, showcase, sourcing
 from .blocks import COLORS, FORMATTERS
+from .sources import Naming
 from .switchboard import (
     AUTO_STATE_TEXT,
     STATE_TEXT_KEYS,
@@ -133,6 +134,9 @@ def _describe_block(block: object) -> dict[str, Any]:
                 described["row_slots"] = {
                     slot.suffix: sourcing.describe(slot) for slot in block.row_slots()
                 }
+            if block.naming is not Naming.FULL:
+                # The editor's label placeholder names the row the same way.
+                described["naming"] = block.naming.value
             if isinstance(block, ActionRows) and block.tiles:
                 # "auto" feeds the editor's placeholders.
                 described["state_text"] = {

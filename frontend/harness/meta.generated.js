@@ -4075,7 +4075,8 @@ export const META = {
                 "template"
               ]
             }
-          }
+          },
+          "naming": "in_device"
         },
         {
           "key": "badge",
@@ -4514,6 +4515,7 @@ export const META = {
               ]
             }
           },
+          "naming": "in_device",
           "state_text": {
             "keys": {
               "toggle": [
@@ -4645,7 +4647,8 @@ export const META = {
                 "template"
               ]
             }
-          }
+          },
+          "naming": "in_device"
         },
         {
           "key": "reported_at",
@@ -5948,7 +5951,8 @@ export const META = {
                 "gray6"
               ]
             }
-          }
+          },
+          "naming": "in_device"
         },
         {
           "key": "state",
@@ -6231,7 +6235,8 @@ export const META = {
                 "template"
               ]
             }
-          }
+          },
+          "naming": "in_device"
         },
         {
           "key": "compact_value",

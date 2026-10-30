@@ -8,6 +8,9 @@ from datetime import UTC, datetime, timedelta, timezone
 from typing import Any
 
 from homeassistant.core import HomeAssistant
+from homeassistant.helpers import device_registry as dr
+from homeassistant.helpers import entity_registry as er
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 from test_contract import assert_valid_request
 
 from contract.openapi import document
@@ -277,6 +280,85 @@ async def test_reported_at_is_when_the_entity_last_reported(
     )
     assert missing is not None
     assert "reported_at" not in missing
+
+
+async def test_a_device_entity_reads_by_its_own_name(
+    hass: HomeAssistant,
+    device_registry: dr.DeviceRegistry,
+    entity_registry: er.EntityRegistry,
+) -> None:
+    config = MockConfigEntry(domain="test")
+    config.add_to_hass(hass)
+    washer = device_registry.async_get_or_create(
+        config_entry_id=config.entry_id,
+        identifiers={("test", "washer")},
+        name="Washer",
+    )
+
+    def add(key: str, name: str | None, **kw: Any) -> str:
+        entity_id = entity_registry.async_get_or_create(
+            "sensor",
+            "test",
+            key,
+            device_id=washer.id,
+            has_entity_name=True,
+            original_name=name,
+            suggested_object_id=f"washer_{key}",
+            **kw,
+        ).entity_id
+        # The friendly name Home Assistant builds: the device's name, then
+        # the entity's.
+        friendly = f"Washer {name}" if name else "Washer"
+        hass.states.async_set(entity_id, "1", {"friendly_name": friendly})
+        return entity_id
+
+    time_left = add("time_left", "Time left")
+    program = add("program", "Program")
+    main = add("status", None)
+    renamed = add("temperature", "Temperature")
+    entity_registry.async_update_entity(renamed, name="Water")
+    hass.states.async_set(renamed, "40", {"friendly_name": "Washer Water"})
+    labelled = add("spin", "Spin speed")
+    # Not on a device: the friendly name is the entity's whole name.
+    loose = entity_registry.async_get_or_create(
+        "sensor", "test", "loose", has_entity_name=True, original_name="Loose"
+    ).entity_id
+    hass.states.async_set(loose, "2", {"friendly_name": "Hallway loose sensor"})
+    # Named the old way, without has_entity_name: its friendly name is
+    # already the whole name.
+    legacy = entity_registry.async_get_or_create(
+        "sensor",
+        "test",
+        "legacy",
+        device_id=washer.id,
+        original_name="Washer legacy drum",
+    ).entity_id
+    hass.states.async_set(legacy, "3", {"friendly_name": "Washer legacy drum"})
+
+    content = engine.resolve(
+        SHOWCASE,
+        {
+            "stats": [time_left, program, main, renamed, labelled, loose],
+            "stats__options": {labelled: {"label": "Spin"}},
+        },
+        HassStateResolver(hass),
+    )
+    assert content is not None
+    assert [stat["label"] for stat in content["stats"]] == [
+        "Time left",
+        "Program",
+        # The device's main entity has no name of its own: it keeps the
+        # device's.
+        "Washer",
+        # The user's rename of the entity.
+        "Water",
+        # A label the user set wins.
+        "Spin",
+        "Hallway loose sensor",
+    ]
+    legacy_only = engine.resolve(SHOWCASE, {"stats": [legacy]}, HassStateResolver(hass))
+    assert legacy_only is not None
+    assert legacy_only["stats"][0]["label"] == "Washer legacy drum"
 
 
 def test_reported_at_from_an_entity_needs_a_resolver_that_knows() -> None:

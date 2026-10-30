@@ -20,7 +20,14 @@ from typing import Any, Final, override
 
 from . import blocks, limits
 from .blocks import ROW_COLOR, ROW_ICON, EntityRows, row_label
-from .sources import ReportedResolver, Source, StateResolver, display_state_of
+from .sources import (
+    Naming,
+    ReportedResolver,
+    Source,
+    StateResolver,
+    display_state_of,
+    entity_name_of,
+)
 from .sourcing import Bare, ValueSlot
 from .switchboard.marks import valid_image_url
 from .switchboard.size import (
@@ -158,10 +165,14 @@ class LastReported(blocks.Timestamp):
 def _stat_label(
     entity_id: str, resolver: StateResolver, options: dict[str, Any]
 ) -> str:
+    """The stat's label: the user's, else the entity's name. A showcase
+    is one thing, so an entity on a device reads by its own name ("Time
+    left"), not with the device's in front ("Washer Time left") on every
+    row."""
     label = str(options.get("label") or "").strip()
     if not label:
-        label = str(resolver.attribute(entity_id, "friendly_name") or "").strip()
-    return (label or entity_id)[: limits.STAT_LABEL]
+        label = entity_name_of(resolver, entity_id, Naming.IN_DEVICE)
+    return label[: limits.STAT_LABEL]
 
 
 def _stat_unit(
@@ -231,7 +242,10 @@ class StatRows(EntityRows):
 
     def __init__(self, *, max_rows: int = limits.STATS) -> None:
         super().__init__(
-            row_builder=stat_row, row_options=STAT_OPTIONS, max_rows=max_rows
+            row_builder=stat_row,
+            row_options=STAT_OPTIONS,
+            max_rows=max_rows,
+            naming=Naming.IN_DEVICE,
         )
 
 

@@ -2,13 +2,13 @@
 
 from __future__ import annotations
 
-from typing import Any, Final, override
+from typing import TYPE_CHECKING, Any, Final, override
 
 from homeassistant.const import STATE_ON
 
 from .. import limits
 from ..blocks import COLORS, ROW_ICON, EntityRows, row_label
-from ..sources import StateResolver
+from ..sources import Naming, StateResolver, entity_name_of
 from ..sourcing import ValueSlot
 from ..values import SlotKind
 from .ids import ACTION_DOMAINS, action_ids, kind_of
@@ -22,6 +22,9 @@ from .marks import (
     valid_image_url,
 )
 from .words import STATE_TEXT_OPTION, state_text, toggle_on
+
+if TYPE_CHECKING:
+    from ..templates import TemplateDef
 
 #: The glyph a tile gets when its row sets none: one SF Symbol per domain.
 _DEFAULT_ICONS: Final[dict[str, str]] = {
@@ -74,11 +77,13 @@ ROW_OPTIONS: Final[tuple[str, ...]] = (
 )
 
 
-def _label(entity_id: str, resolver: StateResolver, options: dict[str, Any]) -> str:
+def _label(
+    entity_id: str, resolver: StateResolver, options: dict[str, Any], naming: Naming
+) -> str:
     """The label a tile shows: the user's, else the entity's name."""
     label = str(options.get("label") or "").strip()
     if not label:
-        label = str(resolver.attribute(entity_id, "friendly_name") or entity_id)
+        label = entity_name_of(resolver, entity_id, naming)
     return label[: limits.TILE_LABEL]
 
 
@@ -89,6 +94,7 @@ def action_row(
     options: dict[str, Any],
     *,
     tiles: bool = True,
+    naming: Naming = Naming.FULL,
 ) -> dict[str, Any]:
     """One tile, from options coerced by ``ActionRows``' row slots. An
     unavailable entity still gets its tile (off), so the grid keeps its
@@ -97,7 +103,7 @@ def action_row(
     id, label, icon, color and state only: Aivi refuses the rest there."""
     domain = entity_id.partition(".")[0]
     state = resolver.state(entity_id)
-    label = _label(entity_id, resolver, options)
+    label = _label(entity_id, resolver, options, naming)
     icon = options.get("icon")
     if (
         not icon
@@ -137,7 +143,9 @@ BUTTON_OPTIONS: Final[tuple[str, ...]] = ("label", "icon", "color")
 class ActionRows(EntityRows):
     """The switchboard's rows (and a remote's buttons): an ordered pick of
     entities resolved to Aivi actions with their derived ids.
-    ``tiles=False`` keeps only what a Live Activity's buttons draw."""
+    ``tiles=False`` keeps only what a Live Activity's buttons draw;
+    ``naming`` is how a row without a label names its entity (a
+    switchboard mixes devices, so its tiles keep the full name)."""
 
     #: The action color takes hex too.
     ROW_SLOTS = (
@@ -183,11 +191,18 @@ class ActionRows(EntityRows):
             return text[: limits.STATE_TEXT]
         return super().clean_option(option, text)
 
-    def __init__(self, *, max_rows: int | None = None, tiles: bool = True) -> None:
+    def __init__(
+        self,
+        *,
+        max_rows: int | None = None,
+        tiles: bool = True,
+        naming: Naming = Naming.FULL,
+    ) -> None:
         super().__init__(
             domain=list(ACTION_DOMAINS),
             row_options=ROW_OPTIONS if tiles else BUTTON_OPTIONS,
             max_rows=max_rows,
+            naming=naming,
         )
         self.tiles = tiles
 
@@ -204,6 +219,7 @@ class ActionRows(EntityRows):
                 resolver,
                 self.tile_options(key, data, entity_id, resolver),
                 tiles=self.tiles,
+                naming=self.naming,
             )
             for entity_id in entity_ids
         ]
@@ -231,9 +247,24 @@ _ROWS = ActionRows()
 
 
 def tile_label(
-    bindings: dict[str, Any], entity_id: str, resolver: StateResolver
+    template: TemplateDef | None,
+    bindings: dict[str, Any],
+    entity_id: str,
+    resolver: StateResolver,
 ) -> str:
-    """The label ``entity_id``'s tile shows on the switchboard ``bindings``
-    configure, from the row's options as the push resolves them."""
-    options = _ROWS.tile_options("actions", bindings, entity_id, resolver)
-    return _label(entity_id, resolver, options)
+    """The label ``entity_id``'s tile or button shows on the content
+    ``bindings`` configure, from the row's options as the push resolves
+    them, by the naming of ``template``'s ``actions`` (the field presses
+    route through)."""
+    rows = _ROWS
+    if template is not None:
+        rows = next(
+            (
+                field.block
+                for field in template.fields
+                if field.key == "actions" and isinstance(field.block, ActionRows)
+            ),
+            _ROWS,
+        )
+    options = rows.tile_options("actions", bindings, entity_id, resolver)
+    return _label(entity_id, resolver, options, rows.naming)
