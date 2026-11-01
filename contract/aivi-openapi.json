@@ -337,16 +337,6 @@
                 }
               }
             }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
           }
         }
       },
@@ -398,16 +388,6 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ErrorDetail"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
                 }
               }
             }
@@ -773,16 +753,6 @@
                 }
               }
             }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
           }
         }
       },
@@ -837,16 +807,6 @@
                 }
               }
             }
-          },
-          "422": {
-            "description": "Validation Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HTTPValidationError"
-                }
-              }
-            }
           }
         }
       }
@@ -857,7 +817,7 @@
           "Events"
         ],
         "summary": "Stream events",
-        "description": "Opens a server-sent event stream of your account's events, such as `widget.action.v1` presses on a switchboard widget. One stream carries the events of every widget on your account; filter it with `types` and `subject`.\n\nEach event arrives as an `id:` line with the stream's position, then a `data:` line holding the event envelope as JSON. The stream opens with a `retry:` line and its starting position, and a `: ping` comment arrives every 20 seconds while nothing else happens.\n\nThe server closes every stream after 15 minutes: reconnect after the `retry:` delay, and send the last `id:` you saw as `Last-Event-ID` to replay the events you missed that haven't expired yet. An event can arrive twice, so deduplicate on its `id`. At most 4 streams per account.\n\nWhen a stream can't be set up for now, for example while the database is unavailable, the answer is still `200`: a stream that holds only a `retry:` line and ends. Reconnect after the delay.\n\nGuide: https://docs.getaivi.app/events/",
+        "description": "Opens a server-sent event stream of your account's events: `widget.action.v1` for presses on a widget's actions, such as a switchboard's tiles (subject `widget/<slug>`), and `activity.action.v1` for presses on a Live Activity's actions, such as a remote's buttons (subject `activity/<slug>`). One stream carries the events of every widget and Live Activity on your account; filter it with `types` and `subject`.\n\nEach event arrives as an `id:` line with the stream's position, then a `data:` line holding the event envelope as JSON. The stream opens with a `retry:` line and its starting position, and a `: ping` comment arrives every 20 seconds while nothing else happens.\n\nThe server closes every stream after 15 minutes: reconnect after the `retry:` delay, and send the last `id:` you saw as `Last-Event-ID` to replay the events you missed that haven't expired yet. An event can arrive twice, so deduplicate on its `id`. At most 4 streams per account.\n\nWhen a stream can't be set up for now, for example while the database is unavailable, the answer is still `200`: a stream that holds only a `retry:` line and ends. Reconnect after the delay.\n\nGuide: https://docs.getaivi.app/events/",
         "operationId": "stream_events_events_get",
         "parameters": [
           {
@@ -876,10 +836,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Only events of these types, for example `widget.action.v1`. Repeatable. Omit for every type.",
+              "description": "Only events of these types, for example `widget.action.v1` or `activity.action.v1`. Repeatable. Omit for every type.",
               "title": "Types"
             },
-            "description": "Only events of these types, for example `widget.action.v1`. Repeatable. Omit for every type."
+            "description": "Only events of these types, for example `widget.action.v1` or `activity.action.v1`. Repeatable. Omit for every type."
           },
           {
             "name": "subject",
@@ -897,10 +857,10 @@
                   "type": "null"
                 }
               ],
-              "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room`. Repeatable. Omit for every subject.",
+              "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room` or `activity/vacuum`. Repeatable. Omit for every subject.",
               "title": "Subject"
             },
-            "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room`. Repeatable. Omit for every subject."
+            "description": "Only events about these resources, written as `<kind>/<slug>`, for example `widget/living-room` or `activity/vacuum`. Repeatable. Omit for every subject."
           },
           {
             "name": "Last-Event-ID",
@@ -928,22 +888,26 @@
               "text/event-stream": {
                 "schema": {
                   "type": "string",
-                  "description": "Server-sent events (`text/event-stream`), UTF-8, one event per block, blocks separated by a blank line:\n\n- `retry: <ms>`: first, the reconnect delay.\n- `id: <cursor>` alone: the stream's starting position.\n- `: ping`: a comment every 20 seconds while nothing else happens. Ignore it.\n- `id: <cursor>` then `data: <json>`: one event. `data` is a single line holding one JSON event envelope; `x-sse-data-schema` names its schema (`WidgetActionEvent` for `widget.action.v1`). Send the last `id` back as `Last-Event-ID` when you reconnect."
+                  "description": "Server-sent events (`text/event-stream`), UTF-8, one event per block, blocks separated by a blank line:\n\n- `retry: <ms>`: first, the reconnect delay.\n- `id: <cursor>` alone: the stream's starting position.\n- `: ping`: a comment every 20 seconds while nothing else happens. Ignore it.\n- `id: <cursor>` then `data: <json>`: one event. `data` is a single line holding one JSON event envelope; `x-sse-data-schema` names its schema (`WidgetActionEvent` for `widget.action.v1`, `ActivityActionEvent` for `activity.action.v1`). Send the last `id` back as `Last-Event-ID` when you reconnect."
                 },
                 "x-sse-data-schema": {
                   "oneOf": [
                     {
                       "$ref": "#/components/schemas/WidgetActionEvent"
+                    },
+                    {
+                      "$ref": "#/components/schemas/ActivityActionEvent"
                     }
                   ],
                   "discriminator": {
                     "propertyName": "type",
                     "mapping": {
-                      "widget.action.v1": "#/components/schemas/WidgetActionEvent"
+                      "widget.action.v1": "#/components/schemas/WidgetActionEvent",
+                      "activity.action.v1": "#/components/schemas/ActivityActionEvent"
                     }
                   }
                 },
-                "example": "retry: 1000\nid: u:6\n\n: ping\n\nid: u:7\ndata: {\"id\":\"7c1e5b0a-4d2f-5a8e-9b3c-2f6d8e1a4c57\",\"request_id\":\"act_3f9c2a71b04e\",\"type\":\"widget.action.v1\",\"subject\":{\"kind\":\"widget\",\"slug\":\"living-room\"},\"occurred_at\":\"2026-10-01T19:04:07.512000Z\",\"expires_at\":\"2026-10-01T19:04:12.512000Z\",\"data\":{\"action\":\"porch\",\"kind\":\"toggle\",\"value\":true}}\n\n"
+                "example": "retry: 1000\nid: u:6\n\n: ping\n\nid: u:7\ndata: {\"id\":\"7c1e5b0a-4d2f-5a8e-9b3c-2f6d8e1a4c57\",\"request_id\":\"act_3f9c2a71b04e\",\"type\":\"widget.action.v1\",\"subject\":{\"kind\":\"widget\",\"slug\":\"living-room\"},\"occurred_at\":\"2026-10-01T19:04:07.512000Z\",\"expires_at\":\"2026-10-01T19:04:12.512000Z\",\"data\":{\"action\":\"porch\",\"kind\":\"toggle\",\"value\":true}}\n\nid: u:8\ndata: {\"id\":\"0d9a7f3e-6b21-5c48-8e1f-4a7c3b2d9e60\",\"request_id\":\"act_8b2e61d4c90a\",\"type\":\"activity.action.v1\",\"subject\":{\"kind\":\"activity\",\"slug\":\"vacuum\"},\"occurred_at\":\"2026-10-01T19:05:41.207000Z\",\"expires_at\":\"2026-10-01T19:05:46.207000Z\",\"data\":{\"action\":\"pause\",\"kind\":\"button\",\"instance_id\":\"0b6f1c8e-2d4a-4e57-9a3b-6c1d2e3f4a5b\"}}\n\n"
               }
             }
           },
@@ -1072,6 +1036,9 @@
           },
           {
             "$ref": "#/components/schemas/ActivityToggleAction-Input"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityLinkAction-Input"
           }
         ]
       },
@@ -1082,6 +1049,9 @@
           },
           {
             "$ref": "#/components/schemas/ActivityToggleAction-Output"
+          },
+          {
+            "$ref": "#/components/schemas/ActivityLinkAction-Output"
           }
         ]
       },
@@ -1292,6 +1262,106 @@
         "title": "ActivityImage",
         "description": "The picture, by URL only: never fetched or stored by the\nbackend. The device draws it only once its app has cached it, and\nthe icon until then."
       },
+      "ActivityLinkAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "link",
+            "title": "Kind",
+            "default": "link"
+          },
+          "url": {
+            "$ref": "#/components/schemas/TapUrl",
+            "maxLength": 256,
+            "description": "Opened on the device. At most 256 characters. Any valid URL scheme (https, http, tel, sms, facetime, an app's own) except javascript, data, file, blob, about and aivi."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "url"
+        ],
+        "title": "ActivityLinkAction",
+        "description": "A `LinkAction` on a Live Activity: its id, label, icon, color and\nurl; nothing else is drawn."
+      },
+      "ActivityLinkAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "link",
+            "title": "Kind",
+            "default": "link"
+          },
+          "url": {
+            "$ref": "#/components/schemas/TapUrl",
+            "maxLength": 256,
+            "description": "Opened on the device. At most 256 characters. Any valid URL scheme (https, http, tel, sms, facetime, an app's own) except javascript, data, file, blob, about and aivi."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "url"
+        ],
+        "title": "ActivityLinkAction",
+        "description": "A `LinkAction` on a Live Activity: its id, label, icon, color and\nurl; nothing else is drawn."
+      },
       "ActivityPage": {
         "properties": {
           "items": {
@@ -1494,7 +1564,8 @@
             },
             "type": "object",
             "maxProperties": 9,
-            "title": "Webhooks"
+            "title": "Webhooks",
+            "description": "Keyed by action id, plus `\"*\"` for the default. A press goes to its action's own entry if there is one, otherwise to `\"*\"`, otherwise nowhere. At most 9 entries."
           }
         },
         "additionalProperties": false,
@@ -1512,7 +1583,8 @@
               "$ref": "#/components/schemas/RedactedWebhookEntry"
             },
             "type": "object",
-            "title": "Webhooks"
+            "title": "Webhooks",
+            "description": "Keyed by action id, plus `\"*\"` for the default."
           }
         },
         "type": "object",
@@ -2743,7 +2815,8 @@
         "properties": {
           "detail": {
             "type": "string",
-            "title": "Detail"
+            "title": "Detail",
+            "description": "What went wrong."
           }
         },
         "type": "object",
@@ -3382,6 +3455,178 @@
             "type": "null"
           }
         ]
+      },
+      "LinkAction-Input": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "link",
+            "title": "Kind",
+            "default": "link"
+          },
+          "url": {
+            "$ref": "#/components/schemas/TapUrl",
+            "maxLength": 256,
+            "description": "Opened on the device. At most 256 characters. Any valid URL scheme (https, http, tel, sms, facetime, an app's own) except javascript, data, file, blob, about and aivi."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "url"
+        ],
+        "title": "LinkAction",
+        "description": "Opens `url` on the device, through the app. Nothing reaches the\npublisher: no press event, no press wait, no rate limit. No state\neither: no `on`, `active`, `state_text` or `confirm`."
+      },
+      "LinkAction-Output": {
+        "properties": {
+          "id": {
+            "$ref": "#/components/schemas/ActionId"
+          },
+          "label": {
+            "type": "string",
+            "maxLength": 24,
+            "minLength": 1,
+            "title": "Label"
+          },
+          "subtitle": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Value"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "icon": {
+            "type": "string",
+            "maxLength": 64,
+            "minLength": 1,
+            "title": "Icon"
+          },
+          "color": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ColorV2"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "gradient": {
+            "anyOf": [
+              {
+                "items": {
+                  "$ref": "#/components/schemas/ColorV2"
+                },
+                "type": "array",
+                "maxItems": 3,
+                "minItems": 2
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Gradient"
+          },
+          "image": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/Image"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "kind": {
+            "type": "string",
+            "const": "link",
+            "title": "Kind",
+            "default": "link"
+          },
+          "url": {
+            "$ref": "#/components/schemas/TapUrl",
+            "maxLength": 256,
+            "description": "Opened on the device. At most 256 characters. Any valid URL scheme (https, http, tel, sms, facetime, an app's own) except javascript, data, file, blob, about and aivi."
+          }
+        },
+        "additionalProperties": false,
+        "type": "object",
+        "required": [
+          "id",
+          "label",
+          "icon",
+          "url"
+        ],
+        "title": "LinkAction",
+        "description": "Opens `url` on the device, through the app. Nothing reaches the\npublisher: no press event, no press wait, no rate limit. No state\neither: no `on`, `active`, `state_text` or `confirm`."
       },
       "ListRow-Input": {
         "properties": {
@@ -4178,7 +4423,8 @@
         "properties": {
           "url": {
             "type": "string",
-            "title": "Url"
+            "title": "Url",
+            "description": "The URL to call, with query values as `\"***\"`."
           },
           "method": {
             "type": "string",
@@ -4188,17 +4434,20 @@
               "PATCH",
               "GET"
             ],
-            "title": "Method"
+            "title": "Method",
+            "description": "The HTTP method."
           },
           "headers": {
             "additionalProperties": {
               "type": "string"
             },
             "type": "object",
-            "title": "Headers"
+            "title": "Headers",
+            "description": "The extra request headers, with values as `\"***\"`."
           },
           "body": {
-            "$ref": "#/components/schemas/JSONSerializable-Output"
+            "$ref": "#/components/schemas/JSONSerializable-Output",
+            "description": "The body template, or `null` when the event envelope is the body."
           }
         },
         "type": "object",
@@ -4214,7 +4463,8 @@
       "RedactedWebhookEntry": {
         "properties": {
           "config": {
-            "$ref": "#/components/schemas/RedactedWebhookConfig"
+            "$ref": "#/components/schemas/RedactedWebhookConfig",
+            "description": "The webhook as it was set, redacted."
           },
           "last_success_at": {
             "anyOf": [
@@ -4259,6 +4509,9 @@
           },
           {
             "$ref": "#/components/schemas/ToggleAction-Input"
+          },
+          {
+            "$ref": "#/components/schemas/LinkAction-Input"
           }
         ]
       },
@@ -4269,6 +4522,9 @@
           },
           {
             "$ref": "#/components/schemas/ToggleAction-Output"
+          },
+          {
+            "$ref": "#/components/schemas/LinkAction-Output"
           }
         ]
       },
@@ -5329,7 +5585,8 @@
         "properties": {
           "detail": {
             "type": "string",
-            "title": "Detail"
+            "title": "Detail",
+            "description": "What went wrong."
           },
           "code": {
             "type": "string",
@@ -6392,6 +6649,119 @@
             "pattern": "^(?!^[-+.]*$)[+-]?0*\\d*\\.?\\d*$"
           }
         ]
+      },
+      "ActivityActionData": {
+        "additionalProperties": false,
+        "description": "The press, and the card it was made on.",
+        "properties": {
+          "action": {
+            "description": "The `id` of the pressed action, as published in the activity's content.",
+            "title": "Action",
+            "type": "string"
+          },
+          "kind": {
+            "description": "The action's kind.",
+            "enum": [
+              "button",
+              "toggle"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "value": {
+            "description": "Toggles only: the state asked for, `true` for on. A request, not a fact: confirm it by publishing the activity's content. Absent for a button.",
+            "title": "Value",
+            "type": "boolean"
+          },
+          "instance_id": {
+            "description": "The Live Activity card the press was made on. A new card, with a new id, starts each time the activity becomes `ONGOING`, and when Aivi replaces a long-running one.",
+            "format": "uuid",
+            "title": "Instance Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "action",
+          "kind",
+          "instance_id"
+        ],
+        "title": "ActivityActionData",
+        "type": "object"
+      },
+      "ActivityActionEvent": {
+        "additionalProperties": false,
+        "description": "An `activity.action.v1` event: a press on an action of a Live\nActivity, such as a remote.",
+        "properties": {
+          "id": {
+            "description": "The delivery id, a UUID. The same on every delivery of one press (a replay, a retry, the webhook `Idempotency-Key`): deduplicate on it.",
+            "title": "Id",
+            "type": "string"
+          },
+          "request_id": {
+            "description": "The id the phone gave the press. Unique only within one activity: for logs and correlation, not deduplication.",
+            "title": "Request Id",
+            "type": "string"
+          },
+          "type": {
+            "const": "activity.action.v1",
+            "description": "What happened, with the version of `data`.",
+            "title": "Type",
+            "type": "string"
+          },
+          "subject": {
+            "$ref": "#/components/schemas/ActivityEventSubject"
+          },
+          "occurred_at": {
+            "description": "When the press happened.",
+            "format": "date-time",
+            "title": "Occurred At",
+            "type": "string"
+          },
+          "expires_at": {
+            "description": "When the event stops being useful, 5 seconds after `occurred_at`. Drop an event that reaches you later.",
+            "format": "date-time",
+            "title": "Expires At",
+            "type": "string"
+          },
+          "data": {
+            "$ref": "#/components/schemas/ActivityActionData"
+          }
+        },
+        "required": [
+          "id",
+          "request_id",
+          "type",
+          "subject",
+          "occurred_at",
+          "expires_at",
+          "data"
+        ],
+        "title": "ActivityActionEvent",
+        "type": "object"
+      },
+      "ActivityEventSubject": {
+        "additionalProperties": false,
+        "description": "The Live Activity the event is about.",
+        "properties": {
+          "kind": {
+            "const": "activity",
+            "description": "What the resource is. Always `activity` for this type.",
+            "title": "Kind",
+            "type": "string"
+          },
+          "slug": {
+            "description": "The activity's slug.",
+            "minLength": 1,
+            "title": "Slug",
+            "type": "string"
+          }
+        },
+        "required": [
+          "kind",
+          "slug"
+        ],
+        "title": "ActivityEventSubject",
+        "type": "object"
       },
       "WidgetActionData": {
         "additionalProperties": false,

@@ -146,17 +146,21 @@ async def test_documented_push_errors_parse(hass, aioclient_mock) -> None:
 
 
 def test_the_documented_event_parses() -> None:
-    """The stream's documented example frame carries an event the
-    command stream reads: its id, type, subject, expiry and press."""
+    """The stream's documented example frames carry events the command
+    stream reads: their id, type, subject, expiry and press, and on a
+    Live Activity's press the card it was made on."""
     response = OPENAPI.spec / "paths" / "/events" / "get" / "responses" / "200"
     stream = (response / "content" / "text/event-stream").read_value()
-    data = next(
-        line.removeprefix("data: ")
+    widget, activity = (
+        json.loads(line.removeprefix("data: "))
         for line in stream["example"].splitlines()
         if line.startswith("data: ")
     )
-    event = json.loads(data)
-    assert event["type"] == "widget.action.v1"
-    assert event["subject"] == {"kind": "widget", "slug": "living-room"}
-    assert {"id", "expires_at", "request_id"} <= event.keys()
-    assert set(event["data"]) == {"action", "kind", "value"}
+    assert widget["type"] == "widget.action.v1"
+    assert widget["subject"] == {"kind": "widget", "slug": "living-room"}
+    assert {"id", "expires_at", "request_id"} <= widget.keys()
+    assert set(widget["data"]) == {"action", "kind", "value"}
+    assert activity["type"] == "activity.action.v1"
+    assert activity["subject"] == {"kind": "activity", "slug": "vacuum"}
+    assert {"id", "expires_at", "request_id"} <= activity.keys()
+    assert set(activity["data"]) == {"action", "kind", "instance_id"}
