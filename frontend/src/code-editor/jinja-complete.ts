@@ -437,8 +437,9 @@ function functionOption(
   env: CompletionEnv,
   boost: number,
 ): JinjaOption {
+  // The first | marks where the caret goes; any after it are the template's own.
   const caret = template.indexOf("|");
-  const apply = template.replace("|", "");
+  const apply = caret < 0 ? template : template.slice(0, caret) + template.slice(caret + 1);
   const option: JinjaOption = { label: f.name, type: "function", info: env.hint(f.name) };
   if (f.args) option.detail = f.args;
   if (apply !== f.name) option.apply = apply;

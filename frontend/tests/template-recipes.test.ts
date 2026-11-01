@@ -274,6 +274,22 @@ describe("recipes that fit the field", () => {
       select: [22, 22],
     });
   });
+
+  it("matches the entity id literally, whatever characters it has", () => {
+    const words = RECIPES.text[0];
+    if (!words) throw new Error("no recipe");
+    const doc = "{{ states('sensor.a+b') }}";
+    expect(recipeInsert(words, "sensor.a+b", undefined, doc, doc.length)).toMatchObject({
+      from: 0,
+      to: doc.length,
+    });
+    // Read as a pattern, the + would take this other entity for it.
+    const other = "{{ states('sensor.aab') }}";
+    expect(recipeInsert(words, "sensor.a+b", undefined, other, other.length)).toMatchObject({
+      from: other.length,
+      to: other.length,
+    });
+  });
 });
 
 describe("hints on a result", () => {

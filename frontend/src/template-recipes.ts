@@ -517,7 +517,7 @@ function outputWhole(doc: string): Output | null {
 /** Whether `expr` only reads entity `id`'s state or one of its
  * attributes: what a recipe for that entity is written to replace. */
 function readsOnly(expr: string, id: string): boolean {
-  const q = id.replace(/\./g, "\\.");
+  const q = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   return new RegExp(
     `^(?:states\\(['"]${q}['"]\\)|state_attr\\(['"]${q}['"], *['"][^'"]*['"]\\))$`,
   ).test(expr);
