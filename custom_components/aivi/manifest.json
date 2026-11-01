@@ -11,7 +11,8 @@
     "websocket_api"
   ],
   "categories": [
-    "other_ecosystems"
+    "other_ecosystems",
+    "presence_location.phones_companion_apps"
   ],
   "codeowners": [
     "@kjagiello"
