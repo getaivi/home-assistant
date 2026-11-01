@@ -92,7 +92,9 @@ To correct a shipped language, edit its file. For a new one:
 
 - Titles follow [Conventional Commits](https://www.conventionalcommits.org)
   (`fix: ...`, `feat(panel): ...`); pull requests are squash-merged and the
-  changelog is generated from the titles.
+  [release notes](https://github.com/getaivi/home-assistant/releases) are
+  generated from the titles.
 - Add or update tests for what you change.
 - For a change to the panel's look, include a screenshot.
-- Do not bump the version in `manifest.json`; the release workflow owns it.
+- Do not bump the version in `manifest.json`; the release workflow stamps
+  it into the release zip, so the committed one stays as it is.
