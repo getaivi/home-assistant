@@ -10,6 +10,9 @@
     "recorder",
     "websocket_api"
   ],
+  "categories": [
+    "other_ecosystems"
+  ],
   "codeowners": [
     "@kjagiello"
   ],
