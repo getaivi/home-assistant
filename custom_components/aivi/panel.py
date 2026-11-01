@@ -87,8 +87,9 @@ async def _async_register_panel(hass: HomeAssistant) -> None:
         hass.data[_STATIC_REGISTERED] = True
         hass.http.register_view(PanelFileView())
     # The module URL carries the release version (the release workflow
-    # stamps manifest.json) and a hash of the bundle as it was when Home
-    # Assistant started; the no-cache answer covers a bundle rebuilt since.
+    # stamps the zip's manifest.json) and a hash of the bundle as it was
+    # when Home Assistant started; the no-cache answer covers a bundle
+    # rebuilt since.
     integration = await async_get_integration(hass, DOMAIN)
     stamp = await hass.async_add_executor_job(_bundle_hash)
     tag = ".".join(part for part in (integration.version, stamp) if part)

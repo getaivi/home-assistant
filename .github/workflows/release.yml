@@ -1,14 +1,15 @@
 name: Release
 
 # One-click release: computes the next semver from Conventional Commits with
-# git-cliff, stamps manifest.json, regenerates CHANGELOG.md, tags, and
-# publishes a GitHub release with the aivi.zip asset that HACS installs
-# (hacs.json: zip_release).
+# git-cliff and publishes a GitHub release with the aivi.zip asset that HACS
+# installs (hacs.json: zip_release). Nothing is pushed: main takes changes
+# only through pull requests, so the version goes into the zip's
+# manifest.json alone and the release itself creates the tag.
 on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: release
@@ -16,7 +17,13 @@ concurrency:
 
 jobs:
   release:
+    # The release tags the dispatched commit, so only main's is released.
+    if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # the release and its tag
+      id-token: write # the Sigstore certificate behind the attestation
+      attestations: write
     steps:
       - uses: actions/checkout@v7.0.1
         with:
@@ -36,25 +43,17 @@ jobs:
           echo "tag=$next" >> "$GITHUB_OUTPUT"
           echo "version=${next#v}" >> "$GITHUB_OUTPUT"
 
-      - name: Stamp manifest and changelog
+      # Workspace only, never committed: Home Assistant and the panel's
+      # cache busting read the version from the installed manifest.
+      - name: Stamp manifest
         run: |
           tmp="$(mktemp)"
           jq --arg v "${{ steps.version.outputs.version }}" '.version = $v' \
             custom_components/aivi/manifest.json > "$tmp"
           mv "$tmp" custom_components/aivi/manifest.json
-          uvx git-cliff --tag "${{ steps.version.outputs.tag }}" -o CHANGELOG.md
-
-      - name: Commit, tag, push
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add custom_components/aivi/manifest.json CHANGELOG.md
-          git commit -m "chore(release): ${{ steps.version.outputs.tag }}"
-          git tag "${{ steps.version.outputs.tag }}"
-          git push origin HEAD:main "${{ steps.version.outputs.tag }}"
 
       # The panel bundle is generated (gitignored), so the zip needs a fresh
-      # build — HACS installs come from this asset (hacs.json: zip_release).
+      # build: HACS installs come from this asset (hacs.json: zip_release).
       - uses: actions/setup-node@v7.1.0
         with:
           node-version: 22
@@ -78,12 +77,24 @@ jobs:
           grep -qF "$(basename "${editors[0]}")" frontend/aivi-panel.js
           zip -r ../../aivi.zip . -x '*__pycache__*'
           unzip -l ../../aivi.zip | grep -F frontend/
+          unzip -p ../../aivi.zip manifest.json |
+            jq -e --arg v "${{ steps.version.outputs.version }}" '.version == $v'
 
+      # Lets anyone check the zip came from this workflow and commit:
+      # gh attestation verify aivi.zip --repo getaivi/home-assistant
+      - uses: actions/attest-build-provenance@v4.2.2
+        with:
+          subject-path: aivi.zip
+
+      # The tag does not exist yet, so the notes are the unreleased commits
+      # under the new tag; gh creates the tag on the dispatched commit.
       - name: Publish GitHub release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          uvx git-cliff --latest --strip header > notes.md
+          uvx git-cliff --unreleased --tag "${{ steps.version.outputs.tag }}" \
+            --strip header > notes.md
           gh release create "${{ steps.version.outputs.tag }}" aivi.zip \
+            --target "${{ github.sha }}" \
             --title "${{ steps.version.outputs.tag }}" \
             --notes-file notes.md
