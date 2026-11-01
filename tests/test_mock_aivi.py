@@ -472,3 +472,31 @@ def test_a_remote_is_pressed_on_the_widget_and_on_the_live_activity_card(
         "kind": "toggle",
         "instance_id": mock.ONGOING["vacuum"],
     }
+
+
+def test_an_activity_press_is_held_to_the_documented_activity_event(
+    client, mock
+) -> None:
+    """A Live Activity press is checked against `ActivityActionEvent`
+    itself: the card it names must be a UUID, and nothing undocumented
+    rides along."""
+    resolver = _Resolver({"sensor.charge": "78", "lock.car": "locked"})
+    bindings = {"value": "sensor.charge", "actions": ["lock.car"]}
+    content = engine.resolve(ACTIVITY_REMOTE, bindings, resolver)
+    body = {"state": "ONGOING", "content": content}
+    response = client.patch("/activities/vacuum", json=body, headers=AUTH)
+    assert response.status_code == 200, response.get_data(as_text=True)
+
+    press = {"activity": "vacuum", "action": "lock_car"}
+    assert client.post("/command", json=dict(press)).status_code == 202
+    _, event = mock.LOG[-1]
+    assert event["data"] == {
+        "action": "lock_car",
+        "kind": "button",
+        "instance_id": mock.ONGOING["vacuum"],
+    }
+
+    for broken in ({"instance_id": "card-1"}, {"extra": 1}):
+        response = client.post("/command", json={**press, **broken})
+        assert response.status_code == 422, response.get_data(as_text=True)
+        assert "would break the schema" in response.get_json()["detail"]

@@ -58,9 +58,7 @@ def command(body: dict[str, Any]) -> Response:
         "expires_at": timestamp(now + EVENT_TTL),
         "data": body,
     }
-    # The vendored document describes the widget event only so far; an
-    # activity event is the same envelope under its own type and kind.
-    if errors := event_errors(_as_documented(event)):
+    if errors := event_errors(event):
         return detail(422, f"The event would break the schema: {errors}")
     with state.LOCK:
         state.CURSOR += 1
@@ -74,19 +72,6 @@ def command(body: dict[str, Any]) -> Response:
         flush=True,
     )
     return json_response(202, {"id": event["id"], "delivered_to": len(listeners)})
-
-
-def _as_documented(event: dict[str, Any]) -> dict[str, Any]:
-    """The event as the documented widget envelope, to check its shape."""
-    if event["type"] != "activity.action.v1":
-        return event
-    data = {k: v for k, v in event["data"].items() if k != "instance_id"}
-    return {
-        **event,
-        "type": "widget.action.v1",
-        "subject": {**event["subject"], "kind": "widget"},
-        "data": data,
-    }
 
 
 def frame(cursor: int, event: dict[str, Any]) -> bytes:
