@@ -14,7 +14,7 @@ jobs:
     # A merge group carries no title; the PR's was checked before it was
     # queued. The skipped job still reports the check, as passing.
     if: github.event_name == 'pull_request'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       # PRs are squash-merged with the PR title as the commit subject, so the
       # title is what git-cliff sees when computing the changelog and bump.
