@@ -25,13 +25,15 @@ troubleshooting and removal.
 
 [![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=getaivi&repository=home-assistant&category=integration)
 
-1. On Home Assistant 2026.11 and newer, go to **Settings → Marketplace →
-   Add from link** and paste `https://github.com/getaivi/home-assistant`.
-   On 2026.10 and older, add that link in HACS as a custom repository of
-   type *Integration*, or use the button above.
-2. Download **Aivi** and restart Home Assistant.
+1. Open HACS (on Home Assistant 2026.11 and newer: **Settings → Marketplace**),
+   search for **Aivi** and download it. The button above opens it in HACS.
+2. Restart Home Assistant.
 3. Go to **Settings → Devices & services → Add integration → Aivi** and
    paste your API token from the Aivi app.
+
+If Aivi does not show up in the search, add
+`https://github.com/getaivi/home-assistant` as a custom repository of type
+*Integration*.
 
 Without HACS: download `aivi.zip` from the
 [latest release](https://github.com/getaivi/home-assistant/releases/latest)
